@@ -7,7 +7,7 @@
 #include <string>
 
 #include "UnitedTokenizer.hpp"
-#include "ASTParser.hpp"
+#include "SyntaxTreeParser.hpp"
 #include "SemanticParser.hpp"
 
 class FrontParser {

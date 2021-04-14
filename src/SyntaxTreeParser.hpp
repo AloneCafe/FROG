@@ -8,7 +8,7 @@
 
 #include "Structure.hpp"
 #include "Statements.hpp"
-#include "ASTBasicParser.hpp"
+#include "SyntaxTreeBasicParser.hpp"
 #include "GlobalFuncMap.hpp"
 
 class AstParser {

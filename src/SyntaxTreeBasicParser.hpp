@@ -5,7 +5,7 @@
 #include <cassert>
 
 #include "ParserConfigure.hpp"
-#include "ASTErrorDriver.hpp"
+#include "SyntaxTreeErrorDriver.hpp"
 #include "ExprDefinition.hpp"
 #include "Statements.hpp"
 

@@ -8,7 +8,7 @@
 #include <sstream>
 
 #include "ParserConfigure.hpp"
-#include "ASTErrorDriver.hpp"
+#include "SyntaxTreeErrorDriver.hpp"
 #include "StructureBase.hpp"
 #include "TokenDefinition.hpp"
 
