@@ -61,7 +61,7 @@ public:
     bool bindDef(const LocatedUtfString & objName, const VarType & objType) {
         std::stringstream ss;
         ss << objName.toString();
-        ss << "@";
+        ss << "_";
         ss << LocalCodeBinder::idCnt;
         LocatedUtfString uniqueObjName(ss.str().c_str(), objName.lineno(), objName.colno());
         return _tables.back().addEntry(objName, uniqueObjName, objType);

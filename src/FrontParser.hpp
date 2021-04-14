@@ -32,22 +32,6 @@ public:
     ~FrontParser() = default;
 
 public:
-    /*
-    std::string parse() {
-        FileStructurePtr pFileStu = genFileStu();
-        if (!pFileStu)
-            return "";
-            
-        _sp.parse(pFileStu);
-		if (_sp.hasErr()) {
-			for (const auto & e : _sp.getErrList())
-				std::cerr << e.getMsg() << std::endl;
-			return "";
-		}
-
-        return _sp._asmk.getContextRef().str();
-    }
-    */
     
     FileStructurePtr parse() {
         const std::vector<Token> & tokens = _ut.tokenize();

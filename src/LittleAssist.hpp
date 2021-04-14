@@ -10,6 +10,8 @@
 #include <fstream>
 #include <climits>
 #include <cwchar>
+#include <stack>
+#include <sstream>
 
 #include "UTFSequence.hpp"
 
@@ -77,7 +79,8 @@ public:
 class FileSystem {
 public:
     static std::string getCWD();
-    static bool fileExist(std::string filename);
+    static bool fileExist(const std::string & filename);
+    static std::string path2FileName(const std::string & filename);
 };
 
 #endif

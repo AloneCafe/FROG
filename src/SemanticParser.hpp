@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "GUIDGenerator.hpp"
-#include "ASM.hpp"
+#include "AssemblyMaker.hpp"
 #include "SemanticErrorDriver.hpp"
 #include "LocalCodeBinder.hpp"
 #include "GlobalFuncMap.hpp"

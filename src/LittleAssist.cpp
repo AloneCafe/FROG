@@ -114,7 +114,24 @@ std::string FileSystem::getCWD() {
     return result;
 }
 
-bool FileSystem::fileExist(std::string filename) {
+bool FileSystem::fileExist(const std::string & filename) {
     std::ifstream i(filename);
     return (i ? (i.close(), true) : false);
+}
+
+std::string FileSystem::path2FileName(const std::string & filename) {
+    std::stack<char> path;
+    size_t len = filename.size();
+    for (size_t i = len; i >= 1; --i) {
+        char ch = filename[i - 1];
+        if (ch == '/' || ch == '\\')
+            break;
+        path.push(ch);
+    }
+    std::stringstream ss;
+    while (!path.empty()) {
+        ss << path.top();
+        path.pop();
+    }
+    return ss.str();
 }

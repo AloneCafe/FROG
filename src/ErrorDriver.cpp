@@ -1,6 +1,6 @@
 #include "ErrorDriver.hpp"
 
-#define EW_FORMAT(x) StringOperator::format("源文件 %s (第 %ld 行, 第 %ld 列), %s", filename.c_str(), lineno, colno, x)
+#define EW_FORMAT(x) StringOperator::format("~ 源文件 %s (第 %ld 行, 第 %ld 列), %s", filename.c_str(), lineno, colno, x)
 
 bool operator==(const std::tuple<ErrorType, int, int> & a, const std::tuple<ErrorType, int, int> & b) {
 	return std::get<0>(a) == std::get<0>(b) &&
