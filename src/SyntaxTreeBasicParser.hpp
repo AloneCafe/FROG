@@ -319,7 +319,7 @@ private:
         ExprPtr pNewLeft = Expression::newExpr(ExprOp::OPT_INDEX, {pLeft, pRight}, AST_ARG_LOCATION1);
         
         if (it->isPunc<']'>()) {
-            ++ it;
+            ++it;
             
             if (it->isPunc<'['>()) {
                 return _buildExprIndexList(it, pNewLeft);

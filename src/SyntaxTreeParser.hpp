@@ -63,7 +63,8 @@ private:
 
         if (it->isId()) {
             AST_REC_LOCATION1
-                so.setName(LocatedUtfString::make(it->getId(), AST_ARG_LOCATION1));
+            so.setName(LocatedUtfString::make(it->getId(), AST_ARG_LOCATION1));
+            
             ++it;
             if (it->isPunc<'='>()) {
                 ++it;
@@ -212,7 +213,7 @@ private:
         pFileStu->addFunc(mf);
 
         // 注册到全局函数
-        if (!GlobalFuncMap::putFunc(mf.getName().toString(), mf)) {
+        if (!GlobalFuncMap::putFunc(mf.getName().toString(), mf._fal, mf)) {
             AST_E(E_FUNC_REDEFINED);
         }
     }

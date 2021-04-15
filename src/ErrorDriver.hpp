@@ -107,7 +107,8 @@ enum ErrorType {
     E_FUNC_NEED_RET_VALUE,
     E_IILEGAL_BREAK,
     E_IILEGAL_CONTINUE,
-    E_ILLEGAL_RET_TYPE
+    E_ILLEGAL_RET_TYPE,
+    E_MISMATCHING_FUNC,
 };
 
 class Error {

@@ -183,20 +183,6 @@ public:
 				return true;
 			}
 		}
-
-		/*
-		for (const auto & typeMatch : orderedTypeMatchList) {
-			SEM_E_COUNT_RECOND;
-			VarType fromChoice = gen4expr<OnlyChk>(pExpr, typeMatch);
-			if (SEM_E_COUNT_HAS_INCREASED) {
-				SEM_E_COUNT_CLEAR_DELTA;
-				continue;
-			} else {
-				okChoice = typeMatch;
-				return true;
-			}
-		}
-		*/
 		return false;
 	}
 
@@ -1384,36 +1370,57 @@ private:
 				SEM_E(E_ILLEGAL_FUNCTION_TO_CALL, pExpr);
 				return demand;
 			}
-			const std::string & idFunc = pFuncExprId->getLeafScalar()._str;
-			Function * pFunc = GlobalFuncMap::getFunc(idFunc);
-			if (!pFunc) {
+			std::vector<Function> perhapsFuncs =
+			        GlobalFuncMap::getFuncsNoMangling(pFuncExprId->getLeafScalar()._str);
+			if (perhapsFuncs.empty()) {
 				SEM_E(E_FUNC_UNDEFINED, pFuncExprId);
 				return demand;
 
 			} else {
-				// 检查参数，并生成调用
-				const auto & fal = pFunc->getFormalArgList();
-				size_t argn = fal.size();
-				if (pExpr->getExprCnt() - 1 != argn) {
-					// 参数个数不匹配
-					SEM_E(E_FUNC_ARG_NUM_MISMATCH, pFuncExprId);
-					return demand;
-
-				} else { 
-					// 从右往左压栈
-					for (size_t i = argn; i > 0; --i) {
-						const VarType & argTypeDemand = fal[i - 1].getType();
-						ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
-						gen4expr<_CHK>(pArgExprId, argTypeDemand);
-					}
-
-					pASM->append_CALL(idFunc);
-
-					// 最终检查返回值类型约束
-					const VarType & retType = pFunc->getRetType();
-					TYPE_PRODUCT2DEMAND(retType);
-					return retType;
-				}
+			    // 循环检查可能匹配的函数
+			    for (const auto & func : perhapsFuncs) {
+                    // 检查参数，并生成调用
+                    const auto & fal = func.getFormalArgList();
+                    size_t argn = fal.size();
+                    if (pExpr->getExprCnt() - 1 != argn) {
+                        // 参数个数不匹配
+                        //SEM_E(E_FUNC_ARG_NUM_MISMATCH, pFuncExprId);
+                        continue; // 下一个
+                    
+                    } else {
+                        // 预先检查
+                        for (size_t i = argn; i > 0; --i) {
+                            const VarType & argTypeDemand = fal[i - 1].getType();
+                            ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
+                            SEM_E_COUNT_RECOND;
+                            gen4expr<OnlyChk>(pArgExprId, argTypeDemand);
+                            if (SEM_E_COUNT_HAS_INCREASED) {
+                                SEM_E_COUNT_CLEAR_DELTA;
+                                goto lbl_next_func; // 此函数不匹配，下一个函数
+                            }
+                        }
+                        
+                        // 从右往左压栈
+                        for (size_t i = argn; i > 0; --i) {
+                            const VarType & argTypeDemand = fal[i - 1].getType();
+                            ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
+                            gen4expr<_CHK>(pArgExprId, argTypeDemand);
+                        }
+                    
+                        pASM->append_CALL(GlobalFuncMap::nameMangling(func.getName().toString(), func.getFormalArgList()));
+                    
+                        // 最终检查返回值类型约束
+                        const VarType & retType = func.getRetType();
+                        TYPE_PRODUCT2DEMAND(retType);
+                        return retType;
+                    }
+                    
+                    lbl_next_func: continue;
+			    }
+			    
+			    SEM_E(E_MISMATCHING_FUNC, pFuncExprId);
+                return demand;
+				
 			}
 		}
 
@@ -1851,7 +1858,15 @@ private:
 	}
 
 	void gen4Function(const Function & fun) {
-		_asmk.begin_FUNC(fun.getName().toString());
+	    std::string funcName = fun.getName().toString();
+	    const auto & argList = fun.getFormalArgList();
+	    Function * pFunc = GlobalFuncMap::getFuncByMangling(funcName, argList);
+	    if (!pFunc) {
+	        SEM_E(E_FUNC_UNDEFINED, fun.getName());
+	        return;
+	    }
+	    
+		_asmk.begin_FUNC(GlobalFuncMap::nameMangling(funcName, argList));
 
 		const FunctionStructure & fs = fun.getFuncStu();
 		

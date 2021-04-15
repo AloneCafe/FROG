@@ -8,7 +8,7 @@
 #include "UTFSequence.hpp"
 
 struct VarType {
-private:
+protected:
     LocatedUtfString _lowLvType;
     int _degree = 0;
 
@@ -83,6 +83,10 @@ public:
     int getDegree() const { return _degree; }
     void setLowLvType(const LocatedUtfString & lowLvType) { _lowLvType = lowLvType; }
     void setDegree(int degree) { _degree = degree; }
+};
+
+struct FixedVarType : public VarType {
+
 };
 
 using VarName = LocatedUtfString;

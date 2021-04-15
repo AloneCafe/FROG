@@ -370,6 +370,10 @@ Error::Error(const ErrorType & type, const std::string & filename, long lineno,
     case E_ILLEGAL_RET_TYPE:
         _msg = EW_FORMAT("非法的返回值类型");
         break;
+        
+    case E_MISMATCHING_FUNC:
+        _msg = EW_FORMAT("无法找到匹配的重载函数");
+        break;
     
     case E_UNKNOWN:
     default:
