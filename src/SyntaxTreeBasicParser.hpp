@@ -22,7 +22,7 @@ private:
     void parseLowLvTypeList_(TokenIter & it, std::vector<LocatedUtfString> & refLowLvTypeList) {
         for (;;) {
             if (it->isPunc<','>()) {
-                ++ it;
+                ++it;
                 LocatedUtfString lowLvObjType;
                 parseLowLvType(it, lowLvObjType);
                 refLowLvTypeList.push_back(lowLvObjType);
@@ -58,39 +58,39 @@ private:
             
         } else*/ if (it->isKwVoid()) {
             lowLvType = LocatedUtfString::make("void", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwByte()) {
             lowLvType = LocatedUtfString::make("byte", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwChar()) {
             lowLvType = LocatedUtfString::make("char", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwDouble()) {
             lowLvType = LocatedUtfString::make("double", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwFloat()) {
             lowLvType = LocatedUtfString::make("float", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwInt()) {
             lowLvType = LocatedUtfString::make("int", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwLong()) {
             lowLvType = LocatedUtfString::make("long", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwShort()) {
             lowLvType = LocatedUtfString::make("short", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isKwBoolean()) {
             lowLvType = LocatedUtfString::make("boolean", AST_ARG_LOCATION1);
-            ++ it;
+            ++it;
             
         } else if (it->isEnd()) {
             AST_E(E_UNEXPECTED_EOF);
@@ -102,10 +102,10 @@ private:
     
     void parseNoNumIndexList(TokenIter & it, int & degree) {
         if (it->isPunc<'['>()) {
-            ++ it;
+            ++it;
             if (it->isPunc<']'>()) {
-                ++ it;
-                ++ degree;
+                ++it;
+                ++degree;
                 parseNoNumIndexList(it, degree);
                 
             } else if (it->isEnd()) {
@@ -147,7 +147,7 @@ private:
      */
     void _parseFormalArgList1(TokenIter & it, std::vector<FormalArg> & args) {
         if (it->isPunc<','>()) {
-            ++ it;
+            ++it;
             if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
                 
@@ -170,14 +170,14 @@ private:
                 } else {
                     AST_E(E_ILLEGAL_FORMAL_ARG_NAME); // 报错，非法的形式参数名
                 }
-                ++ it;
+                ++it;
                 
                 args.push_back(fa);
                 _parseFormalArgList1(it, args);
             }
             
         } else if (it->isPunc<')'>()) {
-            ++ it; // 吃掉右括号
+            ++it; // 吃掉右括号
             // 闭合，返回
         } else if (it->isEnd()) {
             AST_E(E_UNEXPECTED_EOF);
@@ -189,10 +189,10 @@ private:
     
     void _parseFormalArgList(TokenIter & it, std::vector<FormalArg> & args) {
         assert(it->isPunc<'('>());
-        ++ it;
+        ++it;
         
         if (it->isPunc<')'>()) {
-            ++ it; // 吃掉右括号
+            ++it; // 吃掉右括号
             // 碰到 ')' 右括号，说明此参数列表为空，也就是e，直接返回
         } else if (it->isEnd()) {
             AST_E(E_UNEXPECTED_EOF);
@@ -216,7 +216,7 @@ private:
             } else {
                 AST_E(E_ILLEGAL_FORMAL_ARG_NAME); // 报错，非法的形式参数名
             }
-            ++ it;
+            ++it;
             
             args.push_back(fa);
             _parseFormalArgList1(it, args);
@@ -231,7 +231,7 @@ private:
      */
     void _parseRealArgList1(TokenIter & it, std::vector<ExprPtr> & args) {
         if (it->isPunc<','>()) {
-            ++ it;
+            ++it;
             if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
                 
@@ -251,10 +251,10 @@ private:
     
     void _parseRealArgList(TokenIter & it, std::vector<ExprPtr> & args) {
         assert(it->isPunc<'('>());
-        ++ it;
+        ++it;
         
         if (it->isPunc<')'>()) {
-            ++ it; // 吃掉右括号
+            ++it; // 吃掉右括号
             // 碰到 ')' 右括号，说明此参数列表为空，也就是e，直接返回
         } else if (it->isEnd()) {
             AST_E(E_UNEXPECTED_EOF);
@@ -266,7 +266,7 @@ private:
             _parseRealArgList1(it, args);
             
             if (it->isPunc<')'>()) {
-                ++ it; // 吃掉右括号
+                ++it; // 吃掉右括号
                 // 闭合，返回
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
@@ -310,7 +310,7 @@ private:
     ExprPtr _buildExprIndexList(TokenIter & it, ExprPtr pLeft) {
         assert(it->isPunc<'['>());
         AST_REC_LOCATION1
-        ++ it;
+        ++it;
         
         ExprPtr pRight = buildExpression(it);
         
@@ -362,16 +362,16 @@ private:
     ExprPtr _buildExprSuffix(TokenIter & it) {
         AST_REC_LOCATION1
         if (it->isPunc<'@'>()) {
-            ++ it;
+            ++it;
             VarType objType;
             parseDefType(it, objType);
             ExprPtr pLeft = Expression::newLeafType(objType, AST_ARG_LOCATION1);
             if (it->isPunc<'('>()) {
                 AST_REC_LOCATION2
-                ++ it;
+                ++it;
                 ExprPtr pRight = buildExpression(it);
                 if (it->isPunc<')'>()) {
-                    ++ it;
+                    ++it;
                     ExprPtr pCon = Expression::newExpr(ExprOp::OPT_TYPE_CONVERT, {pLeft, pRight}, AST_ARG_LOCATION2);
                     return pCon;
                     
@@ -394,10 +394,10 @@ private:
             }
             
         } else if (it->isPunc<'('>()) {
-            ++ it;
+            ++it;
             ExprPtr pInner = buildExpression(it);
             if (it->isPunc<')'>()) {
-                ++ it;
+                ++it;
                 return pInner;
                 
             } else if (it->isEnd()) {
@@ -410,7 +410,8 @@ private:
             }
             
         } else if (it->isId()) {
-            TokenValue tv; tv._str = it->getId();
+            TokenValue tv;
+            tv._str = it->getId();
             ExprPtr pId = Expression::newLeafScalar(ExprOp::LEAF_ID, tv, AST_ARG_LOCATION1);
             ++it;
             if (it->isPunc<'('>()) { // 调用表达式
@@ -530,7 +531,7 @@ private:
             return pExpr;
         }
         
-        ++ it;
+        ++it;
         return Expression::newExpr(op, {pExpr}, AST_ARG_LOCATION1);
     }
     
@@ -572,7 +573,7 @@ private:
             return _buildExprUnary(it);
         }
         
-        ++ it;
+        ++it;
         ExprPtr pExpr = _buildExprUnaryR2L(it);
         return Expression::newExpr(op, {pExpr}, AST_ARG_LOCATION1);
     }
@@ -604,7 +605,7 @@ private:
             return pLeft;
         }
         
-        ++ it;
+        ++it;
         ExprPtr pRight = _buildExprUnaryR2L(it);
         ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprMulDivMod1(it, pNewLeft);
@@ -638,7 +639,7 @@ private:
             return pLeft;
         }
         
-        ++ it;
+        ++it;
         ExprPtr pRight = _buildExprMulDivMod(it);
         ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprAddSub1(it, pNewLeft);
@@ -673,7 +674,7 @@ private:
             return pLeft;
         }
         
-        ++ it;
+        ++it;
         ExprPtr pRight = _buildExprAddSub(it);
         ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprShift1(it, pNewLeft);
@@ -711,7 +712,7 @@ private:
             return pLeft;
         }
         
-        ++ it;
+        ++it;
         ExprPtr pRight = _buildExprShift(it);
         ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprRelation1(it, pNewLeft);
@@ -745,7 +746,7 @@ private:
             return pLeft;
         }
         
-        ++ it;
+        ++it;
         ExprPtr pRight = _buildExprRelation(it);
         ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprEqNe1(it, pNewLeft);
@@ -764,7 +765,7 @@ private:
     ExprPtr _buildExprBitAnd1(TokenIter & it, ExprPtr pLeft) {
         AST_REC_LOCATION1
         if (it->isPunc<'&'>()) {
-            ++ it;
+            ++it;
             ExprPtr pRight = _buildExprEqNe(it);
             ExprPtr pNewLeft =
                     Expression::newExpr(ExprOp::OPT_BIT_AND, {pLeft, pRight}, AST_ARG_LOCATION1);
@@ -792,7 +793,7 @@ private:
     ExprPtr _buildExprBitXor1(TokenIter & it, ExprPtr pLeft) {
         AST_REC_LOCATION1
         if (it->isPunc<'^'>()) {
-            ++ it;
+            ++it;
             ExprPtr pRight = _buildExprBitAnd(it);
             ExprPtr pNewLeft =
                     Expression::newExpr(ExprOp::OPT_BIT_XOR, {pLeft, pRight}, AST_ARG_LOCATION1);
@@ -820,7 +821,7 @@ private:
     ExprPtr _buildExprBitOr1(TokenIter & it, ExprPtr pLeft) {
         AST_REC_LOCATION1
         if (it->isPunc<'|'>()) {
-            ++ it;
+            ++it;
             ExprPtr pRight = _buildExprBitXor(it);
             ExprPtr pNewLeft =
                     Expression::newExpr(ExprOp::OPT_BIT_OR, {pLeft, pRight}, AST_ARG_LOCATION1);
@@ -848,7 +849,7 @@ private:
     ExprPtr _buildExprLogicAnd1(TokenIter & it, ExprPtr pLeft) {
         AST_REC_LOCATION1
         if (it->isPunc<'&&'>()) {
-            ++ it;
+            ++it;
             ExprPtr pRight = _buildExprBitOr(it);
             ExprPtr pNewLeft =
                     Expression::newExpr(ExprOp::OPT_LOGIC_AND, {pLeft, pRight}, AST_ARG_LOCATION1);
@@ -876,7 +877,7 @@ private:
     ExprPtr _buildExprLogicOr1(TokenIter & it, ExprPtr pLeft) {
         AST_REC_LOCATION1
         if (it->isPunc<'||'>()) {
-            ++ it;
+            ++it;
             ExprPtr pRight = _buildExprLogicAnd(it);
             ExprPtr pNewLeft = Expression::newExpr(ExprOp::OPT_LOGIC_OR, {pLeft, pRight}, AST_ARG_LOCATION1);
             return _buildExprLogicOr1(it, pNewLeft);
@@ -904,10 +905,10 @@ private:
         pLeft = _buildExprLogicOr(it);
         AST_REC_LOCATION1
         if (it->isPunc<'?'>()) {
-            ++ it;
+            ++it;
             pMid = buildExpression(it);
             if (it->isPunc<':'>()) {
-                ++ it;
+                ++it;
                 pRight = _buildExprCond(it);
                 return Expression::newExpr(ExprOp::OPT_COND, {pLeft, pMid, pRight}, AST_ARG_LOCATION1);
                 
@@ -985,7 +986,7 @@ private:
         }
         
         // if-elseif 处理代码的后置。满足各项赋值操作符都执行如下代码
-        ++ it;
+        ++it;
         //ExprPtr pRight = _buildExprCond(it);
         ExprPtr pRight = _buildExprAssign(it); // 从右到左结合性
         ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
@@ -1020,7 +1021,7 @@ private:
         }
     }
     */
-
+    
     /*
      * CommaList ->   ExprAssign CommaList1
      *              | ExprAssign
@@ -1032,32 +1033,32 @@ private:
             ++it;
             if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
-
+                
             } else { // 进入自递归
                 ExprPtr pExpr = _buildExprAssign(it);
                 args.push_back(pExpr);
                 _parseCommaList1(it, args);
             }
-
+            
         } else if (it->isEnd()) {
             AST_E(E_UNEXPECTED_EOF);
-
+            
         } else {
             return; // 不递进，暂且返回给上层
         }
     }
     
     ExprPtr _buildExprComma(TokenIter & it) {
-		AST_REC_LOCATION1
-			std::vector<ExprPtr> commaList;
-		ExprPtr pExpr = _buildExprAssign(it);
-		commaList.push_back(pExpr);
-		_parseCommaList1(it, commaList);
-		if (commaList.size() > 1) {
-			return Expression::newCommaExpr(commaList, AST_ARG_LOCATION1);
-		} else {
-			return commaList[0];
-		}
+        AST_REC_LOCATION1
+        std::vector<ExprPtr> commaList;
+        ExprPtr pExpr = _buildExprAssign(it);
+        commaList.push_back(pExpr);
+        _parseCommaList1(it, commaList);
+        if (commaList.size() > 1) {
+            return Expression::newCommaExpr(commaList, AST_ARG_LOCATION1);
+        } else {
+            return commaList[0];
+        }
     }
     
     ExprPtr buildExpression(TokenIter & it) {
@@ -1080,7 +1081,7 @@ private:
      */
     void parseScopeObjInitEntityList1(TokenIter & it, std::vector<LocalVar::InitEntityPtr> & entities) {
         if (it->isPunc<','>()) {
-            ++ it;
+            ++it;
             if (it->isPunc<'{'>()) {
                 // 说明元素是列表，进入递归
                 std::vector<LocalVar::InitEntityPtr> subEntities;
@@ -1091,7 +1092,7 @@ private:
                 
                 // 吸收右括号
                 if (it->isPunc<'}'>()) {
-                    ++ it; // 完美闭合
+                    ++it; // 完美闭合
                 } else if (it->isEnd()) {
                     AST_E(E_UNEXPECTED_EOF);
                     
@@ -1119,10 +1120,10 @@ private:
     
     void parseScopeObjInitEntityList(TokenIter & it, std::vector<LocalVar::InitEntityPtr> & entities) {
         assert(it->isPunc<'{'>());
-        ++ it;
+        ++it;
         
         if (it->isPunc<'}'>()) {
-            ++ it; // 吃掉右花括号
+            ++it; // 吃掉右花括号
             // 碰到 '}' 右花括号，说明此参数列表为空，直接返回
         } else if (it->isPunc<'{'>()) {
             // 说明元素是列表，进入递归
@@ -1134,7 +1135,7 @@ private:
             
             // 吸收右括号
             if (it->isPunc<'}'>()) {
-                ++ it; // 完美闭合
+                ++it; // 完美闭合
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
                 
@@ -1154,7 +1155,7 @@ private:
             
             // 吸收右括号
             if (it->isPunc<'}'>()) {
-                ++ it; // 完美闭合
+                ++it; // 完美闭合
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
                 
@@ -1178,7 +1179,7 @@ private:
     void parseScopeObjDefineStmt1(TokenIter & it, std::vector<LocalVar> & defScopeObjs,
             const LocalVar & modelScopeObj) {
         if (it->isPunc<','>()) {
-            ++ it;
+            ++it;
             parseScopeObjDefineStmt(it, defScopeObjs, modelScopeObj); // 因为有相同的公共因子序列，故直接转调用
             
         } else if (it->isEnd()) {
@@ -1198,9 +1199,9 @@ private:
         if (it->isId()) {
             AST_REC_LOCATION1
             so.setName(LocatedUtfString::make(it->getId(), AST_ARG_LOCATION1));
-            ++ it;
+            ++it;
             if (it->isPunc<'='>()) {
-                ++ it;
+                ++it;
                 // 此处判断是表达式列表还是单个表达式 (赋值优先级以及赋值以上的)
                 if (it->isPunc<'{'>()) {
                     // 表达式列表
@@ -1247,11 +1248,11 @@ private:
         // 在需要解析变量定义式时使用 parseScopeObjDefineStmt 函数
         auto itRbk = it;
         auto cnt = _aed.getErrCount();
-            
+        
         VarType objType;
         parseDefType(it, objType); // 先假设过一遍 DefType，看看能否成功解析
         modelScopeObj.setType(objType);
-            
+        
         auto errs = _aed.getErrCount() - cnt;
         if (errs == 0) {
             // 成功预判到 DefType，接着判断:
@@ -1277,21 +1278,21 @@ private:
             } else if (it->isId()) {
                 // 认定为变量定义语句，解析语句
                 parseScopeObjDefineStmt(it, defScopeObjs, modelScopeObj);
-                    
+                
                 // 完成，生成变量定义语句，存储语句
                 return IStmt::newDefineStmt(defScopeObjs);
-                    
+                
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
-                    
+                
             } else {
                 AST_E(E_LOSE_SEMICOLON); // 报错，此处可能缺少分号
             }
-                
+            
         } else {
             // 不成功，先删除错误，然后认定并解析为表达式
             _aed.clearLastErr(errs); // 删除预判过程中出现的错误
-                
+            
             // 解析为表达式
             ExprPtr pExpr = buildExpression(it);
             return IStmt::newPureExprStmt(pExpr);
@@ -1348,17 +1349,17 @@ private:
             return pStmts; // 返回语句块指针（本质与语句指针一致）
             
         } else if (it->isPunc<';'>()) { // 解析空语句
-            ++ it;
+            ++it;
             return IStmt::newEmptyStmt();
             
         } else if (it->isKwFor()) { // 解析 for 语句结构
-            ++ it;
+            ++it;
             if (it->isPunc<'('>()) {
-                ++ it;
+                ++it;
                 // 此处需要预判是否是定义式，还是表达式，还是空语句
                 StmtPtr pDefStmtOrInitExpr = nullptr;
                 if (it->isPunc<';'>()) { // 空语句
-                    ++ it;
+                    ++it;
                     
                 } else if (it->isEnd()) {
                     AST_E(E_UNEXPECTED_EOF);
@@ -1366,7 +1367,7 @@ private:
                 } else {
                     pDefStmtOrInitExpr = buildDefOrPureExprStmt(it);
                     if (it->isPunc<';'>()) {
-                        ++ it; // 第一个语句闭合
+                        ++it; // 第一个语句闭合
                         
                     } else if (it->isEnd()) {
                         AST_E(E_UNEXPECTED_EOF);
@@ -1379,12 +1380,12 @@ private:
                 // 接着解析第二个语句
                 StmtPtr pCondStmt = nullptr;
                 if (it->isPunc<';'>()) {
-                    ++ it;
+                    ++it;
                     pCondStmt = IStmt::newEmptyStmt();
                 } else {
                     ExprPtr pCondExpr = buildExpression(it);
                     if (it->isPunc<';'>()) {
-                        ++ it; // 第二个语句闭合
+                        ++it; // 第二个语句闭合
                         pCondStmt = IStmt::newPureExprStmt(pCondExpr);
                         
                     } else if (it->isEnd()) {
@@ -1398,12 +1399,12 @@ private:
                 // 接着解析第三个语句
                 StmtPtr pIncreStmt = nullptr;
                 if (it->isPunc<')'>()) {
-                    ++ it;
+                    ++it;
                     pIncreStmt = IStmt::newEmptyStmt();
                 } else {
                     ExprPtr pIncreExpr = buildExpression(it);
                     if (it->isPunc<')'>()) {
-                        ++ it; // 第三个语句闭合
+                        ++it; // 第三个语句闭合
                         pIncreStmt = IStmt::newPureExprStmt(pIncreExpr);
                         
                     } else if (it->isEnd()) {
@@ -1415,11 +1416,11 @@ private:
                 }
                 
                 if (it->isPunc<'{'>()) {
-                    ++ it;
+                    ++it;
                     StmtsPtr pStmts = buildStmts(it);
                     StmtPtr pForStmt = IStmt::newForStmt(pDefStmtOrInitExpr, pCondStmt, pIncreStmt, pStmts);
                     if (it->isPunc<'}'>()) {
-                        ++ it; // 成功闭合
+                        ++it; // 成功闭合
                         
                     } else if (it->isEnd()) {
                         AST_E(E_UNEXPECTED_EOF);
@@ -1445,19 +1446,19 @@ private:
             return IStmt::newEmptyStmt();
             
         } else if (it->isKwWhile()) { // 解析 while 语句结构
-            ++ it;
+            ++it;
             if (it->isPunc<'('>()) {
-                ++ it; // 吸收表达式
+                ++it; // 吸收表达式
                 ExprPtr pCondExpr = buildExpression(it);
                 if (it->isPunc<')'>()) {
-                    ++ it;
+                    ++it;
                     
                     if (it->isPunc<'{'>()) {
-                        ++ it;
+                        ++it;
                         StmtsPtr pStmts = buildStmts(it);
                         StmtPtr pWhileStmt = IStmt::newWhileStmt(pCondExpr, pStmts);
                         if (it->isPunc<'}'>()) {
-                            ++ it; // 成功闭合
+                            ++it; // 成功闭合
                             
                         } else if (it->isEnd()) {
                             AST_E(E_UNEXPECTED_EOF);
@@ -1490,23 +1491,23 @@ private:
             return IStmt::newEmptyStmt();
             
         } else if (it->isKwDo()) { // 解析 do 语句结构
-            ++ it;
+            ++it;
             if (it->isPunc<'{'>()) {
-                ++ it;
+                ++it;
                 StmtsPtr pStmts = buildStmts(it);
                 if (it->isPunc<'}'>()) {
-                    ++ it; // 成功闭合
+                    ++it; // 成功闭合
                     if (it->isKwWhile()) {
-                        ++ it;
+                        ++it;
                         if (it->isPunc<'('>()) {
-                            ++ it; // 吸收表达式
+                            ++it; // 吸收表达式
                             ExprPtr pCondExpr = buildExpression(it);
                             if (it->isPunc<')'>()) {
-                                ++ it;
+                                ++it;
                                 
                                 StmtPtr pDoWhileStmt = IStmt::newDoWhileStmt(pStmts, pCondExpr);
                                 if (it->isPunc<';'>()) {
-                                    ++ it;
+                                    ++it;
                                     
                                 } else if (it->isEnd()) {
                                     AST_E(E_UNEXPECTED_EOF);
@@ -1557,22 +1558,22 @@ private:
             return IStmt::newEmptyStmt();
             
         } else if (it->isKwIf()) { // 解析 if 语句结构
-            ++ it;
+            ++it;
             std::vector<IfCondEntry> condEntries;
             if (it->isPunc<'('>()) {
-                ++ it; // 吸收表达式
+                ++it; // 吸收表达式
                 ExprPtr pCondExpr = buildExpression(it);
                 if (it->isPunc<')'>()) {
-                    ++ it;
+                    ++it;
                     
                     if (it->isPunc<'{'>()) {
-                        ++ it;
+                        ++it;
                         StmtsPtr pStmts = buildStmts(it);
                         IfCondEntry ce(pCondExpr, pStmts);
                         condEntries.emplace_back(pCondExpr, pStmts);
                         
                         if (it->isPunc<'}'>()) {
-                            ++ it;
+                            ++it;
                         } else if (it->isEnd()) {
                             AST_E(E_UNEXPECTED_EOF);
                             
@@ -1582,17 +1583,17 @@ private:
                         
                         // 循环吸收后部的结构
                         while (it->isKwElse()) {
-                            ++ it;
+                            ++it;
                             // 此处判定是 else 还是 else if
                             bool isElse; // else 为 true, else if 为 false
                             if (it->isKwIf()) { // 说明是 else if
-                                ++ it;
+                                ++it;
                                 isElse = false;
                                 if (it->isPunc<'('>()) {
-                                    ++ it; // 吸收表达式
+                                    ++it; // 吸收表达式
                                     pCondExpr = buildExpression(it);
                                     if (it->isPunc<')'>()) {
-                                        ++ it;
+                                        ++it;
                                     } else if (it->isEnd()) {
                                         AST_E(E_UNEXPECTED_EOF);
                                         
@@ -1615,12 +1616,12 @@ private:
                             }
                             
                             if (it->isPunc<'{'>()) {
-                                ++ it;
+                                ++it;
                                 StmtsPtr pStmts = buildStmts(it);
                                 condEntries.emplace_back(pCondExpr, pStmts);
                                 
                                 if (it->isPunc<'}'>()) {
-                                    ++ it;
+                                    ++it;
                                 } else if (it->isEnd()) {
                                     AST_E(E_UNEXPECTED_EOF);
                                     
@@ -1662,28 +1663,28 @@ private:
             return IStmt::newEmptyStmt();
             
         } else if (it->isKwSwitch()) { // 解析 switch 语句结构
-            ++ it;
+            ++it;
             std::vector<StmtPtr> stmts;
             std::vector<SwitchIndexEntry> idxEntries;
             
             if (it->isPunc<'('>()) {
-                ++ it;
+                ++it;
                 ExprPtr pSrcExpr = buildExpression(it);
                 if (it->isPunc<')'>()) {
-                    ++ it;
+                    ++it;
                     
                     if (it->isPunc<'{'>()) {
-                        ++ it;
+                        ++it;
                         
                         while (true) { // 大循环读取标记以及普通语句(块)
                             if (it->isKwCase()) {
-                                ++ it;
+                                ++it;
                                 // 吸收比较表达式
                                 ExprPtr pObjExpr = buildExpression(it);
                                 
                                 // 吸收冒号 ':'
                                 if (it->isPunc<':'>()) {
-                                    ++ it;
+                                    ++it;
                                     idxEntries.emplace_back(pSrcExpr, pObjExpr, stmts.size()); // 创建跳转标记 case
                                     
                                 } else if (it->isEnd()) {
@@ -1694,10 +1695,10 @@ private:
                                 }
                                 
                             } else if (it->isKwDefault()) {
-                                ++ it;
+                                ++it;
                                 // 吸收冒号 ':'
                                 if (it->isPunc<':'>()) {
-                                    ++ it;
+                                    ++it;
                                     idxEntries.emplace_back(stmts.size()); // 创建跳转标记 default
                                     
                                 } else if (it->isEnd()) {
@@ -1720,7 +1721,7 @@ private:
                         }
                         
                         if (it->isPunc<'}'>()) {
-                            ++ it;
+                            ++it;
                             
                         } else if (it->isEnd()) {
                             AST_E(E_UNEXPECTED_EOF);
@@ -1729,10 +1730,10 @@ private:
                             AST_E(E_LOSE_RP);
                         }
                         
-                        std::sort(idxEntries.begin(), idxEntries.end(), 
-                            [](const SwitchIndexEntry & a, const SwitchIndexEntry & b) {
-                                return a._stmtIdx < b._stmtIdx;
-                            });
+                        std::sort(idxEntries.begin(), idxEntries.end(),
+                                [](const SwitchIndexEntry & a, const SwitchIndexEntry & b) {
+                                    return a._stmtIdx < b._stmtIdx;
+                                });
                         return IStmt::newSwitchStmt(idxEntries, stmts);
                         
                     } else if (it->isEnd()) {
@@ -1762,7 +1763,7 @@ private:
             ++it;
             StmtPtr pStmt = nullptr;
             ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
-
+            
             if (it->isPunc<';'>()) {
                 ++it; // 不带返回值的 return 语句闭合
                 
@@ -1789,7 +1790,7 @@ private:
         } else if (it->isKwBreak()) { // 解析 break 语句结构
             AST_REC_LOCATION1
             ++it;
-
+            
             ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
             StmtPtr pStmt = IStmt::newBreakStmt(pDummyExpr);
             if (it->isPunc<';'>()) {
@@ -1806,11 +1807,11 @@ private:
         } else if (it->isKwContinue()) { // 解析 continue 语句
             AST_REC_LOCATION1
             ++it;
-
-			ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
+            
+            ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
             StmtPtr pStmt = IStmt::newContinueStmt(pDummyExpr);
             if (it->isPunc<';'>()) {
-                ++ it; // 语句闭合
+                ++it; // 语句闭合
                 
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
@@ -1823,7 +1824,7 @@ private:
         } else {
             StmtPtr pStmt = buildDefOrPureExprStmt(it);
             if (it->isPunc<';'>()) {
-                ++ it; // 语句闭合
+                ++it; // 语句闭合
                 
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
