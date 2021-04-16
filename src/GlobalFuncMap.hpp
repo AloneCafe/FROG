@@ -43,8 +43,8 @@ public:
 	    std::stringstream ss;
 	    ss << fname << "__";
 	    for (const FormalArg & farg : fargs) {
-	        ss << farg.getType().toString() << "_"
-	           << farg.getName().toString() << "__";
+	        ss << farg.getType().toString() /*<< "_"
+	           << farg.getName().toString() */<< "__";
 	    }
 	    return ss.str();
 	}

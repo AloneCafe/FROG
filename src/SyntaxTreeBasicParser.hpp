@@ -1334,9 +1334,10 @@ private:
      */
     StmtPtr buildStmt(TokenIter & it) {
         if (it->isPunc<'{'>()) { // 解析语句块
+            ++it;
             StmtsPtr pStmts = buildStmts(it);
             if (it->isPunc<'}'>()) {
-                ++ it; // 成功闭合语句块
+                ++it; // 成功闭合语句块
                 
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);

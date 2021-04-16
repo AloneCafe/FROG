@@ -142,7 +142,6 @@ public:
 			}
 			return cr;
 		}
-
 	};
 
 	static const char * scalarVarType2VMStr(const VarType & choice) {
@@ -1950,27 +1949,6 @@ private:
 	}
 
 public:
-    /*
-    void parse(FileStructurePtr pFileStu) {
-		
-        // 解析全局变量
-		_saBinder.makeScope();
-		_asmk.begin_STATIC();
-        for (const GlobalVar & gvar : pFileStu->_gvars) {
-            gen4GlobalVar(gvar);
-        }
-		_asmk.end_STATIC();
-
-        // 解析函数
-        for (const Function & fun : pFileStu->_funs) {
-			_saBinder.makeScope();
-            gen4Function(fun);
-			_saBinder.clearScope();
-        }
-		_saBinder.clearScope();
-    }
-    */
-    
     void parse(const std::vector<FileStructurePtr> & fileStus) {
         // 解析全局变量
         _saBinder.makeScope();
