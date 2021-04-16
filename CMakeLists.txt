@@ -13,9 +13,9 @@ set(SRCDIR src)
 
 set(SRCS_FROG_COMPILER
         ${SRCDIR}/AssemblyMaker.hpp
-        ${SRCDIR}/ASTBasicParser.hpp
-        ${SRCDIR}/ASTErrorDriver.hpp
-        ${SRCDIR}/ASTParser.hpp
+        ${SRCDIR}/SyntaxTreeBasicParser.hpp
+        ${SRCDIR}/SyntaxTreeErrorDriver.hpp
+        ${SRCDIR}/SyntaxTreeParser.hpp
         ${SRCDIR}/CharScanner.cpp
         ${SRCDIR}/CharScanner.hpp
         ${SRCDIR}/CompilerMain.cpp
@@ -54,9 +54,9 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/AssemblyParser.hpp
         ${SRCDIR}/AssemblerMain.cpp
         ${SRCDIR}/AssemblyMaker.hpp
-        ${SRCDIR}/ASTBasicParser.hpp
-        ${SRCDIR}/ASTErrorDriver.hpp
-        ${SRCDIR}/ASTParser.hpp
+        ${SRCDIR}/SyntaxTreeBasicParser.hpp
+        ${SRCDIR}/SyntaxTreeErrorDriver.hpp
+        ${SRCDIR}/SyntaxTreeParser.hpp
         ${SRCDIR}/CharScanner.cpp
         ${SRCDIR}/CharScanner.hpp
         ${SRCDIR}/ErrorDriver.cpp
