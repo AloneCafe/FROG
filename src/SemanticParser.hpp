@@ -1491,6 +1491,10 @@ private:
 		}
 
     }
+    
+    void gen4ListInit() {
+    
+    }
 
 	void gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
 		for (const auto & pStmt : stmts) {
@@ -1522,6 +1526,7 @@ private:
 
 						const std::string realNameStr = std::get<1>(tuple).toString();
 						const VarType & varType = std::get<2>(tuple);
+						int degree = 0;
 
 						if (varType == "long") {
 							_asmk.append_DEF_VAR_QW(realNameStr);
@@ -1535,8 +1540,27 @@ private:
 							_asmk.append_DEF_VAR_FLT(realNameStr);
 						} else if (varType == "double") {
 							_asmk.append_DEF_VAR_DBL(realNameStr);
-						} else if (varType.getDegree() > 0) {
+						} else if ((degree = varType.getDegree()) > 0) {
 							_asmk.append_DEF_VAR_DW(realNameStr);
+							const LocatedUtfString & lowLvType = varType.getLowLvType();
+							if (lowLvType == "long") {
+                                _asmk.append_MKLIST_N_QW(degree);
+							} else if (lowLvType == "int") {
+                                _asmk.append_MKLIST_N_DW(degree);
+							} else if (lowLvType == "short") {
+                                _asmk.append_MKLIST_N_W(degree);
+							} else if (lowLvType == "byte" || lowLvType == "boolean" || lowLvType == "char") {
+                                _asmk.append_MKLIST_N_B(degree);
+                            } else if (lowLvType == "float") {
+                                _asmk.append_MKLIST_N_FLT(degree);
+                            } else if (lowLvType == "double") {
+                                _asmk.append_MKLIST_N_DBL(degree);
+                            } else {
+                                assert(0);
+                            } // 执行创建 list 的命令
+                            
+							_asmk.append_POP_VAR(realNameStr); // 赋予引用
+							
 						} else {
 							assert(0);
 						}
@@ -1545,12 +1569,41 @@ private:
 						if (!defVar.hasInit())
 							continue;
 
-						if (defVar.isListInit()) {
+						if (degree > 0 && defVar.isListInit()) {
 							// TODO 暂不支持表达式列表
 							SEM_E(E_UNSUPPORTED_LIST_INIT, defVar.getName());
+							
+							// 取出列表
+							degree -= 1;
+							const std::vector<LocalVar::InitEntityPtr> & initList =
+							        defVar.getInitListNativePtr()->_entities;
+							size_t sizInitList = initList.size();
+							for (size_t i = 0; i < sizInitList; ++i) {
+							    const LocalVar::InitEntityPtr & pInitEntity = initList[i];
+							    LocalVar::InitEntityType iet = pInitEntity->getEntityType();
+							    if (iet == LocalVar::InitEntityType::Expr) {
+							        if (degree > 0) {
+                                        SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
+                                        goto lbl_next_stmt;
+							        }
+							        
+							        
+							    
+							    } else if (iet == LocalVar::InitEntityType::List) {
+                                    if (degree == 0) {
+                                        SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
+                                        goto lbl_next_stmt;
+                                    }
+							    
+							    } else {
+							        assert(0);
+							    }
+							    
+							}
+							
 							continue;
 
-						} else {
+						} else if (degree == 0) {
 							// 单个表达式
 							TokenValue tv;
 							tv._str = defVar.getName().toString();
@@ -1560,8 +1613,14 @@ private:
 								Expression::newExpr(ExprOp::OPT_ASSIGN, { pExprLeafId, defVar.getInitExprNativePtr()->_pExpr },
 									defVar.getName().lineno(), defVar.getName().colno());
 							gen4expr<OnlyGen>(pNewAssignExpr, "void");
+							
+						} else {
+						    SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
+						    goto lbl_next_stmt;
 						}
 					}
+					
+					lbl_next_stmt: continue;
 				}
 				break;
 			}

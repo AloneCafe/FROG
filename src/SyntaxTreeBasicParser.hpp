@@ -421,7 +421,7 @@ private:
                 _parseRealArgList(it, refArgList);
                 
                 // 完成表达式构建
-                // ATTENTION: 此处不可用 newExpr() 构造 OPT_CALL 表达式
+                // 此处不可用 newExpr() 构造 OPT_CALL 表达式
                 // return Expression::newCallExpr(ExprOp::OPT_CALL, ...);
                 ExprPtr pCallExpr = Expression::newCallExpr(pId, refArgList, AST_ARG_LOCATION1);
                 

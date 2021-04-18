@@ -375,6 +375,10 @@ Error::Error(const ErrorType & type, const std::string & filename, long lineno,
     case E_MISMATCHING_FUNC:
         _msg = EW_FORMAT("无法找到匹配的重载函数");
         break;
+        
+    case E_ILLEGAL_INIT_STMT:
+        _msg = EW_FORMAT("非法的初始化语句");
+        break;
     
     case E_UNKNOWN:
     default:

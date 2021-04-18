@@ -109,6 +109,7 @@ enum ErrorType {
     E_IILEGAL_CONTINUE,
     E_ILLEGAL_RET_TYPE,
     E_MISMATCHING_FUNC,
+    E_ILLEGAL_INIT_STMT,
 };
 
 class Error {

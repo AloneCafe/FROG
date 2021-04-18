@@ -49,6 +49,30 @@ public: /* 指令参数皆是从右往左压栈 */
         _context << LABEL_PREFIX << label << LABEL_SUFFIX << std::endl;
     }
     
+    void append_MKLIST_N_QW(int degree) {
+        _context << TAB << "MKLIST " << degree << " QW" << STMT_SUFFIX << std::endl;
+    }
+    
+    void append_MKLIST_N_DW(int degree) {
+        _context << TAB << "MKLIST " << degree << " DW" << STMT_SUFFIX << std::endl;
+    }
+    
+    void append_MKLIST_N_W(int degree) {
+        _context << TAB << "MKLIST " << degree << " W" << STMT_SUFFIX << std::endl;
+    }
+    
+    void append_MKLIST_N_B(int degree) {
+        _context << TAB << "MKLIST " << degree << " B" << STMT_SUFFIX << std::endl;
+    }
+    
+    void append_MKLIST_N_FLT(int degree) {
+        _context << TAB << "MKLIST " << degree << " FLT" << STMT_SUFFIX << std::endl;
+    }
+    
+    void append_MKLIST_N_DBL(int degree) {
+        _context << TAB << "MKLIST " << degree << " DBL" << STMT_SUFFIX << std::endl;
+    }
+    
     /* 立即数传送 */
     void append_IPUSH_QW(int64_t qw) {
         _context << TAB << "IPUSH QW" << SPACE << qw << STMT_SUFFIX << std::endl;
