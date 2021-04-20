@@ -1571,7 +1571,7 @@ private:
 
 						if (degree > 0 && defVar.isListInit()) {
 							// TODO 暂不支持表达式列表
-							SEM_E(E_UNSUPPORTED_LIST_INIT, defVar.getName());
+							//SEM_E(E_UNSUPPORTED_LIST_INIT, defVar.getName());
 							
 							// 取出列表
 							degree -= 1;
@@ -1586,7 +1586,9 @@ private:
                                         SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
                                         goto lbl_next_stmt;
 							        }
-							        
+							        _asmk.append_PUSH_VAR(realNameStr);
+							        _asmk.append_IPUSH_DW(i);
+							        _asmk.append_INDEX();
 							        
 							    
 							    } else if (iet == LocalVar::InitEntityType::List) {
@@ -1594,6 +1596,50 @@ private:
                                         SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
                                         goto lbl_next_stmt;
                                     }
+                                    _asmk.append_PUSH_VAR(realNameStr);
+                                    _asmk.append_IPUSH_DW(i);
+                                    _asmk.append_INDEX();
+                                    
+                                    LocalVar::InitList * pInitList =
+                                            static_cast<LocalVar::InitList *>(pInitEntity.get());
+                                    
+                                    static std::function<bool(const std::vector<LocalVar::InitEntityPtr> &, int)> fRecursion =
+                                    [&](const std::vector<LocalVar::InitEntityPtr> & initList, int deg) -> bool {
+                                        deg -= 1;
+                                        size_t sizInitList = initList.size();
+                                        for (size_t i = 0; i < sizInitList; ++i) {
+                                            const LocalVar::InitEntityPtr & pInitEntity = initList[i];
+                                            LocalVar::InitEntityType iet = pInitEntity->getEntityType();
+                                            if (iet == LocalVar::InitEntityType::Expr) {
+                                                if (deg > 0) {
+                                                    SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
+                                                    return false;
+                                                }
+                                                _asmk.append_IPUSH_DW(i);
+                                                _asmk.append_INDEX();
+            
+            
+                                            } else if (iet == LocalVar::InitEntityType::List) {
+                                                if (deg == 0) {
+                                                    SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
+                                                    return false;
+                                                }
+                                                _asmk.append_IPUSH_DW(i);
+                                                _asmk.append_INDEX();
+            
+                                                LocalVar::InitList * pInitList =
+                                                        static_cast<LocalVar::InitList *>(pInitEntity.get());
+                                                fRecursion(pInitList->_entities, deg);
+            
+                                            } else {
+                                                assert(0);
+                                            }
+        
+                                        }
+                                        return true;
+                                    };
+                                    
+                                    fRecursion(pInitList->_entities, degree);
 							    
 							    } else {
 							        assert(0);

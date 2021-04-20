@@ -1092,7 +1092,7 @@ private:
                 
                 // 吸收右括号
                 if (it->isPunc<'}'>()) {
-                    ++it; // 完美闭合
+                    //++it; // 完美闭合
                 } else if (it->isEnd()) {
                     AST_E(E_UNEXPECTED_EOF);
                     

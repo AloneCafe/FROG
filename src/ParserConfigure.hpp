@@ -11,7 +11,7 @@
 
 #define DBGPRINT std::cerr << "[DBGPRINT] code in function: " << __FUNCTION__ << ", lineno: " << __LINE__ << std::endl;
 
-#if ! defined(_DEBUG)
+#if !defined(_DEBUG)
 #   define AST_E(x)         (void)(x != E_UNEXPECTED_EOF ? _aed.postErr((x), *it) : _aed.fatalErr((x), *it))
 #   define AST_FATAL(x)     (void)(_aed.fatalErr((x), *it))
 #   define SEM_E(x, l)      (void)(_sed.postErr((x), l))
