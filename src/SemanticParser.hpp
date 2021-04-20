@@ -1470,7 +1470,25 @@ private:
 		} else if (varType == "double") {
 			_asmk.append_DEF_VAR_DBL(realNameStr);
 		} else if ((degree = varType.getDegree()) > 0) {
-			_asmk.append_DEF_VAR_DW(realNameStr);
+            _asmk.append_DEF_VAR_DW(realNameStr);
+            if (lowLvType == "long") {
+                _asmk.append_MKLIST_N_QW(degree);
+            } else if (lowLvType == "int") {
+                _asmk.append_MKLIST_N_DW(degree);
+            } else if (lowLvType == "short") {
+                _asmk.append_MKLIST_N_W(degree);
+            } else if (lowLvType == "byte" || lowLvType == "boolean" || lowLvType == "char") {
+                _asmk.append_MKLIST_N_B(degree);
+            } else if (lowLvType == "float") {
+                _asmk.append_MKLIST_N_FLT(degree);
+            } else if (lowLvType == "double") {
+                _asmk.append_MKLIST_N_DBL(degree);
+            } else {
+                assert(0);
+            } // 执行创建 list 的命令
+            
+            _asmk.append_POP_VAR(realNameStr); // 赋予引用
+            
 		} else {
 			assert(0);
 		}
@@ -1498,10 +1516,9 @@ private:
                         SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
                         return;
                     }
-                    //_asmk.append_PUSH_VAR(realNameStr);
-                    //_asmk.append_IPUSH_DW(i);
-                    //_asmk.append_OFFSET();
-                    linearOffsets.push_back(i);
+                    _asmk.append_PUSH_VAR(realNameStr);
+                    _asmk.append_IPUSH_DW(i);
+                    _asmk.append_OFFSET();
                 
                 
                 } else if (iet == LocalVar::InitEntityType::List) {
@@ -1708,10 +1725,9 @@ private:
                                         SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
                                         goto lbl_next_stmt;
 							        }
-							        //_asmk.append_PUSH_VAR(realNameStr);
-							        //_asmk.append_IPUSH_DW(i);
-                                    //_asmk.append_OFFSET();
-                                    linearOffsets.push_back(i);
+							        _asmk.append_PUSH_VAR(realNameStr);
+							        _asmk.append_IPUSH_DW(i);
+                                    _asmk.append_OFFSET();
                                     
 							    
 							    } else if (iet == LocalVar::InitEntityType::List) {
@@ -1809,7 +1825,6 @@ private:
 							    }
 							    
 							}
-							
 							continue;
 
 						} else if (degree == 0) {
