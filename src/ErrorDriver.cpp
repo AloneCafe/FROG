@@ -324,8 +324,8 @@ Error::Error(const ErrorType & type, const std::string & filename, long lineno,
         _msg = EW_FORMAT("非法的表达式");
         break;
 
-    case E_ASSIGN_LEFT_ID:
-        _msg = EW_FORMAT("赋值表达式左侧必须是 ID 标识符");
+    case E_ASSIGN_LEFT_VAL:
+        _msg = EW_FORMAT("赋值表达式左侧必须是可以被改变的左值");
         break;
 
     case E_ILLEGAL_TYPE_CONVERT_TYPE:

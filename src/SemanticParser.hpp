@@ -1168,15 +1168,26 @@ private:
 		{
 			ExprPtr pLeftExpr = pExpr->getSubExprPtr(0), 
 				pRightExpr = pExpr->getSubExprPtr(1);
-
-			if (pLeftExpr->getOp() != ExprOp::LEAF_ID) {
-				SEM_E(E_ASSIGN_LEFT_ID, pExpr);
+			
+            ExprOp leftOp = pLeftExpr->getOp();
+			if (leftOp != ExprOp::LEAF_ID && leftOp != ExprOp::OPT_INDEX) {
+				SEM_E(E_ASSIGN_LEFT_VAL, pExpr);
 				return demand;
 			}
 
 			VarType choice[2];
 			
-			choice[0] = gen4ScopeId<OnlyChk>(pLeftExpr, demand);
+			// 此处需要判断是 id 还是 index 表达式
+			if (leftOp == ExprOp::LEAF_ID) {
+                choice[0] = gen4ScopeId<OnlyChk>(pLeftExpr, demand);
+			    
+			} else if (leftOp == ExprOp::OPT_INDEX) {
+			    choice[0] = gen4expr<OnlyChk>(pLeftExpr, demand);
+			    
+			} else {
+			    assert(0);
+			}
+			
 			bool result = checkMultiTypeMatching(pRightExpr,
 									   { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
 									   choice[1]);
@@ -1203,15 +1214,24 @@ private:
 				SEM_E(E_INCMP_TYPE, pExpr);
 				return demand;
 			}
-
-			std::tuple<bool, VarName, VarType> tuple = 
-				_saBinder.getDef(LocatedUtfString::make(pLeftExpr->getLeafScalar()._str,
-					pLeftExpr->lineno(), pLeftExpr->colno()));
-
-			if (std::get<0>(tuple))
-				pASM->append_TOP_VAR(std::get<1>(tuple).toString().c_str());
-			else
-				SEM_E(E_ID_UNDEFINED, pLeftExpr);
+            
+            if (leftOp == ExprOp::LEAF_ID) {
+                std::tuple<bool, VarName, VarType> tuple =
+                        _saBinder.getDef(LocatedUtfString::make(pLeftExpr->getLeafScalar()._str,
+                                pLeftExpr->lineno(), pLeftExpr->colno()));
+    
+                if (std::get<0>(tuple))
+                    pASM->append_TOP_VAR(std::get<1>(tuple).toString().c_str());
+                else
+                    SEM_E(E_ID_UNDEFINED, pLeftExpr);
+                
+            } else if (leftOp == ExprOp::OPT_INDEX) {
+                gen4expr<_CHK>(pLeftExpr, demand);
+                // TODO
+    
+            } else {
+                assert(0);
+            }
 
 			TYPE_PRODUCT2DEMAND(choice[0]);
 			return choice[0];
@@ -1230,9 +1250,9 @@ private:
 		case ExprOp::OPT_ASSIGN_WITH_RSHIFT_ZERO: { // 分散瓦解，转调用
 			ExprPtr pLeftExpr = pExpr->getSubExprPtr(0),
 				pRightExpr = pExpr->getSubExprPtr(1);
-
-			if (pLeftExpr->getOp() != ExprOp::LEAF_ID) {
-				SEM_E(E_ASSIGN_LEFT_ID, pExpr);
+            ExprOp leftOp = pLeftExpr->getOp();
+			if (leftOp != ExprOp::LEAF_ID && leftOp != ExprOp::OPT_INDEX) {
+				SEM_E(E_ASSIGN_LEFT_VAL, pExpr);
 				return demand;
 			}
 
