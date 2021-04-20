@@ -1440,7 +1440,7 @@ private:
 	}
 
 
-    void gen4GlobalVar(const GlobalVar & gvar) {
+    void gen4VarDefine(const GlobalVar & gvar) {
 		const VarType & varType = gvar.getType();
 		const VarName & varName = gvar.getName();
 
@@ -1500,7 +1500,6 @@ private:
         if (degree > 0 && gvar.isListInit()) {
             // 暂不支持表达式列表
             //SEM_E(E_UNSUPPORTED_LIST_INIT, defVar.getName());
-        
             std::vector<int> linearOffsets;
         
             // 取出列表
@@ -1512,9 +1511,45 @@ private:
                 const LocalVar::InitEntityPtr & pInitEntity = initList[i];
                 LocalVar::InitEntityType iet = pInitEntity->getEntityType();
                 if (iet == LocalVar::InitEntityType::Expr) {
+                    LocalVar::InitExpr * pNativeInitExpr =
+                            static_cast<LocalVar::InitExpr *>(pInitEntity.get());
                     if (degree > 0) {
-                        SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
-                        return;
+                        // 此处判断是不是当前是1维char，然后接着判断是不是一个纯 NSTRING 字面量表达式
+                        if (degree == 1 && lowLvType == "char" &&
+                                pNativeInitExpr->_pExpr->getOp() == ExprOp::LEAF_STRING_LITERAL)
+                        {
+                            linearOffsets.push_back(i);
+                            const std::string & lstr = pNativeInitExpr->_pExpr->getLeafScalar()._str;
+                            std::vector<char> vstr;
+                            std::for_each(lstr.cbegin(), lstr.cend(), [&](const char & ch){
+                                vstr.push_back(ch);
+                            });
+                            vstr.push_back(0);
+        
+                            int count = 0;
+                            std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
+                                size_t sizLinearOffsets = linearOffsets.size();
+                                _asmk.append_PUSH_VAR(realNameStr);
+                                _asmk.append_IPUSH_DW(linearOffsets[0]);
+                                _asmk.append_OFFSET();
+                                for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                    _asmk.append_DEREF();
+                                    _asmk.append_IPUSH_DW(linearOffsets[i]);
+                                    _asmk.append_OFFSET();
+                                }
+                                _asmk.append_DEREF();
+                                _asmk.append_IPUSH_DW(count++);
+                                _asmk.append_OFFSET();
+                                _asmk.append_IPUSH_B(ch);
+                                _asmk.append_HPOP_B();
+                            });
+                            linearOffsets.pop_back();
+                            continue;
+        
+                        } else {
+                            SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                            return;
+                        }
                     }
                     _asmk.append_PUSH_VAR(realNameStr);
                     _asmk.append_IPUSH_DW(i);
@@ -1542,9 +1577,45 @@ private:
                             const LocalVar::InitEntityPtr & pInitEntity = initList[i];
                             LocalVar::InitEntityType iet = pInitEntity->getEntityType();
                             if (iet == LocalVar::InitEntityType::Expr) {
+                                LocalVar::InitExpr * pNativeInitExpr =
+                                        static_cast<LocalVar::InitExpr *>(pInitEntity.get());
                                 if (deg > 0) {
-                                    SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
-                                    return false;
+                                    // 此处判断是不是当前是1维char，然后接着判断是不是一个纯 NSTRING 字面量表达式
+                                    if (deg == 1 && lowLvType == "char" &&
+                                        pNativeInitExpr->_pExpr->getOp() == ExprOp::LEAF_STRING_LITERAL)
+                                    {
+                                        linearOffsets.push_back(i);
+                                        const std::string & lstr = pNativeInitExpr->_pExpr->getLeafScalar()._str;
+                                        std::vector<char> vstr;
+                                        std::for_each(lstr.cbegin(), lstr.cend(), [&](const char & ch){
+                                            vstr.push_back(ch);
+                                        });
+                                        vstr.push_back(0);
+    
+                                        int count = 0;
+                                        std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
+                                            size_t sizLinearOffsets = linearOffsets.size();
+                                            _asmk.append_PUSH_VAR(realNameStr);
+                                            _asmk.append_IPUSH_DW(linearOffsets[0]);
+                                            _asmk.append_OFFSET();
+                                            for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                                _asmk.append_DEREF();
+                                                _asmk.append_IPUSH_DW(linearOffsets[i]);
+                                                _asmk.append_OFFSET();
+                                            }
+                                            _asmk.append_DEREF();
+                                            _asmk.append_IPUSH_DW(count++);
+                                            _asmk.append_OFFSET();
+                                            _asmk.append_IPUSH_B(ch);
+                                            _asmk.append_HPOP_B();
+                                        });
+                                        linearOffsets.pop_back();
+                                        continue;
+        
+                                    } else {
+                                        SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                                        return false;
+                                    }
                                 }
                                 //_asmk.append_DEREF();
                                 //_asmk.append_IPUSH_DW(i);
@@ -1560,9 +1631,6 @@ private:
                                     _asmk.append_IPUSH_DW(linearOffsets[i]);
                                     _asmk.append_OFFSET();
                                 }
-                            
-                                LocalVar::InitExpr * pNativeInitExpr =
-                                        static_cast<LocalVar::InitExpr *>(pInitEntity.get());
                             
                                 gen4expr<OnlyGen>(pNativeInitExpr->_pExpr, lowLvType.toString());
                                 if (lowLvType == "long") {
@@ -1584,19 +1652,18 @@ private:
                                 linearOffsets.pop_back();
                             
                             } else if (iet == LocalVar::InitEntityType::List) {
+                                LocalVar::InitList * pInitList =
+                                        static_cast<LocalVar::InitList *>(pInitEntity.get());
                                 if (deg == 0) {
                                     SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
                                     return false;
                                 }
+                                
                                 //_asmk.append_DEREF();
                                 //_asmk.append_IPUSH_DW(i);
                                 //_asmk.append_OFFSET();
                                 linearOffsets.push_back(i);
-                            
-                                LocalVar::InitList * pInitList =
-                                        static_cast<LocalVar::InitList *>(pInitEntity.get());
                                 fRecursion(pInitList->_entities, deg);
-                            
                                 linearOffsets.pop_back();
                             
                             } else {
@@ -1628,8 +1695,31 @@ private:
             gen4expr<OnlyGen>(pNewAssignExpr, "void");
         
         } else {
-            SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
-            return;
+            LocalVar::InitExpr * pNativeInitExpr = gvar.getInitExprNativePtr();
+            if (degree == 1 && lowLvType == "char" &&
+                    pNativeInitExpr->_pExpr->getOp() == ExprOp::LEAF_STRING_LITERAL)
+            {
+                const std::string & lstr = pNativeInitExpr->_pExpr->getLeafScalar()._str;
+                std::vector<char> vstr;
+                std::for_each(lstr.cbegin(), lstr.cend(), [&](const char & ch){
+                    vstr.push_back(ch);
+                });
+                vstr.push_back(0);
+        
+                int count = 0;
+                std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
+                    _asmk.append_PUSH_VAR(realNameStr);
+                    _asmk.append_IPUSH_DW(count++);
+                    _asmk.append_OFFSET();
+                    _asmk.append_IPUSH_B(ch);
+                    _asmk.append_HPOP_B();
+                });
+                return;
+        
+            } else {
+                SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                return;
+            }
         }
 
     }
@@ -1650,6 +1740,8 @@ private:
 					static_cast<DefineStmt *>(pStmt.get());
 				for (const LocalVar & defVar :
 					pNativeDefineStmt->getDefScopeObjs()) {
+                    gen4VarDefine(defVar);
+#if 0
 					bool result =
 						_saBinder.bindDef(defVar.getName(), defVar.getType());
 					if (!result) {
@@ -1845,7 +1937,9 @@ private:
 					}
 					
 					lbl_next_stmt: continue;
+#endif
 				}
+
 				break;
 			}
 
@@ -2239,7 +2333,7 @@ public:
         for (const FileStructurePtr & pFileStu : fileStus) {
             updateCurFileName(pFileStu->_filename);
             for (const GlobalVar & gvar : pFileStu->_gvars) {
-                gen4GlobalVar(gvar);
+                gen4VarDefine(gvar);
             }
         }
         _asmk.end_STATIC();
