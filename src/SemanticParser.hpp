@@ -436,7 +436,7 @@ private:
 				gen4ITC<_CHK>(choiceIdx, VarType::buildFromStr("int"));
 			}
 			// 汇编代码，取得数组中对应下标所指的底层对象 (引用句柄)
-			pASM->append_INDEX();
+            pASM->append_OFFSET();
 
 			choice.getDegreeRef()--;
 
@@ -1325,14 +1325,18 @@ private:
 			}
 
 			if (choice == "byte" || choice == "char") {
-				pASM->append_BNOT_B();
+				pASM->append_NEG_B();
 			} else if (choice == "short") {
-				pASM->append_BNOT_W();
+				pASM->append_NEG_W();
 			} else if (choice == "int") {
-				pASM->append_BNOT_DW();
+				pASM->append_NEG_DW();
 			} else if (choice == "long") {
-				pASM->append_BNOT_QW();
-			} else {
+                pASM->append_NEG_QW();
+            } else if (choice == "float") {
+                pASM->append_NEG_FLT();
+            } else if (choice == "double") {
+                pASM->append_NEG_DBL();
+            } else {
 				assert(0);
 			}
 
@@ -1450,6 +1454,8 @@ private:
 			_saBinder.getDef(gvar.getName());
 		assert(std::get<0>(tuple));
 		const std::string realNameStr = std::get<1>(tuple).toString();
+        const LocatedUtfString & lowLvType = varType.getLowLvType();
+        int degree = 0;
 
 		if (varType == "long") {
 			_asmk.append_DEF_VAR_QW(realNameStr);
@@ -1463,7 +1469,7 @@ private:
 			_asmk.append_DEF_VAR_FLT(realNameStr);
 		} else if (varType == "double") {
 			_asmk.append_DEF_VAR_DBL(realNameStr);
-		} else if (varType.getDegree() > 0) {
+		} else if ((degree = varType.getDegree()) > 0) {
 			_asmk.append_DEF_VAR_DW(realNameStr);
 		} else {
 			assert(0);
@@ -1472,28 +1478,143 @@ private:
 		// 检查是否具备初始化表达式，如果具备，就生成初始化代码
 		if (!gvar.hasInit())
 			return;
-
-		if (gvar.isListInit()) {
-			// TODO 暂不支持表达式列表
-			SEM_E(E_UNSUPPORTED_LIST_INIT, gvar.getName());
-			return;
-
-		} else {
-			// 单个表达式
-			TokenValue tv;
-			tv._str = gvar.getName().toString();
-			ExprPtr pExprLeafId = Expression::newLeafScalar(ExprOp::LEAF_ID, tv,
-				gvar.getName().lineno(), gvar.getName().colno());
-			ExprPtr pNewAssignExpr =
-				Expression::newExpr(ExprOp::OPT_ASSIGN, { pExprLeafId, gvar.getInitExprNativePtr()->_pExpr },
-					gvar.getName().lineno(), gvar.getName().colno());
-			gen4expr<OnlyGen>(pNewAssignExpr, "void");
-		}
-
-    }
     
-    void gen4ListInit() {
-    
+        if (degree > 0 && gvar.isListInit()) {
+            // 暂不支持表达式列表
+            //SEM_E(E_UNSUPPORTED_LIST_INIT, defVar.getName());
+        
+            std::vector<int> linearOffsets;
+        
+            // 取出列表
+            degree -= 1;
+            const std::vector<LocalVar::InitEntityPtr> & initList =
+                    gvar.getInitListNativePtr()->_entities;
+            size_t sizInitList = initList.size();
+            for (size_t i = 0; i < sizInitList; ++i) {
+                const LocalVar::InitEntityPtr & pInitEntity = initList[i];
+                LocalVar::InitEntityType iet = pInitEntity->getEntityType();
+                if (iet == LocalVar::InitEntityType::Expr) {
+                    if (degree > 0) {
+                        SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                        return;
+                    }
+                    //_asmk.append_PUSH_VAR(realNameStr);
+                    //_asmk.append_IPUSH_DW(i);
+                    //_asmk.append_OFFSET();
+                    linearOffsets.push_back(i);
+                
+                
+                } else if (iet == LocalVar::InitEntityType::List) {
+                    if (degree == 0) {
+                        SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                        return;
+                    }
+                    //_asmk.append_PUSH_VAR(realNameStr);
+                    //_asmk.append_IPUSH_DW(i);
+                    //_asmk.append_OFFSET();
+                    linearOffsets.push_back(i);
+                
+                    LocalVar::InitList * pInitList =
+                            static_cast<LocalVar::InitList *>(pInitEntity.get());
+                
+                    static std::function<bool(const std::vector<LocalVar::InitEntityPtr> &, int)> fRecursion =
+                    [&](const std::vector<LocalVar::InitEntityPtr> & initList, int deg) -> bool {
+                        deg -= 1;
+                        size_t sizInitList = initList.size();
+                        for (size_t i = 0; i < sizInitList; ++i) {
+                            const LocalVar::InitEntityPtr & pInitEntity = initList[i];
+                            LocalVar::InitEntityType iet = pInitEntity->getEntityType();
+                            if (iet == LocalVar::InitEntityType::Expr) {
+                                if (deg > 0) {
+                                    SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                                    return false;
+                                }
+                                //_asmk.append_DEREF();
+                                //_asmk.append_IPUSH_DW(i);
+                                //_asmk.append_OFFSET();
+                                linearOffsets.push_back(i);
+                            
+                                size_t sizLinearOffsets = linearOffsets.size();
+                                _asmk.append_PUSH_VAR(realNameStr);
+                                _asmk.append_IPUSH_DW(linearOffsets[0]);
+                                _asmk.append_OFFSET();
+                                for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                    _asmk.append_DEREF();
+                                    _asmk.append_IPUSH_DW(linearOffsets[i]);
+                                    _asmk.append_OFFSET();
+                                }
+                            
+                                LocalVar::InitExpr * pNativeInitExpr =
+                                        static_cast<LocalVar::InitExpr *>(pInitEntity.get());
+                            
+                                gen4expr<OnlyGen>(pNativeInitExpr->_pExpr, lowLvType.toString());
+                                if (lowLvType == "long") {
+                                    _asmk.append_HPOP_QW();
+                                } else if (lowLvType == "int") {
+                                    _asmk.append_HPOP_DW();
+                                } else if (lowLvType == "short") {
+                                    _asmk.append_HPOP_W();
+                                } else if (lowLvType == "byte" || lowLvType == "boolean" || lowLvType == "char") {
+                                    _asmk.append_HPOP_B();
+                                } else if (lowLvType == "float") {
+                                    _asmk.append_HPOP_FLT();
+                                } else if (lowLvType == "double") {
+                                    _asmk.append_HPOP_DBL();
+                                } else {
+                                    assert(0);
+                                }
+                            
+                                linearOffsets.pop_back();
+                            
+                            } else if (iet == LocalVar::InitEntityType::List) {
+                                if (deg == 0) {
+                                    SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                                    return false;
+                                }
+                                //_asmk.append_DEREF();
+                                //_asmk.append_IPUSH_DW(i);
+                                //_asmk.append_OFFSET();
+                                linearOffsets.push_back(i);
+                            
+                                LocalVar::InitList * pInitList =
+                                        static_cast<LocalVar::InitList *>(pInitEntity.get());
+                                fRecursion(pInitList->_entities, deg);
+                            
+                                linearOffsets.pop_back();
+                            
+                            } else {
+                                assert(0);
+                            }
+                        }
+                        return true;
+                    };
+                
+                    fRecursion(pInitList->_entities, degree);
+                
+                    linearOffsets.pop_back();
+                
+                } else {
+                    assert(0);
+                }
+            
+            }
+        
+        } else if (degree == 0) {
+            // 单个表达式
+            TokenValue tv;
+            tv._str = gvar.getName().toString();
+            ExprPtr pExprLeafId = Expression::newLeafScalar(ExprOp::LEAF_ID, tv,
+                    gvar.getName().lineno(), gvar.getName().colno());
+            ExprPtr pNewAssignExpr =
+                    Expression::newExpr(ExprOp::OPT_ASSIGN, { pExprLeafId, gvar.getInitExprNativePtr()->_pExpr },
+                            gvar.getName().lineno(), gvar.getName().colno());
+            gen4expr<OnlyGen>(pNewAssignExpr, "void");
+        
+        } else {
+            SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+            return;
+        }
+
     }
 
 	void gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
@@ -1517,15 +1638,15 @@ private:
 					if (!result) {
 						SEM_E(E_VAR_REDEFINED, defVar.getName());
 						continue;
+						
 					} else {
-
-
 						std::tuple<bool, VarName, VarType> tuple =
 							_saBinder.getDef(defVar.getName());
 						assert(std::get<0>(tuple));
 
 						const std::string realNameStr = std::get<1>(tuple).toString();
 						const VarType & varType = std::get<2>(tuple);
+                        const LocatedUtfString & lowLvType = varType.getLowLvType();
 						int degree = 0;
 
 						if (varType == "long") {
@@ -1542,7 +1663,6 @@ private:
 							_asmk.append_DEF_VAR_DBL(realNameStr);
 						} else if ((degree = varType.getDegree()) > 0) {
 							_asmk.append_DEF_VAR_DW(realNameStr);
-							const LocatedUtfString & lowLvType = varType.getLowLvType();
 							if (lowLvType == "long") {
                                 _asmk.append_MKLIST_N_QW(degree);
 							} else if (lowLvType == "int") {
@@ -1570,8 +1690,10 @@ private:
 							continue;
 
 						if (degree > 0 && defVar.isListInit()) {
-							// TODO 暂不支持表达式列表
+							// 暂不支持表达式列表
 							//SEM_E(E_UNSUPPORTED_LIST_INIT, defVar.getName());
+							
+							std::vector<int> linearOffsets;
 							
 							// 取出列表
 							degree -= 1;
@@ -1586,19 +1708,21 @@ private:
                                         SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
                                         goto lbl_next_stmt;
 							        }
-							        _asmk.append_PUSH_VAR(realNameStr);
-							        _asmk.append_IPUSH_DW(i);
-							        _asmk.append_INDEX();
-							        
+							        //_asmk.append_PUSH_VAR(realNameStr);
+							        //_asmk.append_IPUSH_DW(i);
+                                    //_asmk.append_OFFSET();
+                                    linearOffsets.push_back(i);
+                                    
 							    
 							    } else if (iet == LocalVar::InitEntityType::List) {
                                     if (degree == 0) {
                                         SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
                                         goto lbl_next_stmt;
                                     }
-                                    _asmk.append_PUSH_VAR(realNameStr);
-                                    _asmk.append_IPUSH_DW(i);
-                                    _asmk.append_INDEX();
+                                    //_asmk.append_PUSH_VAR(realNameStr);
+                                    //_asmk.append_IPUSH_DW(i);
+                                    //_asmk.append_OFFSET();
+                                    linearOffsets.push_back(i);
                                     
                                     LocalVar::InitList * pInitList =
                                             static_cast<LocalVar::InitList *>(pInitEntity.get());
@@ -1615,21 +1739,58 @@ private:
                                                     SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
                                                     return false;
                                                 }
-                                                _asmk.append_IPUSH_DW(i);
-                                                _asmk.append_INDEX();
-            
+                                                //_asmk.append_DEREF();
+                                                //_asmk.append_IPUSH_DW(i);
+                                                //_asmk.append_OFFSET();
+                                                linearOffsets.push_back(i);
+                                                
+                                                size_t sizLinearOffsets = linearOffsets.size();
+                                                _asmk.append_PUSH_VAR(realNameStr);
+                                                _asmk.append_IPUSH_DW(linearOffsets[0]);
+                                                _asmk.append_OFFSET();
+                                                for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                                    _asmk.append_DEREF();
+                                                    _asmk.append_IPUSH_DW(linearOffsets[i]);
+                                                    _asmk.append_OFFSET();
+                                                }
+                                                
+                                                LocalVar::InitExpr * pNativeInitExpr =
+                                                        static_cast<LocalVar::InitExpr *>(pInitEntity.get());
+                                                
+                                                gen4expr<OnlyGen>(pNativeInitExpr->_pExpr, lowLvType.toString());
+                                                if (lowLvType == "long") {
+                                                    _asmk.append_HPOP_QW();
+                                                } else if (lowLvType == "int") {
+                                                    _asmk.append_HPOP_DW();
+                                                } else if (lowLvType == "short") {
+                                                    _asmk.append_HPOP_W();
+                                                } else if (lowLvType == "byte" || lowLvType == "boolean" || lowLvType == "char") {
+                                                    _asmk.append_HPOP_B();
+                                                } else if (lowLvType == "float") {
+                                                    _asmk.append_HPOP_FLT();
+                                                } else if (lowLvType == "double") {
+                                                    _asmk.append_HPOP_DBL();
+                                                } else {
+                                                    assert(0);
+                                                }
+                                                
+                                                linearOffsets.pop_back();
             
                                             } else if (iet == LocalVar::InitEntityType::List) {
                                                 if (deg == 0) {
                                                     SEM_E(E_ILLEGAL_INIT_STMT, defVar.getName());
                                                     return false;
                                                 }
-                                                _asmk.append_IPUSH_DW(i);
-                                                _asmk.append_INDEX();
+                                                //_asmk.append_DEREF();
+                                                //_asmk.append_IPUSH_DW(i);
+                                                //_asmk.append_OFFSET();
+                                                linearOffsets.push_back(i);
             
                                                 LocalVar::InitList * pInitList =
                                                         static_cast<LocalVar::InitList *>(pInitEntity.get());
                                                 fRecursion(pInitList->_entities, deg);
+    
+                                                linearOffsets.pop_back();
             
                                             } else {
                                                 assert(0);
@@ -1640,6 +1801,8 @@ private:
                                     };
                                     
                                     fRecursion(pInitList->_entities, degree);
+                                
+                                    linearOffsets.pop_back();
 							    
 							    } else {
 							        assert(0);

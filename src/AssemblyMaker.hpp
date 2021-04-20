@@ -25,8 +25,12 @@ public:
 
 public: /* 指令参数皆是从右往左压栈 */
     
-    void append_INDEX() {
-        _context << TAB << "INDEX" << STMT_SUFFIX << std::endl;
+    void append_OFFSET() {
+        _context << TAB << "OFFSET" << STMT_SUFFIX << std::endl;
+    }
+    
+    void append_DEREF() {
+        _context << TAB << "DEREF" << STMT_SUFFIX << std::endl;
     }
     
     void begin_STATIC() {
@@ -169,12 +173,13 @@ public: /* 指令参数皆是从右往左压栈 */
     void append_HPUSH_DBL(/* int32_t off, int32_t heapaddr, NSTRING type */) {
         _context << TAB << "HPUSH DBL" << STMT_SUFFIX << std::endl;
     }
-    void append_HPUSH_STR(/* int32_t off, int32_t heapaddr, NSTRING type */) {
-        _context << TAB << "HPUSH STR" << STMT_SUFFIX << std::endl;
-    }
-    void append_VHPUSH(/* int32_t off, int32_t sz, int32_t heapaddr, NSTRING type */) {
-        _context << TAB << "VHPUSH" << STMT_SUFFIX << std::endl;
-    }
+    
+//    void append_HPUSH_STR(/* int32_t off, int32_t heapaddr, NSTRING type */) {
+//        _context << TAB << "HPUSH STR" << STMT_SUFFIX << std::endl;
+//    }
+//    void append_VHPUSH(/* int32_t off, int32_t sz, int32_t heapaddr, NSTRING type */) {
+//        _context << TAB << "VHPUSH" << STMT_SUFFIX << std::endl;
+//    }
     
     void append_HPOP_QW(/* int32_t off, int32_t heapaddr, NSTRING type */) {
         _context << TAB << "HPOP QW" << STMT_SUFFIX << std::endl;
@@ -194,12 +199,12 @@ public: /* 指令参数皆是从右往左压栈 */
     void append_HPOP_DBL(/* int32_t off, int32_t heapaddr, NSTRING type */) {
         _context << TAB << "HPOP DBL" << STMT_SUFFIX << std::endl;
     }
-    void append_HPOP_STR(/* int32_t off, int32_t heapaddr, NSTRING type */) {
-        _context << TAB << "HPOP STR" << STMT_SUFFIX << std::endl;
-    }
-    void append_VHPOP(/* int32_t off, int32_t sz, int32_t heapaddr, NSTRING type */) {
-        _context << TAB << "VHPOP" << STMT_SUFFIX << std::endl;
-    }
+//    void append_HPOP_STR(/* int32_t off, int32_t heapaddr, NSTRING type */) {
+//        _context << TAB << "HPOP STR" << STMT_SUFFIX << std::endl;
+//    }
+//    void append_VHPOP(/* int32_t off, int32_t sz, int32_t heapaddr, NSTRING type */) {
+//        _context << TAB << "VHPOP" << STMT_SUFFIX << std::endl;
+//    }
     
     void append_ADD_QW(/* int64_t a, int64_t b */) {
         _context << TAB << "ADD QW" << STMT_SUFFIX << std::endl;
