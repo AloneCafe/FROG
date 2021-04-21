@@ -18,7 +18,7 @@
 
 
 ## 关于 FROG
-FROG 是一种简单的、静态强类型的 (static strongly-typed)、图灵完备的编程语言。
+FROG 是一种简单的、静态强类型的 (statically & strongly-typed)、图灵完备的编程语言。
 
 本项目亦包含三个主要的组成部分，分别是
 * 编译器 (Compiler)
