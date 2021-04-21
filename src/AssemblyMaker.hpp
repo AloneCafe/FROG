@@ -29,9 +29,9 @@ public: /* 指令参数皆是从右往左压栈 */
         _context << TAB << "OFFSET" << STMT_SUFFIX << std::endl;
     }
     
-    void append_DEREF() {
+    /*void append_DEREF() {
         _context << TAB << "DEREF" << STMT_SUFFIX << std::endl;
-    }
+    }*/
     
     void begin_STATIC() {
         _context << ".STATIC" << STMT_SUFFIX << std::endl;

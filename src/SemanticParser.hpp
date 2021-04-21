@@ -418,7 +418,16 @@ private:
 			// 先对数组类型 demand 升阶，然后传递给 dot
 			VarType newDemand = demand;
 			newDemand.getDegreeRef()++;
-			VarType choice = gen4ScopeId<_CHK>(pExpr->getSubExprPtr(0), newDemand);
+			
+			ExprOp opLeft = pExpr->getSubExprPtr(0)->getOp();
+			VarType choice;
+			if (opLeft == ExprOp::LEAF_ID) {
+                choice = gen4ScopeId<_CHK>(pExpr->getSubExprPtr(0), newDemand);
+            } else if (opLeft == ExprOp::OPT_INDEX) {
+                choice = gen4expr<_CHK>(pExpr->getSubExprPtr(0), newDemand);
+            } else {
+			    assert(0);
+			}
 			// 此时操作对象已经压栈
 
 			// 解析下标
@@ -437,6 +446,7 @@ private:
 			}
 			// 汇编代码，取得数组中对应下标所指的底层对象 (引用句柄)
             pASM->append_OFFSET();
+			pASM->append_HPUSH_DW();
 
 			choice.getDegreeRef()--;
 
@@ -1553,11 +1563,11 @@ private:
                                 _asmk.append_IPUSH_DW(linearOffsets[0]);
                                 _asmk.append_OFFSET();
                                 for (size_t i = 1; i < sizLinearOffsets; ++i) {
-                                    _asmk.append_DEREF();
+                                    _asmk.append_HPUSH_DW();
                                     _asmk.append_IPUSH_DW(linearOffsets[i]);
                                     _asmk.append_OFFSET();
                                 }
-                                _asmk.append_DEREF();
+                                _asmk.append_HPUSH_DW();
                                 _asmk.append_IPUSH_DW(count++);
                                 _asmk.append_OFFSET();
                                 _asmk.append_IPUSH_B(ch);
@@ -1574,7 +1584,22 @@ private:
                     _asmk.append_PUSH_VAR(realNameStr);
                     _asmk.append_IPUSH_DW(i);
                     _asmk.append_OFFSET();
-                
+                    gen4expr<OnlyGen>(pNativeInitExpr->_pExpr, lowLvType.toString());
+                    if (lowLvType == "long") {
+                        _asmk.append_HPOP_QW();
+                    } else if (lowLvType == "int") {
+                        _asmk.append_HPOP_DW();
+                    } else if (lowLvType == "short") {
+                        _asmk.append_HPOP_W();
+                    } else if (lowLvType == "byte" || lowLvType == "boolean" || lowLvType == "char") {
+                        _asmk.append_HPOP_B();
+                    } else if (lowLvType == "float") {
+                        _asmk.append_HPOP_FLT();
+                    } else if (lowLvType == "double") {
+                        _asmk.append_HPOP_DBL();
+                    } else {
+                        assert(0);
+                    }
                 
                 } else if (iet == LocalVar::InitEntityType::List) {
                     if (degree == 0) {
@@ -1619,11 +1644,11 @@ private:
                                             _asmk.append_IPUSH_DW(linearOffsets[0]);
                                             _asmk.append_OFFSET();
                                             for (size_t i = 1; i < sizLinearOffsets; ++i) {
-                                                _asmk.append_DEREF();
+                                                _asmk.append_HPUSH_DW();
                                                 _asmk.append_IPUSH_DW(linearOffsets[i]);
                                                 _asmk.append_OFFSET();
                                             }
-                                            _asmk.append_DEREF();
+                                            _asmk.append_HPUSH_DW();
                                             _asmk.append_IPUSH_DW(count++);
                                             _asmk.append_OFFSET();
                                             _asmk.append_IPUSH_B(ch);
@@ -1647,7 +1672,7 @@ private:
                                 _asmk.append_IPUSH_DW(linearOffsets[0]);
                                 _asmk.append_OFFSET();
                                 for (size_t i = 1; i < sizLinearOffsets; ++i) {
-                                    _asmk.append_DEREF();
+                                    _asmk.append_HPUSH_DW();
                                     _asmk.append_IPUSH_DW(linearOffsets[i]);
                                     _asmk.append_OFFSET();
                                 }
