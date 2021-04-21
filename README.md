@@ -1,6 +1,7 @@
 # FROG 编程语言
 
 ![Logo](https://github.com/AloneCafe/frog/blob/master/logo.png?raw=true)
+项目的吉祥物，开心的青蛙国王 FROG 桑，渣绘请勿喷 (由 GIMP 手工绘制)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/AloneCafe/frog?color=%2300ffff)
 ![GitHub lines](https://img.shields.io/tokei/lines/github/AloneCafe/frog?color=%233388bb)
@@ -25,9 +26,9 @@ FROG 是一种简单的、静态强类型的 (static strongly-typed)、图灵完
 * 虚拟机 (Virtual Machine)
 
 如果在无错的情况下，编写 & 运行 FROG 程序的生命周期大致是这样的：
-1. 先将写好源程序交由编译器编译处理，编译器将生成一种中间语言 (Intermediate Language)，也就是 FROG 汇编语言
-2. 再将上一步生成的汇编源程序交由 FROG 汇编器进行汇编处理，最终将生成二进制程序，也就是 FROG 机器程序
-3. 最后将上一步生成的机器程序交由 FROG 虚拟机执行，程序进入执行状态，最终程序退出结束执行
+1. 先将写好源程序交由编译器编译处理，编译器将生成一种中间语言 (Intermediate Language)，形式上类似一种汇编语言
+2. 再将上一步生成的汇编代码交由 FROG 汇编器进行汇编处理，最终将生成二进制字节码，即 FROG 字节码文件
+3. 最后将上一步生成的字节码文件交由 FROG 虚拟机执行，程序进入执行状态，最终程序退出结束执行
 
 FROG 编程语言采用类 C (C-like) 的语法。其程序结构简单、语法清晰明了，易于上手使用。
 * ~~FROG 语法简明手册~~
