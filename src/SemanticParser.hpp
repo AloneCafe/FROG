@@ -20,29 +20,30 @@ x = &_asmk; \
 #define ASMMAKER_DISABLE(x)
 
 #define TYPE_PRODUCT2DEMAND(choice) \
-if (true) { \
-if (_CHK == OnlyGen) { \
-	this->gen4ITC<OnlyGen>(choice, demand); \
+if (true) {                         \
+VarType vtChoice{choice}, vtDemand{demand};                                    \
+if (_CHK == OnlyGen) {              \
+	if (!(vtChoice.getDegree() > 0 && (vtChoice.getDegree() == vtDemand.getDegree()))) this->gen4ITC<OnlyGen>(vtChoice, vtDemand); \
 } else { \
-		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, demand, (choice)); \
+		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, vtDemand, vtChoice); \
 		if (ExprTypeConstraint::ChkResult::CHK_INCMP == _cr_) { \
-				if ((choice) == "byte")\
+				if (vtChoice == "byte")\
 				{ SEM_E((E_INCMP_TYPE_BYTE), pExpr); }\
-				else if ((choice) == "boolean")       \
+				else if (vtChoice == "boolean")       \
 				{ SEM_E((E_INCMP_TYPE_BOOLEAN), pExpr); }                                      \
-				else if ((choice) == "char")       \
+				else if (vtChoice == "char")       \
 				{ SEM_E((E_INCMP_TYPE_CHAR), pExpr); }                                          \
-				else if ((choice) == "short")       \
+				else if (vtChoice == "short")       \
 				{ SEM_E((E_INCMP_TYPE_SHORT), pExpr); }                                          \
-				else if ((choice) == "int")       \
+				else if (vtChoice == "int")       \
 				{ SEM_E((E_INCMP_TYPE_DW), pExpr); }                                          \
-				else if ((choice) == "long")       \
+				else if (vtChoice == "long")       \
 				{ SEM_E((E_INCMP_TYPE_QW), pExpr); }                                          \
-				else if ((choice) == "float")           \
+				else if (vtChoice == "float")           \
 				{ SEM_E((E_INCMP_TYPE_FLT), pExpr); }                                          \
-				else if ((choice) == "double")                       \
+				else if (vtChoice == "double")                       \
 				{ SEM_E((E_INCMP_TYPE_DBL), pExpr); }      \
-				else if (VarType(choice).getDegree() > 0)                                         \
+				else if (vtChoice.getDegree() > 0)                                         \
 				{ SEM_E((E_INCMP_TYPE_REF), pExpr); }                                          \
 		} \
 } \
@@ -66,7 +67,9 @@ public:
 		static ChkResult _check(const VarType & demand, const VarType & choice) {
 			if (demand == choice) {
 				return ChkResult::CHK_OK;
-			} else {
+			} /*else if (demand.getDegree() > 0 && (demand.getDegree() == choice.getDegree())) {
+                return ChkResult::CHK_OK;
+			} */else {
 				if (demand == "void") {
 					if (choice == "double" || choice == "float" || choice == "long" || choice == "int" ||
 						choice == "short" || choice == "char" || choice == "byte") {
@@ -441,15 +444,33 @@ private:
 				SEM_E(E_INCMP_TYPE, pExpr);
 			}
 
+			
 			if (choiceIdx != VarType::buildFromStr("int")) {
 				gen4ITC<_CHK>(choiceIdx, VarType::buildFromStr("int"));
 			}
 			// 汇编代码，取得数组中对应下标所指的底层对象 (引用句柄)
             pASM->append_OFFSET();
-			pASM->append_HPUSH_DW();
-
+			
 			choice.getDegreeRef()--;
-
+            
+            // 多种类型要考虑
+            if (choice == "long") {
+                pASM->append_HPUSH_QW();
+            } else if (choice == "int") {
+                pASM->append_HPUSH_DW();
+            } else if (choice == "short") {
+                pASM->append_HPUSH_W();
+            } else if (choice == "byte" || choice == "boolean" || choice == "char") {
+                pASM->append_HPUSH_B();
+            } else if (choice == "float") {
+                pASM->append_HPUSH_FLT();
+            } else if (choice == "double") {
+                pASM->append_HPUSH_DBL();
+            } else if (choice.getDegree() > 0) {
+                pASM->append_HPUSH_DW();
+            } else {
+                assert(0);
+            }
 			TYPE_PRODUCT2DEMAND(choice);
 			return choice;
 		}
