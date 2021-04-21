@@ -1,7 +1,7 @@
 # FROG 编程语言
 
 ![logo.png](https://i.loli.net/2021/04/22/TEozG6QHwLqZiP1.png)
-项目的吉祥物，开心的青蛙国王 FROG 桑，渣绘请勿喷 (由 GIMP 手工绘制)
+项目吉祥物：开心快乐的青蛙国王 FROG 桑，由 GIMP 手工绘制（渣绘轻喷）
 
 ![GitHub top language](https://img.shields.io/github/languages/top/AloneCafe/frog?color=%2300ffff)
 ![GitHub lines](https://img.shields.io/tokei/lines/github/AloneCafe/frog?color=%233388bb)
