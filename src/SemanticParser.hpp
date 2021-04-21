@@ -1210,7 +1210,7 @@ private:
                 bool result = checkMultiTypeMatching(pRightExpr,
                         { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
                         choice[1]);
-                if (result) {
+                if (result && choice[0].getDegree() == 0) {
                     int choiceIdx;
                     bool checkFlag = check2ScalarTypeBigger(choice[0], choice[1], choiceIdx);
                     assert(checkFlag);
@@ -1252,10 +1252,6 @@ private:
                 
                 VarType newDemand = demand;
                 newDemand.getDegreeRef()++;
-                {
-                    //ExprPtr pExpr = pLeftExpr;
-                    //choice[0] = gen4expr<OnlyChk>(pLeftExpr, newDemand);
-                }
                 
                 choice[0] = gen4expr<_CHK>(pLeftExpr->getSubExprPtr(0), newDemand);
                 
@@ -1282,7 +1278,7 @@ private:
                 result = checkMultiTypeMatching(pRightExpr,
                         { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
                         choice[1]);
-                if (result) {
+                if (result && choice[0].getDegree() == 0) {
                     int choiceIdx;
                     bool checkFlag = check2ScalarTypeBigger(choice[0], choice[1], choiceIdx);
                     assert(checkFlag);
