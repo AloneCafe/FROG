@@ -413,7 +413,7 @@ private:
 			TYPE_PRODUCT2DEMAND("boolean");
 			return VarType::buildFromStr("boolean");
 
-		case ExprOp::LEAF_TYPE: // TODO 此处无需处理，类型转换交由上层处理
+		case ExprOp::LEAF_TYPE: // 此处无需处理，类型转换应该交由上层处理
 			break;
 
 		case ExprOp::OPT_INDEX:
@@ -1197,6 +1197,8 @@ private:
 
 		case ExprOp::OPT_ASSIGN:
 		{
+		 
+		 
 			ExprPtr pLeftExpr = pExpr->getSubExprPtr(0), 
 				pRightExpr = pExpr->getSubExprPtr(1);
 			
@@ -1205,67 +1207,217 @@ private:
 				SEM_E(E_ASSIGN_LEFT_VAL, pExpr);
 				return demand;
 			}
-
-			VarType choice[2];
 			
-			// 此处需要判断是 id 还是 index 表达式
-			if (leftOp == ExprOp::LEAF_ID) {
+			if (leftOp == ExprOp::LEAF_ID) { // 左值 id
+                VarType choice[2];
                 choice[0] = gen4ScopeId<OnlyChk>(pLeftExpr, demand);
-			    
-			} else if (leftOp == ExprOp::OPT_INDEX) {
-			    choice[0] = gen4expr<OnlyChk>(pLeftExpr, demand);
-			    
-			} else {
-			    assert(0);
-			}
-			
-			bool result = checkMultiTypeMatching(pRightExpr,
-									   { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
-									   choice[1]);
-			if (result) {
-				int choiceIdx;
-				bool checkFlag = check2ScalarTypeBigger(choice[0], choice[1], choiceIdx);
-				assert(checkFlag);
-
-				if (choiceIdx == 0) {
-					// 可隐式类型转换，左侧数据类型大于等于右侧数据类型
-					gen4expr<_CHK>(pRightExpr, choice[1]);
-					gen4ITC<_CHK>(choice[1], choice[0]);
-
-				} else if (choiceIdx == -1) {
-					gen4expr<_CHK>(pRightExpr, choice[1]);
-
-				} else {
-					// 不可转换，右侧数据类型过大
-					SEM_E(E_INCMP_TYPE_CONVERT, pExpr);
-					return demand;
-				}
-
-			} else {
-				SEM_E(E_INCMP_TYPE, pExpr);
-				return demand;
-			}
-            
-            if (leftOp == ExprOp::LEAF_ID) {
+                bool result = checkMultiTypeMatching(pRightExpr,
+                        { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
+                        choice[1]);
+                if (result) {
+                    int choiceIdx;
+                    bool checkFlag = check2ScalarTypeBigger(choice[0], choice[1], choiceIdx);
+                    assert(checkFlag);
+                    
+                    if (choiceIdx == 0) {
+                        // 可隐式类型转换，左侧数据类型大于等于右侧数据类型
+                        gen4expr<_CHK>(pRightExpr, choice[1]);
+                        gen4ITC<_CHK>(choice[1], choice[0]);
+                        
+                    } else if (choiceIdx == -1) {
+                        gen4expr<_CHK>(pRightExpr, choice[1]);
+                        
+                    } else {
+                        // 不可转换，右侧数据类型过大
+                        SEM_E(E_INCMP_TYPE_CONVERT, pExpr);
+                        return demand;
+                    }
+                    
+                } else {
+                    SEM_E(E_INCMP_TYPE, pExpr);
+                    return demand;
+                }
+                
                 std::tuple<bool, VarName, VarType> tuple =
                         _saBinder.getDef(LocatedUtfString::make(pLeftExpr->getLeafScalar()._str,
                                 pLeftExpr->lineno(), pLeftExpr->colno()));
-    
+                
                 if (std::get<0>(tuple))
                     pASM->append_TOP_VAR(std::get<1>(tuple).toString().c_str());
                 else
                     SEM_E(E_ID_UNDEFINED, pLeftExpr);
                 
+                TYPE_PRODUCT2DEMAND(choice[0]);
+                return choice[0];
+			
+			} else if (leftOp == ExprOp::OPT_INDEX) { // 左值 index 表达式
+			    
+                VarType choice[2];
+                
+                VarType newDemand = demand;
+                newDemand.getDegreeRef()++;
+                {
+                    //ExprPtr pExpr = pLeftExpr;
+                    //choice[0] = gen4expr<OnlyChk>(pLeftExpr, newDemand);
+                }
+                
+                choice[0] = gen4expr<_CHK>(pLeftExpr->getSubExprPtr(0), newDemand);
+                
+                // 解析下标
+                VarType choiceIdx;
+                bool result = checkMultiTypeMatching(pLeftExpr->getSubExprPtr(1),
+                        { "byte", "char", "short", "int" }, choiceIdx);
+                if (result) {
+                    gen4expr<_CHK>(pLeftExpr->getSubExprPtr(1), choiceIdx);
+                    
+                } else {
+                    SEM_E(E_INCMP_TYPE, pLeftExpr);
+                }
+                
+                if (choiceIdx != VarType::buildFromStr("int")) {
+                    gen4ITC<_CHK>(choiceIdx, VarType::buildFromStr("int"));
+                }
+                
+                // 汇编代码，取得数组中对应下标所指的底层对象 (引用句柄)
+                pASM->append_OFFSET();
+                
+                choice[0].getDegreeRef()--;
+                
+                result = checkMultiTypeMatching(pRightExpr,
+                        { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
+                        choice[1]);
+                if (result) {
+                    int choiceIdx;
+                    bool checkFlag = check2ScalarTypeBigger(choice[0], choice[1], choiceIdx);
+                    assert(checkFlag);
+                    
+                    if (choiceIdx == 0) {
+                        // 可隐式类型转换，左侧数据类型大于等于右侧数据类型
+                        gen4expr<_CHK>(pRightExpr, choice[1]);
+                        gen4ITC<_CHK>(choice[1], choice[0]);
+                        
+                    } else if (choiceIdx == -1) {
+                        gen4expr<_CHK>(pRightExpr, choice[1]);
+                        
+                    } else {
+                        // 不可转换，右侧数据类型过大
+                        SEM_E(E_INCMP_TYPE_CONVERT, pExpr);
+                        return demand;
+                    }
+                    
+                } else {
+                    SEM_E(E_INCMP_TYPE, pExpr);
+                    return demand;
+                }
+                
+                // 多种类型要考虑
+                if (choice[0] == "long") {
+                    pASM->append_HPOP_QW();
+                } else if (choice[0] == "int") {
+                    pASM->append_HPOP_DW();
+                } else if (choice[0] == "short") {
+                    pASM->append_HPOP_W();
+                } else if (choice[0] == "byte" || choice[0] == "boolean" || choice[0] == "char") {
+                    pASM->append_HPOP_B();
+                } else if (choice[0] == "float") {
+                    pASM->append_HPOP_FLT();
+                } else if (choice[0] == "double") {
+                    pASM->append_HPOP_DBL();
+                } else if (choice[0].getDegree() > 0) {
+                    pASM->append_HPOP_DW();
+                } else {
+                    assert(0);
+                }
+                
+                /*
+                std::tuple<bool, VarName, VarType> tuple =
+                        _saBinder.getDef(LocatedUtfString::make(pLeftExpr->getLeafScalar()._str,
+                                pLeftExpr->lineno(), pLeftExpr->colno()));
+                
+                if (std::get<0>(tuple))
+                    pASM->append_TOP_VAR(std::get<1>(tuple).toString().c_str());
+                else
+                    SEM_E(E_ID_UNDEFINED, pLeftExpr);
+                */
+                
+                //TYPE_PRODUCT2DEMAND(choice[0]);
+                return choice[0];
+			
+			} else {
+			    assert(0);
+			}
+   
+#if 0
+            if (leftOp == ExprOp::LEAF_ID) {
+            
+                
             } else if (leftOp == ExprOp::OPT_INDEX) {
-                gen4expr<_CHK>(pLeftExpr, demand);
-                // TODO
+                
+                // index 表达式作为左值
+                // 先对数组类型 demand 升阶，然后传递给 dot
+                VarType newDemand = demand;
+                newDemand.getDegreeRef()++;
+                ExprPtr pExpr = pLeftExpr;
+                ExprOp opLeft = pExpr->getSubExprPtr(0)->getOp();
+                VarType choice;
+                if (opLeft == ExprOp::LEAF_ID) {
+                    choice = gen4ScopeId<_CHK>(pExpr->getSubExprPtr(0), newDemand);
+                } else if (opLeft == ExprOp::OPT_INDEX) {
+                    choice = gen4expr<_CHK>(pExpr->getSubExprPtr(0), newDemand);
+                } else {
+                    assert(0);
+                }
+                // 此时操作对象已经压栈
+    
+                // 解析下标
+                VarType choiceIdx;
+                bool result = checkMultiTypeMatching(pExpr->getSubExprPtr(1),
+                        { "byte", "char", "short", "int" }, choiceIdx);
+                if (result) {
+                    gen4expr<_CHK>(pExpr->getSubExprPtr(1), choiceIdx);
+        
+                } else {
+                    SEM_E(E_INCMP_TYPE, pExpr);
+                }
+    
+    
+                if (choiceIdx != VarType::buildFromStr("int")) {
+                    gen4ITC<_CHK>(choiceIdx, VarType::buildFromStr("int"));
+                }
+                // 汇编代码，取得数组中对应下标所指的底层对象 (引用句柄)
+                pASM->append_OFFSET();
+    
+                choice.getDegreeRef()--;
+    
+                // 多种类型要考虑
+                if (choice == "long") {
+                    pASM->append_HPOP_QW();
+                } else if (choice == "int") {
+                    pASM->append_HPOP_DW();
+                } else if (choice == "short") {
+                    pASM->append_HPOP_W();
+                } else if (choice == "byte" || choice == "boolean" || choice == "char") {
+                    pASM->append_HPOP_B();
+                } else if (choice == "float") {
+                    pASM->append_HPOP_FLT();
+                } else if (choice == "double") {
+                    pASM->append_HPOP_DBL();
+                } else if (choice.getDegree() > 0) {
+                    pASM->append_HPOP_DW();
+                } else {
+                    assert(0);
+                }
+                
+                
+                
+                TYPE_PRODUCT2DEMAND(choice);
+                return choice;
     
             } else {
                 assert(0);
             }
 
-			TYPE_PRODUCT2DEMAND(choice[0]);
-			return choice[0];
+#endif
 		}
 
 		case ExprOp::OPT_ASSIGN_WITH_ADD: 
