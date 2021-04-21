@@ -112,21 +112,76 @@ public: /* 指令参数皆是从右往左压栈 */
         _context << '0' << STMT_SUFFIX << std::endl;
     }
     
-    void append_MKHEAP(/* int32_t sz */) {
-        _context << TAB << "MKHEAP" << STMT_SUFFIX << std::endl;
-    }
+    
+//    void append_MKHEAP(/* int32_t sz */) {
+//        _context << TAB << "MKHEAP" << STMT_SUFFIX << std::endl;
+//    }
     
     /* 作用域栈 */
-    void append_PUSH_VAR(const std::string & varName) {
-        _context << TAB << "PUSH" << SPACE << varName << STMT_SUFFIX << std::endl;
+//    void append_PUSH_VAR(const std::string & varName) {
+//        _context << TAB << "PUSH" << SPACE << varName << STMT_SUFFIX << std::endl;
+//    }
+    void append_PUSH_VAR_QW(const std::string & varName) {
+        _context << TAB << "PUSH QW" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_PUSH_VAR_DW(const std::string & varName) {
+        _context << TAB << "PUSH DW" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_PUSH_VAR_W(const std::string & varName) {
+        _context << TAB << "PUSH W" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_PUSH_VAR_B(const std::string & varName) {
+        _context << TAB << "PUSH B" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_PUSH_VAR_FLT(const std::string & varName) {
+        _context << TAB << "PUSH FLT" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_PUSH_VAR_DBL(const std::string & varName) {
+        _context << TAB << "PUSH DBL" << SPACE << varName << STMT_SUFFIX << std::endl;
     }
     
-    void append_POP_VAR(const std::string & varName) {
-        _context << TAB << "POP" << SPACE << varName << STMT_SUFFIX << std::endl;
+//    void append_POP_VAR(const std::string & varName) {
+//        _context << TAB << "POP" << SPACE << varName << STMT_SUFFIX << std::endl;
+//    }
+    void append_POP_VAR_QW(const std::string & varName) {
+        _context << TAB << "POP QW" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_POP_VAR_DW(const std::string & varName) {
+        _context << TAB << "POP DW" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_POP_VAR_W(const std::string & varName) {
+        _context << TAB << "POP W" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_POP_VAR_B(const std::string & varName) {
+        _context << TAB << "POP B" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_POP_VAR_FLT(const std::string & varName) {
+        _context << TAB << "POP FLT" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_POP_VAR_DBL(const std::string & varName) {
+        _context << TAB << "POP DBL" << SPACE << varName << STMT_SUFFIX << std::endl;
     }
     
-    void append_TOP_VAR(const std::string & varName) {
-        _context << TAB << "TOP" << SPACE << varName << STMT_SUFFIX << std::endl;
+//    void append_TOP_VAR(const std::string & varName) {
+//        _context << TAB << "TOP" << SPACE << varName << STMT_SUFFIX << std::endl;
+//    }
+    void append_TOP_VAR_QW(const std::string & varName) {
+        _context << TAB << "TOP QW" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_TOP_VAR_DW(const std::string & varName) {
+        _context << TAB << "TOP DW" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_TOP_VAR_W(const std::string & varName) {
+        _context << TAB << "TOP W" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_TOP_VAR_B(const std::string & varName) {
+        _context << TAB << "TOP B" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_TOP_VAR_FLT(const std::string & varName) {
+        _context << TAB << "TOP FLT" << SPACE << varName << STMT_SUFFIX << std::endl;
+    }
+    void append_TOP_VAR_DBL(const std::string & varName) {
+        _context << TAB << "TOP DBL" << SPACE << varName << STMT_SUFFIX << std::endl;
     }
     
     /*
