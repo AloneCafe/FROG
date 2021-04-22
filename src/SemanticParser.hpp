@@ -1691,7 +1691,25 @@ private:
                             int count = 0;
                             std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
                                 size_t sizLinearOffsets = linearOffsets.size();
-                                _asmk.append_PUSH_VAR(realNameStr);
+                                //_asmk.append_PUSH_VAR(realNameStr);
+                                if (varType == "long") {
+                                    _asmk.append_PUSH_VAR_QW(realNameStr);
+                                } else if (varType == "int") {
+                                    _asmk.append_PUSH_VAR_DW(realNameStr);
+                                } else if (varType == "short") {
+                                    _asmk.append_PUSH_VAR_W(realNameStr);
+                                } else if (varType == "byte" || varType == "boolean" || varType == "char") {
+                                    _asmk.append_PUSH_VAR_B(realNameStr);
+                                } else if (varType == "float") {
+                                    _asmk.append_PUSH_VAR_FLT(realNameStr);
+                                } else if (varType == "double") {
+                                    _asmk.append_PUSH_VAR_DBL(realNameStr);
+                                } else if (varType.getDegree() > 0) {
+                                    _asmk.append_PUSH_VAR_DW(realNameStr);
+                                } else {
+                                    assert(0);
+                                }
+                                
                                 _asmk.append_IPUSH_DW(linearOffsets[0]);
                                 _asmk.append_OFFSET();
                                 for (size_t i = 1; i < sizLinearOffsets; ++i) {
@@ -1713,7 +1731,25 @@ private:
                             return;
                         }
                     }
-                    _asmk.append_PUSH_VAR(realNameStr);
+                    //_asmk.append_PUSH_VAR(realNameStr);
+                    if (varType == "long") {
+                        _asmk.append_PUSH_VAR_QW(realNameStr);
+                    } else if (varType == "int") {
+                        _asmk.append_PUSH_VAR_DW(realNameStr);
+                    } else if (varType == "short") {
+                        _asmk.append_PUSH_VAR_W(realNameStr);
+                    } else if (varType == "byte" || varType == "boolean" || varType == "char") {
+                        _asmk.append_PUSH_VAR_B(realNameStr);
+                    } else if (varType == "float") {
+                        _asmk.append_PUSH_VAR_FLT(realNameStr);
+                    } else if (varType == "double") {
+                        _asmk.append_PUSH_VAR_DBL(realNameStr);
+                    } else if (varType.getDegree() > 0) {
+                        _asmk.append_PUSH_VAR_DW(realNameStr);
+                    } else {
+                        assert(0);
+                    }
+                    
                     _asmk.append_IPUSH_DW(i);
                     _asmk.append_OFFSET();
                     gen4expr<OnlyGen>(pNativeInitExpr->_pExpr, lowLvType.toString());
@@ -1772,7 +1808,25 @@ private:
                                         int count = 0;
                                         std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
                                             size_t sizLinearOffsets = linearOffsets.size();
-                                            _asmk.append_PUSH_VAR(realNameStr);
+                                            //_asmk.append_PUSH_VAR(realNameStr);
+                                            if (varType == "long") {
+                                                _asmk.append_PUSH_VAR_QW(realNameStr);
+                                            } else if (varType == "int") {
+                                                _asmk.append_PUSH_VAR_DW(realNameStr);
+                                            } else if (varType == "short") {
+                                                _asmk.append_PUSH_VAR_W(realNameStr);
+                                            } else if (varType == "byte" || varType == "boolean" || varType == "char") {
+                                                _asmk.append_PUSH_VAR_B(realNameStr);
+                                            } else if (varType == "float") {
+                                                _asmk.append_PUSH_VAR_FLT(realNameStr);
+                                            } else if (varType == "double") {
+                                                _asmk.append_PUSH_VAR_DBL(realNameStr);
+                                            } else if (varType.getDegree() > 0) {
+                                                _asmk.append_PUSH_VAR_DW(realNameStr);
+                                            } else {
+                                                assert(0);
+                                            }
+                                            
                                             _asmk.append_IPUSH_DW(linearOffsets[0]);
                                             _asmk.append_OFFSET();
                                             for (size_t i = 1; i < sizLinearOffsets; ++i) {
@@ -1800,7 +1854,25 @@ private:
                                 linearOffsets.push_back(i);
                             
                                 size_t sizLinearOffsets = linearOffsets.size();
-                                _asmk.append_PUSH_VAR(realNameStr);
+                                //_asmk.append_PUSH_VAR(realNameStr);
+                                if (varType == "long") {
+                                    _asmk.append_PUSH_VAR_QW(realNameStr);
+                                } else if (varType == "int") {
+                                    _asmk.append_PUSH_VAR_DW(realNameStr);
+                                } else if (varType == "short") {
+                                    _asmk.append_PUSH_VAR_W(realNameStr);
+                                } else if (varType == "byte" || varType == "boolean" || varType == "char") {
+                                    _asmk.append_PUSH_VAR_B(realNameStr);
+                                } else if (varType == "float") {
+                                    _asmk.append_PUSH_VAR_FLT(realNameStr);
+                                } else if (varType == "double") {
+                                    _asmk.append_PUSH_VAR_DBL(realNameStr);
+                                } else if (varType.getDegree() > 0) {
+                                    _asmk.append_PUSH_VAR_DW(realNameStr);
+                                } else {
+                                    assert(0);
+                                }
+                                
                                 _asmk.append_IPUSH_DW(linearOffsets[0]);
                                 _asmk.append_OFFSET();
                                 for (size_t i = 1; i < sizLinearOffsets; ++i) {
@@ -1885,7 +1957,25 @@ private:
         
                 int count = 0;
                 std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
-                    _asmk.append_PUSH_VAR(realNameStr);
+                    //_asmk.append_PUSH_VAR(realNameStr);
+                    if (varType == "long") {
+                        _asmk.append_PUSH_VAR_QW(realNameStr);
+                    } else if (varType == "int") {
+                        _asmk.append_PUSH_VAR_DW(realNameStr);
+                    } else if (varType == "short") {
+                        _asmk.append_PUSH_VAR_W(realNameStr);
+                    } else if (varType == "byte" || varType == "boolean" || varType == "char") {
+                        _asmk.append_PUSH_VAR_B(realNameStr);
+                    } else if (varType == "float") {
+                        _asmk.append_PUSH_VAR_FLT(realNameStr);
+                    } else if (varType == "double") {
+                        _asmk.append_PUSH_VAR_DBL(realNameStr);
+                    } else if (varType.getDegree() > 0) {
+                        _asmk.append_PUSH_VAR_DW(realNameStr);
+                    } else {
+                        assert(0);
+                    }
+                    
                     _asmk.append_IPUSH_DW(count++);
                     _asmk.append_OFFSET();
                     _asmk.append_IPUSH_B(ch);
@@ -2263,7 +2353,26 @@ private:
 			} else {
 				assert(0);
 			}
-			_asmk.append_POP_VAR(realNameStr);
+            
+            //_asmk.append_POP_VAR(realNameStr);
+            if (varType == "long") {
+                _asmk.append_POP_VAR_QW(realNameStr);
+            } else if (varType == "int") {
+                _asmk.append_POP_VAR_DW(realNameStr);
+            } else if (varType == "short") {
+                _asmk.append_POP_VAR_W(realNameStr);
+            } else if (varType == "byte" || varType == "boolean" || varType == "char") {
+                _asmk.append_POP_VAR_B(realNameStr);
+            } else if (varType == "float") {
+                _asmk.append_POP_VAR_FLT(realNameStr);
+            } else if (varType == "double") {
+                _asmk.append_POP_VAR_DBL(realNameStr);
+            } else if (varType.getDegree() > 0) {
+                _asmk.append_PUSH_VAR_DW(realNameStr);
+            } else {
+                assert(0);
+            }
+			
 		}
 
 		gen4Stmts(fun, pNativeStmts->_stmts);
