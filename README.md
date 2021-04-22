@@ -1,7 +1,20 @@
 # FROG 编程语言
 
+![Logo](https://github.com/AloneCafe/frog/blob/master/logo.ico)
+
+![GitHub top language](https://img.shields.io/github/languages/top/AloneCafe/frog?color=%2300ffff)
+![GitHub](https://img.shields.io/tokei/lines/github/AloneCafe/frog?color=%233388bb)
+![GitHub](https://img.shields.io/github/license/AloneCafe/frog?color=%23ddcc88)
+![GitHub repo size](https://img.shields.io/github/repo-size/AloneCafe/frog)
+
+![GitHub branch checks state](https://img.shields.io/github/checks-status/AloneCafe/frog/main?color=%23bb1c00)
+![GitHub last commit](https://img.shields.io/github/last-commit/AloneCafe/frog?color=%2322dd66)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AloneCafe/frog?color=%23cd00dd)
+
 ## 关于作者
 第一次自创一种编译型的编程语言，围绕着它所实现的词法分析器、语法分析器、类型检查 & 语义分析器、代码生成器 ... 这个编译系统的任何环节均是原创，并且采用 C++ 语言手工编写，没有借助任何分析器生成工具。只是作者本人想试着从零开始编写一个编译系统，满足自己从最开始学习编程技术开始直到现在总是想独立完成的一个小小的心愿，幸运的是如今终于能够窥见其冰山一角。虽然代码过于冗杂，已经无法控制复杂度，但是总算是蹩脚地正常运行起来了，即便在程序的各个角落都可能潜伏着一些臭虫。
+
+
 
 ## 关于 FROG
 FROG 是一种简单的、静态强类型的 (static strongly-typed)、图灵完备的编程语言。

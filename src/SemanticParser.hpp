@@ -293,31 +293,31 @@ private:
 			std::string objTypeStr = varType.toString();
 			// 先排除标量，哈哈，标量无需指定大小，所以直接将偏移压栈
 			if (varType.getDegree() > 0) {
-				pASM->append_PUSH_VAR(varName.toString().c_str()); // int32 堆句柄 heap addr
+				pASM->append_PUSH_VAR_DW(varName.toString().c_str()); // int32 堆句柄 heap addr
 				//TYPE_PRODUCT2DEMAND(objTypeStr);
 				
 			} else if (objTypeStr == "int") {
-				pASM->append_PUSH_VAR(varName.toString().c_str());
+				pASM->append_PUSH_VAR_DW(varName.toString().c_str());
 				//TYPE_PRODUCT2DEMAND(objTypeStr);
 				
 			} else if (objTypeStr == "long") {
-				pASM->append_PUSH_VAR(varName.toString().c_str());
+				pASM->append_PUSH_VAR_QW(varName.toString().c_str());
 				//TYPE_PRODUCT2DEMAND(objTypeStr);
 				
 			} else if (objTypeStr == "float") {
-				pASM->append_PUSH_VAR(varName.toString().c_str());
+				pASM->append_PUSH_VAR_FLT(varName.toString().c_str());
 				//TYPE_PRODUCT2DEMAND(objTypeStr);
 
 			} else if (objTypeStr == "double") {
-				pASM->append_PUSH_VAR(varName.toString().c_str());
+				pASM->append_PUSH_VAR_DBL(varName.toString().c_str());
 				//TYPE_PRODUCT2DEMAND(objTypeStr);
 
 			} else if (objTypeStr == "short") {
-				pASM->append_PUSH_VAR(varName.toString().c_str());
+				pASM->append_PUSH_VAR_W(varName.toString().c_str());
 				//TYPE_PRODUCT2DEMAND(objTypeStr);
 			
 			} else if (objTypeStr == "char" || objTypeStr == "byte" || objTypeStr == "boolean") {
-				pASM->append_PUSH_VAR(varName.toString().c_str());
+				pASM->append_PUSH_VAR_B(varName.toString().c_str());
 				//TYPE_PRODUCT2DEMAND(objTypeStr);
 				
 			} else {
@@ -1238,8 +1238,27 @@ private:
                         _saBinder.getDef(LocatedUtfString::make(pLeftExpr->getLeafScalar()._str,
                                 pLeftExpr->lineno(), pLeftExpr->colno()));
                 
-                if (std::get<0>(tuple))
-                    pASM->append_TOP_VAR(std::get<1>(tuple).toString().c_str());
+                if (std::get<0>(tuple)) {
+                    const VarName & varName = std::get<1>(tuple);
+                    const VarType & varType = std::get<2>(tuple);
+                    if (varType.getDegree() > 0) {
+                        pASM->append_TOP_VAR_DW(varName.toString().c_str());
+                    } else if (varType == "int") {
+                        pASM->append_TOP_VAR_DW(varName.toString().c_str());
+                    } else if (varType == "long") {
+                        pASM->append_TOP_VAR_QW(varName.toString().c_str());
+                    } else if (varType == "float") {
+                        pASM->append_TOP_VAR_FLT(varName.toString().c_str());
+                    } else if (varType == "double") {
+                        pASM->append_TOP_VAR_DBL(varName.toString().c_str());
+                    } else if (varType == "short") {
+                        pASM->append_TOP_VAR_W(varName.toString().c_str());
+                    } else if (varType == "char" || varType == "byte" || varType == "boolean") {
+                        pASM->append_TOP_VAR_B(varName.toString().c_str());
+                    } else {
+                        assert(0);
+                    }
+                }
                 else
                     SEM_E(E_ID_UNDEFINED, pLeftExpr);
                 
@@ -1610,7 +1629,27 @@ private:
                 assert(0);
             } // 执行创建 list 的命令
             
-            _asmk.append_POP_VAR(realNameStr); // 赋予引用
+            _asmk.append_POP_VAR_DW(realNameStr); // 赋予引用
+            /*
+            const VarName & varName = std::get<1>(tuple);
+            const VarType & varType = std::get<2>(tuple);
+            if (varType.getDegree() > 0) {
+                _asmk.append_POP_VAR_DW(realNameStr);
+            } else if (varType == "int") {
+                _asmk.append_POP_VAR_DW(realNameStr);
+            } else if (varType == "long") {
+                _asmk.append_POP_VAR_QW(realNameStr);
+            } else if (varType == "float") {
+                _asmk.append_POP_VAR_FLT(realNameStr);
+            } else if (varType == "double") {
+                _asmk.append_POP_VAR_DBL(realNameStr);
+            } else if (varType == "short") {
+                _asmk.append_POP_VAR_W(realNameStr);
+            } else if (varType == "char" || varType == "byte" || varType == "boolean") {
+                _asmk.append_POP_VAR_B(realNameStr);
+            } else {
+                assert(0);
+            }*/
             
 		} else {
 			assert(0);
