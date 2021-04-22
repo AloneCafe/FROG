@@ -7,7 +7,7 @@
 ![GitHub license](https://img.shields.io/github/license/AloneCafe/frog?color=%23ddcc88)
 ![GitHub repo size](https://img.shields.io/github/repo-size/AloneCafe/frog)
 
-![GitHub branch checks state](https://img.shields.io/github/checks-status/AloneCafe/frog/main?color=%23bb1c00)
+![GitHub branch checks state](https://img.shields.io/github/checks-status/AloneCafe/frog/master?color=%23bb1c00)
 ![GitHub last commit](https://img.shields.io/github/last-commit/AloneCafe/frog?color=%2322dd66)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AloneCafe/frog?color=%23cd00dd)
 
