@@ -1,6 +1,6 @@
 # FROG 编程语言
 
-<img src="https://i.loli.net/2021/04/22/TEozG6QHwLqZiP1.png" href="#" />
+![LOGO](https://github.com/AloneCafe/frog/blob/master/logo.png?raw=true)
 
 <span style="color:blue;">项目吉祥物：开心快乐的青蛙国王 FROG 桑，由 GIMP 手工绘制（渣绘轻喷）</span>
 
