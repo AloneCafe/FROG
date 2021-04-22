@@ -1,6 +1,6 @@
 # FROG 编程语言
 
-![Logo](https://github.com/AloneCafe/frog/blob/master/logo.ico?raw=true)
+![Logo](https://github.com/AloneCafe/frog/blob/master/logo.png?raw=true)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/AloneCafe/frog?color=%2300ffff)
 ![GitHub lines](https://img.shields.io/tokei/lines/github/AloneCafe/frog?color=%233388bb)
