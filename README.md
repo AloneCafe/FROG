@@ -1,6 +1,6 @@
 # FROG 编程语言
 
-![LOGO](https://github.com/AloneCafe/frog/blob/master/logo.png?raw=true)
+[![logo.png](https://i.loli.net/2021/04/22/TEozG6QHwLqZiP1.png)](https://github.com/Alone Cafe/frog/)
 
 <span style="color:blue;">项目吉祥物：开心快乐的青蛙国王 FROG 桑，由 GIMP 手工绘制（渣绘轻喷）</span>
 
@@ -19,7 +19,7 @@
 
 
 ## 关于 FROG
-FROG 是一种简单的、静态强类型的 (statically & strongly-typed)、图灵完备的编程语言。
+FROG 是一种简单的、结构化的、面向过程的、静态类型 & 强类型的编程语言。
 
 本项目亦包含三个主要的组成部分，分别是
 * 编译器 (Compiler)
@@ -31,6 +31,7 @@ FROG 是一种简单的、静态强类型的 (statically & strongly-typed)、图
 2. 再将上一步生成的汇编代码交由 FROG 汇编器进行汇编处理，最终将生成二进制字节码，即 FROG 字节码文件
 3. 最后将上一步生成的字节码文件交由 FROG 虚拟机执行，程序进入执行状态，最终程序退出结束执行
 
-FROG 编程语言采用类 C (C-like) 的语法。其程序结构简单、语法清晰明了，易于上手使用。
+FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语言的基本语法类似，只是稍有不同之处。
+本语言源程序结构简单、语法清晰明了，易于上手使用。
 * ~~FROG 语法简明手册~~
 * ~~FROG 汇编指令手册~~
