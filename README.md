@@ -3,8 +3,8 @@
 ![Logo](https://github.com/AloneCafe/frog/blob/master/logo.ico)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/AloneCafe/frog?color=%2300ffff)
-![GitHub](https://img.shields.io/tokei/lines/github/AloneCafe/frog?color=%233388bb)
-![GitHub](https://img.shields.io/github/license/AloneCafe/frog?color=%23ddcc88)
+![GitHub lines](https://img.shields.io/tokei/lines/github/AloneCafe/frog?color=%233388bb)
+![GitHub license](https://img.shields.io/github/license/AloneCafe/frog?color=%23ddcc88)
 ![GitHub repo size](https://img.shields.io/github/repo-size/AloneCafe/frog)
 
 ![GitHub branch checks state](https://img.shields.io/github/checks-status/AloneCafe/frog/main?color=%23bb1c00)
