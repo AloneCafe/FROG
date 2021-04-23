@@ -96,21 +96,22 @@ public: /* 指令参数皆是从右往左压栈 */
     void append_IPUSH_DBL(double dbl) {
         _context << TAB << "IPUSH DBL" << SPACE << dbl << STMT_SUFFIX << std::endl;
     }
-    void append_VIPUSH(const std::vector<int8_t> l) {
-        assert(!l.empty());
-        _context << TAB << "VIPUSH" << SPACE << l[0];
-        size_t sz = l.size();
-        for (size_t i = 1; i < sz; ++i)
-            _context << "," << SPACE << l[i];
-        _context << STMT_SUFFIX << std::endl;
-    }
-    void append_VIPUSH(const std::string & s) {
-        size_t sz = s.size();
-        _context << TAB << "VIPUSH" << SPACE << '\'' << s[0] << '\'';
-        for (size_t i = 1; i < sz; ++i)
-            _context << "," << SPACE << '\'' << s[i] << '\'';
-        _context << '0' << STMT_SUFFIX << std::endl;
-    }
+    
+//    void append_VIPUSH(const std::vector<int8_t> l) {
+//        assert(!l.empty());
+//        _context << TAB << "VIPUSH" << SPACE << l[0];
+//        size_t sz = l.size();
+//        for (size_t i = 1; i < sz; ++i)
+//            _context << "," << SPACE << l[i];
+//        _context << STMT_SUFFIX << std::endl;
+//    }
+//    void append_VIPUSH(const std::string & s) {
+//        size_t sz = s.size();
+//        _context << TAB << "VIPUSH" << SPACE << '\'' << s[0] << '\'';
+//        for (size_t i = 1; i < sz; ++i)
+//            _context << "," << SPACE << '\'' << s[i] << '\'';
+//        _context << '0' << STMT_SUFFIX << std::endl;
+//    }
     
     
 //    void append_MKHEAP(/* int32_t sz */) {
@@ -260,6 +261,7 @@ public: /* 指令参数皆是从右往左压栈 */
 //    void append_VHPOP(/* int32_t off, int32_t sz, int32_t heapaddr, NSTRING type */) {
 //        _context << TAB << "VHPOP" << STMT_SUFFIX << std::endl;
 //    }
+
     
     void append_ADD_QW(/* int64_t a, int64_t b */) {
         _context << TAB << "ADD QW" << STMT_SUFFIX << std::endl;
@@ -622,22 +624,22 @@ public: /* 指令参数皆是从右往左压栈 */
         _context << TAB << "NRET" << STMT_SUFFIX << std::endl;
     }
     void append_RET_QW() {
-        _context << TAB << "RET QW" << SPACE << STMT_SUFFIX << std::endl;
+        _context << TAB << "RET QW" << STMT_SUFFIX << std::endl;
     }
     void append_RET_DW() {
-        _context << TAB << "RET DW" << SPACE << STMT_SUFFIX << std::endl;
+        _context << TAB << "RET DW" << STMT_SUFFIX << std::endl;
     }
     void append_RET_W() {
-        _context << TAB << "RET W" << SPACE << STMT_SUFFIX << std::endl;
+        _context << TAB << "RET W" << STMT_SUFFIX << std::endl;
     }
     void append_RET_B() {
-        _context << TAB << "RET B" << SPACE << STMT_SUFFIX << std::endl;
+        _context << TAB << "RET B" << STMT_SUFFIX << std::endl;
     }
     void append_RET_FLT() {
-        _context << TAB << "RET FLT" << SPACE << STMT_SUFFIX << std::endl;
+        _context << TAB << "RET FLT" << STMT_SUFFIX << std::endl;
     }
     void append_RET_DBL() {
-        _context << TAB << "RET DBL" << SPACE << STMT_SUFFIX << std::endl;
+        _context << TAB << "RET DBL" << STMT_SUFFIX << std::endl;
     }
     void append_NOP() {
         _context << TAB << "NOP" << STMT_SUFFIX << std::endl;

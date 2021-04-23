@@ -23,7 +23,8 @@ x = &_asmk; \
 if (true) {                         \
 VarType vtChoice{choice}, vtDemand{demand};                                    \
 if (_CHK == OnlyGen) {              \
-	if (!(vtChoice.getDegree() > 0 && (vtChoice.getDegree() == vtDemand.getDegree()))) this->gen4ITC<OnlyGen>(vtChoice, vtDemand); \
+	if (vtChoice.getDegree() == 0 || demand == "void") this->gen4ITC<OnlyGen>(vtChoice, vtDemand);    \
+	else if (vtChoice.getDegree() != vtDemand.getDegree() && demand != "void") SEM_E((E_INCMP_TYPE_REF), pExpr); \
 } else { \
 		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, vtDemand, vtChoice); \
 		if (ExprTypeConstraint::ChkResult::CHK_INCMP == _cr_) { \
@@ -160,7 +161,9 @@ public:
 			return "FLT";
 		} else if (choice == "double") {
 			return "DBL";
-		} else {
+		} else if (choice.getDegree() > 0) {
+            return "DW";
+        } else {
 			//assert(0); // 一般不会到此
 			//return nullptr;
 			return "VOID";
@@ -394,8 +397,9 @@ private:
 			return VarType::buildFromStr("char");
 
 		case ExprOp::LEAF_STRING_LITERAL:
+		    assert(0); // 不应该执行至此处
 			// string push 从 \0 开始倒序压栈
-			pASM->append_VIPUSH(pExpr->getLeafScalar()._str);
+			//pASM->append_VIPUSH(pExpr->getLeafScalar()._str);
 			TYPE_PRODUCT2DEMAND("NSTRING");
 			return VarType::buildFromStr("NSTRING");
 
@@ -425,7 +429,8 @@ private:
             } else if (opLeft == ExprOp::OPT_INDEX) {
                 choice = gen4expr<_CHK>(pExpr->getSubExprPtr(0), newDemand);
             } else {
-			    assert(0);
+                choice = gen4expr<_CHK>(pExpr->getSubExprPtr(0), newDemand);
+			    //assert(0);
 			}
 			// 此时操作对象已经压栈
 
@@ -1207,32 +1212,43 @@ private:
 			if (leftOp == ExprOp::LEAF_ID) { // 左值 id
                 VarType choice[2];
                 choice[0] = gen4ScopeId<OnlyChk>(pLeftExpr, demand);
-                bool result = checkMultiTypeMatching(pRightExpr,
-                        { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
-                        choice[1]);
-                if (result && choice[0].getDegree() == 0) {
+                
+                bool result;
+                
+                if (choice[0].getDegree() > 0) {
+                    result = checkMultiTypeMatching(pRightExpr,
+                            { choice[0] },
+                            choice[1]);
+                    gen4expr<_CHK>(pRightExpr, choice[1]);
+                    
+                } else { // choice[0].getDegree() == 0
+                    result = checkMultiTypeMatching(pRightExpr,
+                            { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
+                            choice[1]);
                     int choiceIdx;
                     bool checkFlag = check2ScalarTypeBigger(choice[0], choice[1], choiceIdx);
                     assert(checkFlag);
-                    
+    
                     if (choiceIdx == 0) {
                         // 可隐式类型转换，左侧数据类型大于等于右侧数据类型
                         gen4expr<_CHK>(pRightExpr, choice[1]);
                         gen4ITC<_CHK>(choice[1], choice[0]);
-                        
+        
                     } else if (choiceIdx == -1) {
                         gen4expr<_CHK>(pRightExpr, choice[1]);
-                        
+        
                     } else {
                         // 不可转换，右侧数据类型过大
                         SEM_E(E_INCMP_TYPE_CONVERT, pExpr);
                         return demand;
                     }
-                    
-                } else {
+                }
+                
+                if (!result)  {
                     SEM_E(E_INCMP_TYPE, pExpr);
                     return demand;
                 }
+                
                 
                 std::tuple<bool, VarName, VarType> tuple =
                         _saBinder.getDef(LocatedUtfString::make(pLeftExpr->getLeafScalar()._str,
@@ -1844,8 +1860,22 @@ private:
                                         continue;
         
                                     } else {
-                                        SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
-                                        return false;
+                                        
+                                        size_t sizLinearOffsets = linearOffsets.size();
+                                        _asmk.append_IPUSH_DW(linearOffsets[0]);
+                                        _asmk.append_OFFSET();
+                                        for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                            _asmk.append_HPUSH_DW();
+                                            _asmk.append_IPUSH_DW(linearOffsets[i]);
+                                            _asmk.append_OFFSET();
+                                        }
+                                        _asmk.append_HPUSH_DW();
+                                        gen4expr<OnlyGen>(pNativeInitExpr->_pExpr, varType);
+                                        _asmk.append_HPOP_DW();
+                                        return true;
+                                        
+                                        //SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                                        //return false;
                                     }
                                 }
                                 //_asmk.append_DEREF();
@@ -1984,7 +2014,10 @@ private:
                 return;
         
             } else {
-                SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                //SEM_E(E_ILLEGAL_INIT_STMT, gvar.getName());
+                gen4expr<OnlyGen>(pNativeInitExpr->_pExpr, varType);
+                _asmk.append_POP_VAR_DW(realNameStr);
+                
                 return;
             }
         }
