@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(${SRCDIR})
 
+#add_compile_definitions(_DEBUG)
+
 set(EN_FROG_COMPILER fgc)
 set(EN_FROG_ASSEMBLER fgas)
 set(EN_FROG_VM fgvm)

@@ -24,7 +24,7 @@ if (true) {                         \
 VarType vtChoice{choice}, vtDemand{demand};                                    \
 if (_CHK == OnlyGen) {              \
 	if (vtChoice.getDegree() == 0 || demand == "void") this->gen4ITC<OnlyGen>(vtChoice, vtDemand);    \
-	else if (vtChoice.getDegree() != vtDemand.getDegree() && demand != "void") SEM_E((E_INCMP_TYPE_REF), pExpr); \
+	else if (vtChoice.getDegree() != vtDemand.getDegree() && demand.getLowLvType() != "void") SEM_E((E_INCMP_TYPE_REF), pExpr); \
 } else { \
 		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, vtDemand, vtChoice); \
 		if (ExprTypeConstraint::ChkResult::CHK_INCMP == _cr_) { \
@@ -71,7 +71,7 @@ public:
 			} /*else if (demand.getDegree() > 0 && (demand.getDegree() == choice.getDegree())) {
                 return ChkResult::CHK_OK;
 			} */else {
-				if (demand == "void") {
+				if (demand == "void") { // accept multi-degree
 					if (choice == "double" || choice == "float" || choice == "long" || choice == "int" ||
 						choice == "short" || choice == "char" || choice == "byte") {
 						return ChkResult::CHK_NEED_IC;
@@ -1310,6 +1310,9 @@ private:
                 
                 choice[0].getDegreeRef()--;
                 
+                
+
+#if 0
                 result = checkMultiTypeMatching(pRightExpr,
                         { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
                         choice[1]);
@@ -1336,6 +1339,41 @@ private:
                     SEM_E(E_INCMP_TYPE, pExpr);
                     return demand;
                 }
+#else
+                if (choice[0].getDegree() > 0) {
+                    result = checkMultiTypeMatching(pRightExpr,
+                            { choice[0] },
+                            choice[1]);
+                    gen4expr<_CHK>(pRightExpr, choice[1]);
+                    
+                } else { // choice[0].getDegree() == 0
+                    result = checkMultiTypeMatching(pRightExpr,
+                            { "boolean", "byte", "char", "short", "int", "long", "float", "double" },
+                            choice[1]);
+                    int choiceIdx;
+                    bool checkFlag = check2ScalarTypeBigger(choice[0], choice[1], choiceIdx);
+                    assert(checkFlag);
+                    
+                    if (choiceIdx == 0) {
+                        // 可隐式类型转换，左侧数据类型大于等于右侧数据类型
+                        gen4expr<_CHK>(pRightExpr, choice[1]);
+                        gen4ITC<_CHK>(choice[1], choice[0]);
+                        
+                    } else if (choiceIdx == -1) {
+                        gen4expr<_CHK>(pRightExpr, choice[1]);
+                        
+                    } else {
+                        // 不可转换，右侧数据类型过大
+                        SEM_E(E_INCMP_TYPE_CONVERT, pExpr);
+                        return demand;
+                    }
+                }
+                
+                if (!result)  {
+                    SEM_E(E_INCMP_TYPE, pExpr);
+                    return demand;
+                }
+#endif
                 
                 // 多种类型要考虑
                 if (choice[0] == "long") {
