@@ -26,7 +26,7 @@ if (_CHK == OnlyGen) {              \
 	if (vtChoice.getDegree() == 0 || demand == "void") this->gen4ITC<OnlyGen>(vtChoice, vtDemand);    \
 	else if (vtChoice.getDegree() != vtDemand.getDegree() && demand.getLowLvType() != "void") SEM_E((E_INCMP_TYPE_REF), pExpr); \
 } else { \
-		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, vtDemand, vtChoice); \
+		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, vtDemand, vtChoice, allowIC); \
 		if (ExprTypeConstraint::ChkResult::CHK_INCMP == _cr_) { \
 				if (vtChoice == "byte")\
 				{ SEM_E((E_INCMP_TYPE_BYTE), pExpr); }\
@@ -132,12 +132,15 @@ public:
 		}*/
 
 		template <int _CHK>
-		static ChkResult check(SemParser * pThis, const VarType & demand, const VarType & choice) {
+		static ChkResult check(SemParser * pThis, const VarType & demand, const VarType & choice, bool allowIC) {
 			ChkResult cr = _check(demand, choice);
 			if (cr == ChkResult::CHK_OK) {
 				
 			} else if (cr == ChkResult::CHK_NEED_IC) {
-				pThis->gen4ITC<_CHK>(choice, demand); // 生成隐式类型转换代码
+			    if (allowIC)
+				    pThis->gen4ITC<_CHK>(choice, demand); // 生成隐式类型转换代码
+                else
+                    return ChkResult::CHK_INCMP;
 
 			} else if (cr == ChkResult::CHK_INCMP) {
 
@@ -335,7 +338,7 @@ private:
 	}
 
 	template <int _CHK>
-	VarType gen4expr(const ExprPtr & pExpr, const VarType & demand) {
+	VarType gen4expr(const ExprPtr & pExpr, const VarType & demand, bool allowIC = true) {
 		ASMMAKER_ENABLE(pASM);
 
 		ExprOp op = pExpr->getOp();
@@ -368,21 +371,27 @@ private:
                 return VarType::buildFromStr("int");
 			}*/
             pASM->append_IPUSH_DW(pExpr->getLeafScalar().u._d);
-            if (demand == "byte") {
-                gen4ITC<_CHK>("int", "byte");
-                return VarType::buildFromStr("byte");
-            } else if (demand == "char") {
-                gen4ITC<_CHK>("int", "char");
-                return VarType::buildFromStr("char");
-            } else if (demand == "short") {
-                gen4ITC<_CHK>("int", "short");
-                return VarType::buildFromStr("short");
-            } else if (demand == "int") {
-                return VarType::buildFromStr("int");
+            if (allowIC) {
+                if (demand == "byte") {
+                    gen4ITC<_CHK>("int", "byte");
+                    return VarType::buildFromStr("byte");
+                } else if (demand == "char") {
+                    gen4ITC<_CHK>("int", "char");
+                    return VarType::buildFromStr("char");
+                } else if (demand == "short") {
+                    gen4ITC<_CHK>("int", "short");
+                    return VarType::buildFromStr("short");
+                } else if (demand == "int") {
+                    return VarType::buildFromStr("int");
+                } else {
+                    TYPE_PRODUCT2DEMAND("int");
+                    return VarType::buildFromStr("int");
+                }
             } else {
                 TYPE_PRODUCT2DEMAND("int");
                 return VarType::buildFromStr("int");
             }
+            
 
 		case ExprOp::LEAF_LONG_LITERAL:
 			pASM->append_IPUSH_QW(pExpr->getLeafScalar().u._l);
@@ -397,6 +406,7 @@ private:
 		case ExprOp::LEAF_LONG_DOUBLE_LITERAL:
 			// long double 暂未实现，当做 double 处理
 		case ExprOp::LEAF_DOUBLE_LITERAL:
+		    /*
 			if (demand == "float") {
 				pASM->append_IPUSH_FLT(static_cast<float>(pExpr->getLeafScalar().u._lf));
 				TYPE_PRODUCT2DEMAND("float");
@@ -405,7 +415,22 @@ private:
 				pASM->append_IPUSH_DBL(pExpr->getLeafScalar().u._lf);
 				TYPE_PRODUCT2DEMAND("double");
 				return VarType::buildFromStr("double");
-			}
+			}*/
+            pASM->append_IPUSH_DBL(pExpr->getLeafScalar().u._lf);
+            if (allowIC) {
+                if (demand == "float") {
+                    gen4ITC<_CHK>("double", "float");
+                    return VarType::buildFromStr("float");
+                } else if (demand == "double") {
+                    return VarType::buildFromStr("double");
+                } else {
+                    TYPE_PRODUCT2DEMAND("double");
+                    return VarType::buildFromStr("double");
+                }
+            } else {
+                TYPE_PRODUCT2DEMAND("double");
+                return VarType::buildFromStr("double");
+            }
 
 		case ExprOp::LEAF_CHAR_LITERAL:
 			pASM->append_IPUSH_B(pExpr->getLeafScalar().u._c);
@@ -1608,10 +1633,10 @@ private:
                             const VarType & argTypeDemand = fal[i - 1].getType();
                             ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
                             SEM_E_COUNT_RECOND;
-                            gen4expr<OnlyChk>(pArgExprId, argTypeDemand);
+                            gen4expr<OnlyChk>(pArgExprId, argTypeDemand, false);
                             if (SEM_E_COUNT_HAS_INCREASED) {
                                 SEM_E_COUNT_CLEAR_DELTA;
-                                goto lbl_next_func; // 此函数不匹配，下一个函数
+                                goto lbl_next_func0; // 此函数不匹配，下一个函数
                             }
                         }
                         
@@ -1630,8 +1655,50 @@ private:
                         return retType;
                     }
                     
-                    lbl_next_func: continue;
+                    lbl_next_func0: continue;
 			    }
+			    
+			    // 此处再进行允许隐式类型转换的函数调用
+                // 循环检查可能匹配的函数
+                for (const auto & func : perhapsFuncs) {
+                    // 检查参数，并生成调用
+                    const auto & fal = func.getFormalArgList();
+                    size_t argn = fal.size();
+                    if (pExpr->getExprCnt() - 1 != argn) {
+                        // 参数个数不匹配
+                        //SEM_E(E_FUNC_ARG_NUM_MISMATCH, pFuncExprId);
+                        continue; // 下一个
+                        
+                    } else {
+                        // 预先检查
+                        for (size_t i = argn; i > 0; --i) {
+                            const VarType & argTypeDemand = fal[i - 1].getType();
+                            ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
+                            SEM_E_COUNT_RECOND;
+                            gen4expr<OnlyChk>(pArgExprId, argTypeDemand, true);
+                            if (SEM_E_COUNT_HAS_INCREASED) {
+                                SEM_E_COUNT_CLEAR_DELTA;
+                                goto lbl_next_func1; // 此函数不匹配，下一个函数
+                            }
+                        }
+                        
+                        // 从右往左压栈
+                        for (size_t i = argn; i > 0; --i) {
+                            const VarType & argTypeDemand = fal[i - 1].getType();
+                            ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
+                            gen4expr<_CHK>(pArgExprId, argTypeDemand);
+                        }
+                        
+                        pASM->append_CALL(GlobalFuncMap::nameMangling(func.getName().toString(), func.getFormalArgList()));
+                        
+                        // 最终检查返回值类型约束
+                        const VarType & retType = func.getRetType();
+                        TYPE_PRODUCT2DEMAND(retType);
+                        return retType;
+                    }
+                    
+                    lbl_next_func1: continue;
+                }
 			    
 			    SEM_E(E_MISMATCHING_FUNC, pFuncExprId);
                 return demand;
