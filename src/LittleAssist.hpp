@@ -71,9 +71,11 @@ public:
     
     static UtfString toEscape(UtfString & native);
     static UtfString toEscape(UtfChar & native);
-    static UtfString toNative(const UtfString & escape) {
-        // TODO implementation
-    }
+    static UtfString toNative(UtfString & escape);
+    
+    static std::string toEscape(const std::string & native);
+    static std::string toEscape(char native);
+    static std::string toNative(const std::string & escape);
 };
 
 class FileSystem {

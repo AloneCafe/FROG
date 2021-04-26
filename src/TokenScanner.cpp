@@ -385,7 +385,7 @@ Token & TokenScanner::realNextToken() {
             } else if (uci.isEof()) {
                 goto empty_ret;
             } else {                         // 非法字符
-                _ed.POST_PT_E(E_INVALID_CHAR); // TODO 产生一个错误, 并且忽略该字符
+                _ed.POST_PT_E(E_INVALID_CHAR); // 产生一个错误, 并且忽略该字符
             }
             break;
         
@@ -754,7 +754,7 @@ Token & TokenScanner::realNextToken() {
                     _ed.POST_PT_E(E_STRING_TOO_LONG);
                 }
                 _token_seq.emplace_back(TOKEN_LITERAL_STRING, lineno, colno,
-                        s);
+                        SeqConverter::toNative(s));
                 return _token_seq.back();
             } else if (uci.isEof()) {
                 // 字符串尚未闭合文件就到末尾了
@@ -784,7 +784,7 @@ Token & TokenScanner::realNextToken() {
                     _ed.POST_PT_E(E_CHARSEQ_TOO_LONG);
                 }
                 _token_seq.emplace_back(TOKEN_LITERAL_CHARSEQ, lineno, colno,
-                        s);
+                        SeqConverter::toNative(s));
                 return _token_seq.back();
             } else if (uci.isEof()) {
                 // 字符尚未闭合, 文件就到末尾了

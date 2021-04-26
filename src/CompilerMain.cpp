@@ -71,6 +71,7 @@ int main(int argc, const char * argv[]) {
                         return 1;
                     }
                     extraFileNames.push_back(extraFileName);
+                    stat = NEED_INPUT_OR_OPTION;
                 }
                 
                 

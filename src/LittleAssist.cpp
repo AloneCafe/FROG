@@ -99,6 +99,173 @@ UtfString SeqConverter::toEscape(UtfChar & native) {
     return escape;
 }
 
+
+UtfString SeqConverter::toNative(UtfString & escape) {
+    UtfString native;
+    size_t len = escape.length();
+    bool readingEscape = false;
+    for (size_t i = 0; i < len; ++i) {
+        UtfChar & uc = escape[i];
+        
+        if (!readingEscape) {
+            if (uc == '\\') {
+                readingEscape = true;
+            } else {
+                native.push(uc);
+            }
+        } else {
+            switch (uc.getAsciChar()) {
+            case '\'':
+                native.push('\'');
+                break;
+            case '\"':
+                native.push('\"');
+                break;
+            case '\?':
+                native.push('\?');
+                break;
+            case '\\':
+                native.push('\\');
+                break;
+            case 'a':
+                native.push('\a');
+                break;
+            case 'b':
+                native.push('\b');
+                break;
+            case 'f':
+                native.push('\f');
+                break;
+            case 'n':
+                native.push('\n');
+                break;
+            case 'r':
+                native.push('\r');
+                break;
+            case 't':
+                native.push('\t');
+                break;
+            case 'v':
+                native.push('\v');
+                break;
+            default:
+                native.push(uc);
+            }
+            readingEscape = false;
+        }
+        
+    }
+    return native;
+}
+std::string SeqConverter::toEscape(const std::string & native) {
+    std::string escape;
+    int len = native.length();
+    for (int i = 0; i < len; i ++) escape += toEscape(native[i]);
+    return escape;
+}
+
+std::string SeqConverter::toEscape(char native) {
+    std::string escape;
+    switch (native) {
+    case '\'':
+        escape = "\\\'";
+        break;
+    case '\"':
+        escape = "\\\"";
+        break;
+    case '\?':
+        escape = "\\\?";
+        break;
+    case '\\':
+        escape = "\\\\";
+        break;
+    case '\a':
+        escape = "\\a";
+        break;
+    case '\b':
+        escape = "\\b";
+        break;
+    case '\f':
+        escape = "\\f";
+        break;
+    case '\n':
+        escape = "\\n";
+        break;
+    case '\r':
+        escape = "\\r";
+        break;
+    case '\t':
+        escape = "\\t";
+        break;
+    case '\v':
+        escape = "\\v";
+        break;
+        //case CHARACTER_EOF: escape = "EOF"; break;
+    default:
+        escape = native;
+    }
+    return escape;
+}
+
+std::string SeqConverter::toNative(const std::string & escape) {
+    std::string native;
+    size_t len = escape.length();
+    bool readingEscape = false;
+    for (size_t i = 0; i < len; ++i) {
+        char uc = escape[i];
+        
+        if (!readingEscape) {
+            if (uc == '\\') {
+                readingEscape = true;
+            } else {
+                native.push_back(uc);
+            }
+        } else {
+            switch (uc) {
+            case '\'':
+                native.push_back('\'');
+                break;
+            case '\"':
+                native.push_back('\"');
+                break;
+            case '\?':
+                native.push_back('\?');
+                break;
+            case '\\':
+                native.push_back('\\');
+                break;
+            case 'a':
+                native.push_back('\a');
+                break;
+            case 'b':
+                native.push_back('\b');
+                break;
+            case 'f':
+                native.push_back('\f');
+                break;
+            case 'n':
+                native.push_back('\n');
+                break;
+            case 'r':
+                native.push_back('\r');
+                break;
+            case 't':
+                native.push_back('\t');
+                break;
+            case 'v':
+                native.push_back('\v');
+                break;
+            default:
+                native.push_back(uc);
+            }
+            readingEscape = false;
+        }
+        
+    }
+    return native;
+}
+
+
 std::string FileSystem::getCWD() {
     std::string result;
 #ifdef _WIN32

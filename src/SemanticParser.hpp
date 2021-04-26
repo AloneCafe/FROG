@@ -101,11 +101,11 @@ public:
 					} 
 				} else if (demand == "char") {
 					if (choice == "byte") {
-						return ChkResult::CHK_OK;
+						return ChkResult::CHK_NEED_IC;
 					}
 				} else if (demand == "byte") {
 					if (choice == "char") {
-						return ChkResult::CHK_OK;
+						return ChkResult::CHK_NEED_IC;
 					}
 				} else if (demand == "boolean") {
 					if (choice == "boolean") {
