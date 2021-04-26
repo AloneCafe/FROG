@@ -69,7 +69,7 @@ StmtPtr IStmt::newEmptyStmt() {
     return pStmt;
 }
 
-StmtPtr IStmt::newInlineASM(const std::string & asmcodes) {
-    StmtPtr pStmt(new InlineASM(asmcodes));
+StmtPtr IStmt::newInlineASM(const std::string & asmcodes, const ExprPtr & pDummyExpr) {
+    StmtPtr pStmt(new InlineASM(asmcodes, pDummyExpr));
     return pStmt;
 }

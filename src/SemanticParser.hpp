@@ -2366,7 +2366,53 @@ private:
 			case StmtType::InlineASM: {
                 InlineASM * pNativeInlineASM =
                         static_cast<InlineASM *>(pStmt.get());
-                _asmk.getContextRef() << pNativeInlineASM->_asmcodes;
+                
+                const std::string & asmstr = pNativeInlineASM->_asmcodes;
+                size_t sizAsmstr = asmstr.size();
+                size_t beg = 0, end = 0;
+                int beginResign = 0;
+                std::string resignVarName;
+                for (size_t i = 0; i < sizAsmstr; ++i) {
+                    if (beginResign == 1) {
+                        if (isblank(asmstr[i])) {
+                        
+                        } else {
+                            beginResign = 2;
+                            resignVarName += asmstr[i];
+                        }
+                        
+                    } else if (beginResign == 2) {
+                        if (isalpha(asmstr[i]) || isdigit(asmstr[i]) || asmstr[i] == '_') {
+                            resignVarName += asmstr[i];
+                            
+                        } else {
+                            beginResign = 0;
+    
+                            std::tuple<bool, VarName, VarType> tuple =
+                                    _saBinder.getDef(LocatedUtfString::make(resignVarName, -1, -1));
+                            if (!std::get<0>(tuple)) {
+                                SEM_E(E_ID_UNDEFINED, pNativeInlineASM->_pDummyExpr);
+                                break;
+                            }
+                            
+                            _asmk.getContextRef() << std::get<1>(tuple).toString();
+                            _asmk.getContextRef() << asmstr[i];
+                            resignVarName.clear();
+                        }
+                        
+                    } else if (beginResign == 0) {
+                        if (asmstr[i] == '@') {
+                            beginResign = 1;
+                            
+                        } else {
+                            _asmk.getContextRef() << asmstr[i];
+                        }
+                    }
+                }
+                
+                
+                
+                //_asmk.getContextRef() << pNativeInlineASM->_asmcodes;
 			}
 
 			case StmtType::Empty: {

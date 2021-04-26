@@ -94,7 +94,7 @@ struct IStmt {
     static StmtPtr newReturnStmt(const ExprPtr & pRetExpr, const ExprPtr & pDummyPtr);
     static StmtPtr newReturnStmt(const ExprPtr & pDummyPtr);
     static StmtsPtr newStmts(const std::vector<StmtPtr> & stmts);
-    static StmtPtr newInlineASM(const std::string & asmcodes);
+    static StmtPtr newInlineASM(const std::string & asmcodes, const ExprPtr & pDummyExpr);
     static StmtPtr newEmptyStmt();
 };
 
@@ -125,8 +125,9 @@ public:
     
     const auto & getASMCodes() const { return _asmcodes; }
 
-    ONLY_STMT_FACTORY(InlineASM)(const std::string & asmcodes) {
+    ONLY_STMT_FACTORY(InlineASM)(const std::string & asmcodes, const ExprPtr & pDummyExpr) {
         _asmcodes = asmcodes;
+        setDummyExpr(pDummyExpr);
     }
 };
 

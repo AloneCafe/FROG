@@ -1831,7 +1831,8 @@ private:
                 while (1) {
                     if (it->isPunc<'}'>()) {
                         ++it; // 正确闭合
-                        return IStmt::newInlineASM(ss.str());
+                        ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
+                        return IStmt::newInlineASM(ss.str(), pDummyExpr);
         
                     } else if (it->getType() == TokenType::TOKEN_LITERAL_STRING) {
                         ss << it->getVal()._str << std::endl;
