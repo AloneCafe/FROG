@@ -17,21 +17,21 @@ public:
         VarType objType;
         std::stringstream ss;
         auto it = str.cbegin();
-        while (it != str.cend() && *it != '[') {
+        while (it != str.cend() && !isdigit(*it)) {
             ss << *it;
             ++it;
         }
         objType._lowLvType = LocatedUtfString::make(ss.str().c_str(), -1, -1);
         
+        std::stringstream nums;
         while (it != str.cend()) {
-            if (*it == '[') {
+            
+            if (isdigit(*it)) {
                 ++it;
-                if (*it == ']') {
-                    ++it;
-                    objType._degree += 1;
-                }
+                nums << *it;
             }
         }
+        objType._degree = atoi(nums.str().c_str());
         
         return objType;
     }
@@ -72,8 +72,8 @@ public:
         if (_lowLvType.empty())
             return "";
         ss << _lowLvType.toString();
-        for (int d = 0; d < _degree; ++ d)
-            ss << "[]";
+        if (_degree > 0)
+            ss << _degree;
         return ss.str();
     }
     

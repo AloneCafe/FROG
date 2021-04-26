@@ -41,10 +41,9 @@ public:
 	
 	static std::string nameMangling(const std::string & fname, const std::vector<FormalArg> & fargs) {
 	    std::stringstream ss;
-	    ss << fname << "__";
+	    ss << fname;
 	    for (const FormalArg & farg : fargs) {
-	        ss << farg.getType().toString() /*<< "_"
-	           << farg.getName().toDebugString() */<< "__";
+	        ss << "__" << farg.getType().toString();
 	    }
 	    return ss.str();
 	}
