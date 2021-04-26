@@ -351,22 +351,38 @@ private:
 		case ExprOp::LEAF_INT_LITERAL: // int 字面量可以被赋值给更窄的数据类型
 			/*
 			if (demand == "byte") {
-				pASM->append_IPUSH_B(pExpr->getLeaf().u._c);
+				pASM->append_IPUSH_B(pExpr->getLeafScalar().u._c);
 				return VarType::buildFromStr("byte");
 			} else if (demand == "char") {
-				pASM->append_IPUSH_B(pExpr->getLeaf().u._c);
+				pASM->append_IPUSH_B(pExpr->getLeafScalar().u._c);
 				return VarType::buildFromStr("char");
 			} else if (demand == "short") {
-				pASM->append_IPUSH_W(pExpr->getLeaf().u._s);
+				pASM->append_IPUSH_W(pExpr->getLeafScalar().u._s);
 				return VarType::buildFromStr("short");
-			} else {
-				pASM->append_IPUSH_DW(pExpr->getLeaf().u._d);
-				TYPE_PRODUCT2DEMAND("int");
+			} else if (demand == "int") {
+				pASM->append_IPUSH_DW(pExpr->getLeafScalar().u._d);
 				return VarType::buildFromStr("int");
+			} else {
+                pASM->append_IPUSH_DW(pExpr->getLeafScalar().u._d);
+                TYPE_PRODUCT2DEMAND("int");
+                return VarType::buildFromStr("int");
 			}*/
-			pASM->append_IPUSH_DW(pExpr->getLeafScalar().u._d);
-			TYPE_PRODUCT2DEMAND("int");
-			return VarType::buildFromStr("int");
+            pASM->append_IPUSH_DW(pExpr->getLeafScalar().u._d);
+            if (demand == "byte") {
+                gen4ITC<_CHK>("int", "byte");
+                return VarType::buildFromStr("byte");
+            } else if (demand == "char") {
+                gen4ITC<_CHK>("int", "char");
+                return VarType::buildFromStr("char");
+            } else if (demand == "short") {
+                gen4ITC<_CHK>("int", "short");
+                return VarType::buildFromStr("short");
+            } else if (demand == "int") {
+                return VarType::buildFromStr("int");
+            } else {
+                TYPE_PRODUCT2DEMAND("int");
+                return VarType::buildFromStr("int");
+            }
 
 		case ExprOp::LEAF_LONG_LITERAL:
 			pASM->append_IPUSH_QW(pExpr->getLeafScalar().u._l);
