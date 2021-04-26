@@ -1821,6 +1821,38 @@ private:
             }
             return pStmt;
             
+        } else if (it->isKwAsm()) { // 解析内联汇编
+            AST_REC_LOCATION1
+            ++it;
+            std::stringstream ss;
+            if (it->isPunc<'{'>()) {
+                ++it;
+                
+                while (1) {
+                    if (it->isPunc<'}'>()) {
+                        ++it; // 正确闭合
+                        return IStmt::newInlineASM(ss.str());
+        
+                    } else if (it->getType() == TokenType::TOKEN_LITERAL_STRING) {
+                        ss << it->getVal()._str << std::endl;
+                        ++it;
+        
+                    } else if (it->isEnd()) {
+                        AST_E(E_UNEXPECTED_EOF);
+        
+                    } else {
+                        AST_E(E_ILLEGAL_TOKEN);
+                    }
+                }
+                
+            } else if (it->isEnd()) {
+                AST_E(E_UNEXPECTED_EOF);
+    
+            } else {
+                AST_E(E_ILLEGAL_TOKEN);
+            }
+            
+            
         } else {
             StmtPtr pStmt = buildDefOrPureExprStmt(it);
             if (it->isPunc<';'>()) {

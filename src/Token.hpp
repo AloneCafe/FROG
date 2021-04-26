@@ -121,6 +121,7 @@ public:
     inline bool isKwFalse() const { return _type == TOKEN_KW_FALSE; }
     inline bool isKwSuper() const { return _type == TOKEN_KW_SUPER; }
     inline bool isKwThis() const { return _type == TOKEN_KW_THIS; }
+    inline bool isKwAsm() const { return _type == TOKEN_KW_ASM; }
     inline bool isKwVoid() const { return _type == TOKEN_KW_VOID; }
     inline bool isKwGoto() const { return _type == TOKEN_RW_GOTO; }
     inline bool isKwConst() const { return _type == TOKEN_RW_CONST; }
@@ -130,7 +131,7 @@ public:
     const std::string & getId() const;
     long lineno() const;
     long colno() const;
-    std::string toString() const;
+    std::string toDebugString() const;
 };
 
 using TokenIter = typename std::vector<Token>::const_iterator;

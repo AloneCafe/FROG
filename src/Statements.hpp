@@ -23,6 +23,7 @@ enum class StmtType : int {
     Continue,
     Return,
     Stmts,
+    InlineASM,
     Empty
 };
 
@@ -93,6 +94,7 @@ struct IStmt {
     static StmtPtr newReturnStmt(const ExprPtr & pRetExpr, const ExprPtr & pDummyPtr);
     static StmtPtr newReturnStmt(const ExprPtr & pDummyPtr);
     static StmtsPtr newStmts(const std::vector<StmtPtr> & stmts);
+    static StmtPtr newInlineASM(const std::string & asmcodes);
     static StmtPtr newEmptyStmt();
 };
 
@@ -109,6 +111,22 @@ public:
 
     ONLY_STMT_FACTORY(Stmts)(const std::vector<StmtPtr> stmts) {
         _stmts = stmts;
+    }
+};
+
+struct InlineASM : public IStmt {
+    //ScopeType _scopeType = ScopeType::ScopeNormal; // 作用域类型
+    std::string _asmcodes;
+
+public:
+    StmtType getStmtType() const override {
+        return StmtType::InlineASM;
+    }
+    
+    const auto & getASMCodes() const { return _asmcodes; }
+
+    ONLY_STMT_FACTORY(InlineASM)(const std::string & asmcodes) {
+        _asmcodes = asmcodes;
     }
 };
 

@@ -68,3 +68,8 @@ StmtPtr IStmt::newEmptyStmt() {
     StmtPtr pStmt(new EmptyStmt());
     return pStmt;
 }
+
+StmtPtr IStmt::newInlineASM(const std::string & asmcodes) {
+    StmtPtr pStmt(new InlineASM(asmcodes));
+    return pStmt;
+}

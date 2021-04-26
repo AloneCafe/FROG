@@ -122,6 +122,7 @@ const char * TokenType2String[] = {
           "KW(false)",
           "KW(super)",
           "KW(this)",
+          "KW(asm)",
           "KW(void)",
           "RW(goto)",
           "RW(const)",
@@ -172,6 +173,7 @@ const std::map<std::string, TokenType> Keyword2TokenType = {
         std::make_pair("false", TOKEN_KW_FALSE),
         std::make_pair("super", TOKEN_KW_SUPER),
         std::make_pair("this", TOKEN_KW_THIS),
+        std::make_pair("asm", TOKEN_KW_ASM),
         std::make_pair("void", TOKEN_KW_VOID),
         std::make_pair("goto", TOKEN_RW_GOTO),
         std::make_pair("const", TOKEN_RW_CONST)};
@@ -186,7 +188,7 @@ long Token::lineno() const { return this->_begin_lines; }
 
 long Token::colno() const { return this->_begin_cols; }
 
-std::string Token::toString() const {
+std::string Token::toDebugString() const {
     switch (_type) {
     default:
         return StringOperator::format(R"([<'%s'>, %ld, %ld])",

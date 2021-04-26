@@ -53,28 +53,28 @@ public: /* 指令参数皆是从右往左压栈 */
         _context << LABEL_PREFIX << label << LABEL_SUFFIX << std::endl;
     }
     
-    void append_MKLIST_N_QW(int degree) {
-        _context << TAB << "MKLIST " << degree << " QW" << STMT_SUFFIX << std::endl;
+    void append_MKVEC_N_QW(int degree) {
+        _context << TAB << "MKVEC" << SPACE << degree << SPACE << "QW" << STMT_SUFFIX << std::endl;
     }
     
-    void append_MKLIST_N_DW(int degree) {
-        _context << TAB << "MKLIST " << degree << " DW" << STMT_SUFFIX << std::endl;
+    void append_MKVEC_N_DW(int degree) {
+        _context << TAB << "MKVEC" << SPACE << degree << SPACE << "DW" << STMT_SUFFIX << std::endl;
     }
     
-    void append_MKLIST_N_W(int degree) {
-        _context << TAB << "MKLIST " << degree << " W" << STMT_SUFFIX << std::endl;
+    void append_MKVEC_N_W(int degree) {
+        _context << TAB << "MKVEC" << SPACE << degree << SPACE << "W" << STMT_SUFFIX << std::endl;
     }
     
-    void append_MKLIST_N_B(int degree) {
-        _context << TAB << "MKLIST " << degree << " B" << STMT_SUFFIX << std::endl;
+    void append_MKVEC_N_B(int degree) {
+        _context << TAB << "MKVEC" << SPACE << degree << SPACE << "B" << STMT_SUFFIX << std::endl;
     }
     
-    void append_MKLIST_N_FLT(int degree) {
-        _context << TAB << "MKLIST " << degree << " FLT" << STMT_SUFFIX << std::endl;
+    void append_MKVEC_N_FLT(int degree) {
+        _context << TAB << "MKVEC" << SPACE << degree << SPACE << "FLT" << STMT_SUFFIX << std::endl;
     }
     
-    void append_MKLIST_N_DBL(int degree) {
-        _context << TAB << "MKLIST " << degree << " DBL" << STMT_SUFFIX << std::endl;
+    void append_MKVEC_N_DBL(int degree) {
+        _context << TAB << "MKVEC" << SPACE << degree << SPACE << "DBL" << STMT_SUFFIX << std::endl;
     }
     
     /* 立即数传送 */
@@ -599,9 +599,7 @@ public: /* 指令参数皆是从右往左压栈 */
     void append_HALT() {
         _context << TAB << "HALT" << STMT_SUFFIX << std::endl;
     }
-    void append_BREAK() {
-        _context << TAB << "BREAK" << STMT_SUFFIX << std::endl;
-    }
+    
     // localCodeAddr 汇编前是标号 label
     void append_J(/* int32_t localCodeAddr */ const std::string & label) {
         _context << TAB << "J" << SPACE << LABEL_PREFIX << label << STMT_SUFFIX << std::endl;
@@ -644,25 +642,6 @@ public: /* 指令参数皆是从右往左压栈 */
     void append_NOP() {
         _context << TAB << "NOP" << STMT_SUFFIX << std::endl;
     }
-    
-    /* TODO 尚未实现
-    void append_INVOKE_CALL() {
-
-    }
-
-    void append_INVOKE_VAR() {
-
-    }
-
-    void append_LASTERR() {
-
-    }
-    */
-    
-    void eraseLast() {
-        std::string s;
-    }
-    
 };
 
 class AdvancedAsmMaker : public AsmMaker {

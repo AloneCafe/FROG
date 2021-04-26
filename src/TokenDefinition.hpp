@@ -144,6 +144,7 @@ enum TokenType {
     TOKEN_KW_FALSE,
     TOKEN_KW_SUPER,
     TOKEN_KW_THIS,
+    TOKEN_KW_ASM,
     TOKEN_KW_VOID,
     TOKEN_RW_GOTO,
     TOKEN_RW_CONST

@@ -1400,7 +1400,7 @@ private:
                                 pLeftExpr->lineno(), pLeftExpr->colno()));
                 
                 if (std::get<0>(tuple))
-                    pASM->append_TOP_VAR(std::get<1>(tuple).toString().c_str());
+                    pASM->append_TOP_VAR(std::get<1>(tuple).toDebugString().c_str());
                 else
                     SEM_E(E_ID_UNDEFINED, pLeftExpr);
                 */
@@ -1668,17 +1668,17 @@ private:
 		} else if ((degree = varType.getDegree()) > 0) {
             _asmk.append_DEF_VAR_DW(realNameStr);
             if (lowLvType == "long") {
-                _asmk.append_MKLIST_N_QW(degree);
+                _asmk.append_MKVEC_N_QW(degree);
             } else if (lowLvType == "int") {
-                _asmk.append_MKLIST_N_DW(degree);
+                _asmk.append_MKVEC_N_DW(degree);
             } else if (lowLvType == "short") {
-                _asmk.append_MKLIST_N_W(degree);
+                _asmk.append_MKVEC_N_W(degree);
             } else if (lowLvType == "byte" || lowLvType == "boolean" || lowLvType == "char") {
-                _asmk.append_MKLIST_N_B(degree);
+                _asmk.append_MKVEC_N_B(degree);
             } else if (lowLvType == "float") {
-                _asmk.append_MKLIST_N_FLT(degree);
+                _asmk.append_MKVEC_N_FLT(degree);
             } else if (lowLvType == "double") {
-                _asmk.append_MKLIST_N_DBL(degree);
+                _asmk.append_MKVEC_N_DBL(degree);
             } else {
                 assert(0);
             } // 执行创建 list 的命令
@@ -2361,6 +2361,12 @@ private:
 				gen4Stmts(fun, pNativeStmts->_stmts);
 				_saBinder.clearScope();
 				break;
+			}
+			
+			case StmtType::InlineASM: {
+                InlineASM * pNativeInlineASM =
+                        static_cast<InlineASM *>(pStmt.get());
+                _asmk.getContextRef() << pNativeInlineASM->_asmcodes;
 			}
 
 			case StmtType::Empty: {

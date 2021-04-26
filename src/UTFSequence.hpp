@@ -61,7 +61,7 @@ public:
     UtfString operator+(const UtfString & utfStr) const;
     bool operator==(const UtfString & utfStr);
     bool operator!=(const UtfString & utfStr);
-    //operator std::string() { return toString(); }
+    //operator std::string() { return toDebugString(); }
 };
 
 class LocatedUtfString : public UtfString {

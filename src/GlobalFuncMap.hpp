@@ -44,7 +44,7 @@ public:
 	    ss << fname << "__";
 	    for (const FormalArg & farg : fargs) {
 	        ss << farg.getType().toString() /*<< "_"
-	           << farg.getName().toString() */<< "__";
+	           << farg.getName().toDebugString() */<< "__";
 	    }
 	    return ss.str();
 	}
