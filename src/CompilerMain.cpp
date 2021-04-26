@@ -18,6 +18,7 @@ void printUsage(const std::string & path) {
     std::cout << "- USAGE: " << path << " [OPTIONS]" << std::endl;
     std::cout << "- OPTIONS: " << std::endl;
     std::cout << "    infile1 infile2 ... infileN : 编译源文件列表" << std::endl;
+    std::cout << "    (-e | --extra) extralib     : 指定与源程序一同编译的扩展库" << std::endl;
     std::cout << "    (-o | --output) outfile     : 生成汇编文件" << std::endl;
     std::cout << "    (-I | --stdin)              : 从标准输入读取源代码" << std::endl;
     std::cout << "    (-O | --stdout)             : 将结果打印至标准输出" << std::endl;
@@ -38,6 +39,7 @@ int main(int argc, const char * argv[]) {
     enum {
         NEED_INPUT_OR_OPTION,
         NEED_OUTPUT,
+        NEED_EXTRA_LIB,
     } stat = NEED_INPUT_OR_OPTION;
     
     
@@ -45,6 +47,7 @@ int main(int argc, const char * argv[]) {
         
         bool flagStdin = false;
         std::vector<std::string> inFileNames;
+        std::vector<std::string> extraFileNames;
         bool flagStdout = false;
         std::string outFileName;
         
@@ -59,11 +62,25 @@ int main(int argc, const char * argv[]) {
                     if (!flagStdout)
                         outFileName = s;
                     stat = NEED_INPUT_OR_OPTION;
+                    
+                } else if (stat == NEED_EXTRA_LIB) {
+                    std::string extraFileName = "extra/"; extraFileName += s; extraFileName += ".frog";
+                    bool result = FileSystem::fileExist(extraFileName);
+                    if (!result) {
+                        std::cerr << "~ 扩展库 "  << s  << " 不存在" << std::endl;
+                        return 1;
+                    }
+                    extraFileNames.push_back(extraFileName);
                 }
+                
+                
             } else if (stat != NEED_OUTPUT) {
                 if (s == "-o" || s == "--output") {
                     stat = NEED_OUTPUT;
             
+                } else if (s == "-e" || s == "--extra") {
+                    stat = NEED_EXTRA_LIB;
+    
                 } else if (s == "-I" || s == "--stdin") {
                     flagStdin = true;
                     if (!inFileNames.empty()) {
@@ -96,7 +113,7 @@ int main(int argc, const char * argv[]) {
                 std::cerr << "~ 输入文件列表为空" << std::endl;
                 return 1;
             }
-            UniParser up(inFileNames);
+            UniParser up(inFileNames, extraFileNames);
             outputContext = std::move(up.parse());
         }
         

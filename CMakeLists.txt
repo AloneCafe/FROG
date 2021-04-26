@@ -94,3 +94,5 @@ set(SRCS_FROG_ASSEMBLER
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
+
+file(COPY extra/SimpleIO.frog DESTINATION ${CMAKE_BINARY_DIR}/extra)
