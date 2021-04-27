@@ -26,7 +26,7 @@ public:
             bytecodes.push_back(bytesStatic[i]);
         for (size_t i = 0; i < bch._sizeFuncs; ++i)
             bytecodes.push_back(bytesFuncs[i]);
-        return bytecodes;
+        return std::move(bytecodes);
     }
 };
 
@@ -60,7 +60,7 @@ public:
         for (size_t i = 0; i < sizeBytes; ++i) {
             char h[2];
             b2hex(bytes[i], h);
-            std::cout << h << ((i + 1) % 8 == 0 ? " " : "\n");
+            std::cout << h << ((i > 7 && (i + 1) % 8 == 0) ? " " : "\n");
         }
     }
 };

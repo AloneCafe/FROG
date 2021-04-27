@@ -11,6 +11,15 @@ private:
     std::vector<char> _bytesStatic;
 
 public:
+    const std::vector<char> & getBytesFuncs() const {
+        return _bytesFuncs;
+    }
+    
+    const std::vector<char> & getBytesStatic() const {
+        return _bytesStatic;
+    }
+
+public:
     UniAsmParser(const std::vector<std::string> & filenames)
             : _filenames(filenames) { }
     UniAsmParser() = default;
@@ -24,12 +33,10 @@ public:
                 if (!result)
                     return false;
                 
-                for (auto b : ap.getBytesFuncs()) {
+                for (auto b : ap.getBytesFuncs())
                     _bytesFuncs.push_back(b);
-                }
-                for (auto b : ap.getBytesStatic()) {
+                for (auto b : ap.getBytesStatic())
                     _bytesStatic.push_back(b);
-                }
             }
             
         } else {
@@ -38,12 +45,10 @@ public:
             if (!result)
                 return false;
             
-            for (auto b : ap.getBytesFuncs()) {
+            for (auto b : ap.getBytesFuncs())
                 _bytesFuncs.push_back(b);
-            }
-            for (auto b : ap.getBytesStatic()) {
+            for (auto b : ap.getBytesStatic())
                 _bytesStatic.push_back(b);
-            }
         }
         
         return true;

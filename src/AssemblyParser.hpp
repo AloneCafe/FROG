@@ -90,7 +90,7 @@ private:
     UniTokenizer _ut;
     
     void raiseFatalErrAt(const Token & tk, const std::string & msg) {
-        std::cerr << "~ 汇编文件 " << _filename << " (第 " << tk.lineno() << " 行, 第 " << tk.colno() << " 列), " << msg << std::endl;
+        std::cerr << "~ 汇编文件 " << _filename << " (第 " << tk.lineno() + 1 << " 行, 第 " << tk.colno() << " 列), " << msg << std::endl;
     }
     
 public:
@@ -130,7 +130,7 @@ public:
                             ++i;
     
                             if (tks[i].isPunc<';'>()) {
-                                ++i;
+                                //++i;
                                 stat = BUILDING_FUNC;
         
                             } else if (tks[i].isEnd()) {
@@ -155,7 +155,7 @@ public:
                     ++i;
                     if (stat == INITIAL) {
                         if (tks[i].isPunc<';'>()) {
-                            ++i;
+                            //++i;
                             stat = BUILDING_STATIC;
         
                         } else if (tks[i].isEnd()) {
@@ -175,7 +175,7 @@ public:
                         ASMBR_E("非法的结束标记");
                     
                     if (tks[i].isPunc<';'>()) {
-                        ++i;
+                        //++i;
                         stat = INITIAL;
                         _uvatFuncs.reset(); // reset function variable allocation
                         
@@ -1007,7 +1007,6 @@ public:
                     } else {
                         ASMBR_E("非法的 DEF 变量名");
                     }
-                    ++i;
                     
                 } else if (tks[i].isId("PUSH", false)) {
                     ++i;
@@ -1046,7 +1045,6 @@ public:
                     } else {
                         ASMBR_E("非法的 DEF 变量名");
                     }
-                    ++i;
     
                 } else if (tks[i].isId("POP", false)) {
                     ++i;
@@ -1085,7 +1083,6 @@ public:
                     } else {
                         ASMBR_E("非法的 DEF 变量名");
                     }
-                    ++i;
     
                 } else if (tks[i].isId("TOP", false)) {
                     ++i;
@@ -1124,7 +1121,6 @@ public:
                     } else {
                         ASMBR_E("非法的 DEF 变量名");
                     }
-                    ++i;
     
                 } else if (tks[i].isId("J", false)) {
                     ++i;
@@ -1146,6 +1142,7 @@ public:
                     } else {
                         ASMBR_E("非法的标签标记");
                     }
+                    
                 } else if (tks[i].isId("JT", false)) {
                     ++i;
                     if (tks[i].isPunc<'#'>()) {
@@ -1166,6 +1163,7 @@ public:
                     } else {
                         ASMBR_E("非法的标签标记");
                     }
+                    
                 } else if (tks[i].isId("JF", false)) {
                     ++i;
                     if (tks[i].isPunc<'#'>()) {
@@ -1186,10 +1184,10 @@ public:
                     } else {
                         ASMBR_E("非法的标签标记");
                     }
+                    
                 }
     
                 if (tks[i].isPunc<';'>()) {
-                    ++i;
         
                 } else if (tks[i].isEnd()) {
                     ASMBR_E("意外的文件结尾");

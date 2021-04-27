@@ -80,12 +80,12 @@ int main(int argc, const char * argv[]) {
                 return 1;
             }
         }
-        
-        std::string outputContext;
+    
+        std::vector<char> outputByteCode;
         if (flagStdin) {
             UniAsmParser up;
-            //outputContext = std::move(up.parse());
-            // TODO 需确定字节码文件格式
+            if (up.parse())
+                outputByteCode = std::move(ByteCodeGenerator::make(up.getBytesStatic(), up.getBytesFuncs()));
             
         } else {
             if (inFileNames.empty()) {
@@ -93,19 +93,20 @@ int main(int argc, const char * argv[]) {
                 return 1;
             }
             UniAsmParser up(inFileNames);
-            //outputContext = std::move(up.parse());
-            // TODO 需确定字节码文件格式
+            if (up.parse())
+                outputByteCode = std::move(ByteCodeGenerator::make(up.getBytesStatic(), up.getBytesFuncs()));
         }
         
         if (flagStdout) {
-            std::cout << outputContext << std::endl;
+            ByteCodeHexPrinter::print(outputByteCode);
         } else {
             if (outFileName.empty()) {
                 std::cerr << "~ 未指定输出文件" << std::endl;
                 return 1;
             }
             std::ofstream ofs(outFileName, std::ios::out);
-            ofs << outputContext;
+            for (const char & b : outputByteCode)
+                ofs << b;
         }
         
     } else {
