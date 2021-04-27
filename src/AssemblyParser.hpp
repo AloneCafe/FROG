@@ -48,28 +48,42 @@ public:
 
 class UniVarAllocTable {
 private:
-    size_t currOffset = 0;
-    std::unordered_map<std::string, size_t> _map;
+    int _currStaticOffset = 0; // 负增长, 负方向存放
+    int _currFuncsOffset = 0;  // 正增长, 正方向存放
+    std::unordered_map<std::string, std::pair<bool, int>> _map;
 
 public:
-    std::pair<bool, size_t> getOffset(const std::string & varName) const {
+    std::pair<bool, std::pair<bool, int>> getOffset(const std::string & varName) const {
         auto it = _map.cbegin();
         if ((it = _map.find(varName)) != _map.cend()) {
             return std::make_pair(true, it->second);
         }
-        return std::make_pair(false, 0);
+        return std::make_pair(false, std::make_pair(0, 0));
     }
     
-    bool setOffset(const std::string & varName, size_t varSiz) {
-        auto it = _map.insert(std::make_pair(varName, currOffset));
-        if (it.second)
-            currOffset += varSiz;
-        return it.second;
+    bool setOffset(const std::string & varName, size_t varSiz, bool isStatic) {
+        if (isStatic) {
+            auto it = _map.insert(std::make_pair(varName, std::make_pair(isStatic, _currStaticOffset)));
+            if (it.second)
+                _currStaticOffset -= varSiz;
+            return it.second;
+        } else {
+            auto it = _map.insert(std::make_pair(varName, std::make_pair(isStatic, _currFuncsOffset)));
+            if (it.second)
+                _currFuncsOffset += varSiz;
+            return it.second;
+        }
+        
+        
     }
     
-    void reset() {
-        currOffset = 0;
-        _map.clear();
+    void resetNonStatic() {
+        _currFuncsOffset = 0;
+        for (auto it = _map.cbegin(); it != _map.cend(); ++it) {
+            if (!it->second.first) {
+                _map.erase(it);
+            }
+        }
     }
 };
 
@@ -80,12 +94,11 @@ private:
     std::vector<char> _bytesStatic;
     AddrLocateTable _altStatic;
     AddrRelocateTable _artStatic;
-    UniVarAllocTable _uvatStatic;
     
     std::vector<char> _bytesFuncs;
     AddrLocateTable _altFuncs;
     AddrRelocateTable _artFuncs;
-    UniVarAllocTable _uvatFuncs;
+    UniVarAllocTable _uvat;
     
     UniTokenizer _ut;
     
@@ -177,7 +190,7 @@ public:
                     if (tks[i].isPunc<';'>()) {
                         //++i;
                         stat = INITIAL;
-                        _uvatFuncs.reset(); // reset function variable allocation
+                        _uvat.resetNonStatic(); // reset function variable allocation
                         
                     } else if (tks[i].isEnd()) {
                         ASMBR_E("意外的文件结尾");
@@ -199,17 +212,20 @@ public:
                 AddrLocateTable * pALT;
                 AddrRelocateTable * pART;
                 UniVarAllocTable *pUVAT;
+                bool isStatic;
                 
                 if (stat == BUILDING_FUNC) {
                     pBytes = &_bytesFuncs;
                     pALT = &_altFuncs;
                     pART = &_artFuncs;
-                    pUVAT = &_uvatFuncs;
+                    pUVAT = &_uvat;
+                    isStatic = false;
                 } else if (stat == BUILDING_STATIC) {
                     pBytes = &_bytesStatic;
                     pALT = &_altStatic;
                     pART = &_artStatic;
-                    pUVAT = &_uvatStatic;
+                    pUVAT = &_uvat;
+                    isStatic = true;
                 } else {
                     ASMBR_E("非法的语法元素");
                 }
@@ -992,12 +1008,12 @@ public:
                     pBytes->push_back(gh);
     
                     if (tks[i].isId()) {
-                        if (!pUVAT->setOffset(tks[i].getId(), siz)) {
+                        if (!pUVAT->setOffset(tks[i].getId(), siz, isStatic)) {
                             ASMBR_E("DEF 指令对该标识符重定义");
                         }
                         auto pair = pUVAT->getOffset(tks[i].getId());
                         assert(pair.first);
-                        size_t offset = pair.second;
+                        size_t offset = pair.second.second;
                         pBytes->push_back(((char *)&offset)[0]);
                         pBytes->push_back(((char *)&offset)[1]);
                         pBytes->push_back(((char *)&offset)[2]);
@@ -1035,7 +1051,7 @@ public:
                         if (!pair.first) {
                             ASMBR_E("该变量未用 DEF 指令定义");
                         }
-                        size_t offset = pair.second;
+                        size_t offset = pair.second.second;
                         pBytes->push_back(((char *)&offset)[0]);
                         pBytes->push_back(((char *)&offset)[1]);
                         pBytes->push_back(((char *)&offset)[2]);
@@ -1073,7 +1089,7 @@ public:
                         if (!pair.first) {
                             ASMBR_E("该变量未用 DEF 指令定义");
                         }
-                        size_t offset = pair.second;
+                        size_t offset = pair.second.second;
                         pBytes->push_back(((char *)&offset)[0]);
                         pBytes->push_back(((char *)&offset)[1]);
                         pBytes->push_back(((char *)&offset)[2]);
@@ -1111,7 +1127,7 @@ public:
                         if (!pair.first) {
                             ASMBR_E("该变量未用 DEF 指令定义");
                         }
-                        size_t offset = pair.second;
+                        size_t offset = pair.second.second;
                         pBytes->push_back(((char *)&offset)[0]);
                         pBytes->push_back(((char *)&offset)[1]);
                         pBytes->push_back(((char *)&offset)[2]);
