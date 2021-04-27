@@ -1,6 +1,7 @@
 #ifndef __TOKEN_HEADER__
 #define __TOKEN_HEADER__
 
+#include <algorithm>
 #include "TokenDefinition.hpp"
 
 class Token; // 前置声明，积累在这里
@@ -58,8 +59,19 @@ public:
         return _type == TOKEN_ID;
     }
     
-    inline bool isId(const char * s) const {
-        return _type == TOKEN_ID && (_val._str == s);
+    inline bool isId(const char * s, bool caseSensitive = true) const {
+        if (caseSensitive)
+            return _type == TOKEN_ID && (_val._str == s);
+        else {
+            if (_type != TOKEN_ID) return false;
+            if (_val._str.length() != strlen(s)) return false;
+            for (size_t i = 0; i < _val._str.length(); ++i) {
+                if (toupper(s[i]) != toupper(_val._str[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
     
     inline bool isId(const std::string & s) const {

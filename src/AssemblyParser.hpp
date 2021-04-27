@@ -110,7 +110,7 @@ public:
         for (size_t i = 0; i < sizTks; ++i) {
             if (tks[i].isPunc<'.'>()) {
                 ++i;
-                if (tks[i].isId("FUNC") || tks[i].isId("func")) {
+                if (tks[i].isId("FUNC", false)) {
                     ++i;
                     if (stat == INITIAL) {
                         if (tks[i].isId()) {
@@ -140,7 +140,7 @@ public:
                         ASMBR_E("非法的区块嵌套");
                     }
                 
-                } else if (tks[i].isId("STATIC") || tks[i].isId("static")) {
+                } else if (tks[i].isId("STATIC", false)) {
                     ++i;
                     if (stat == INITIAL) {
                         if (tks[i].isPunc<';'>()) {
@@ -158,7 +158,7 @@ public:
                         ASMBR_E("非法的区块嵌套");
                     }
                     
-                } else if (tks[i].isId("END") || tks[i].isId("end")) {
+                } else if (tks[i].isId("END", false)) {
                     ++i;
                     if (stat != BUILDING_STATIC && stat != BUILDING_FUNC)
                         ASMBR_E("非法的结束标记");
@@ -202,16 +202,16 @@ public:
                 }
                 
                 unsigned char gh = 0;
-                const std::string & s0 = tks[i].getId();
-                if (s0 == "NOP") {
+                //const std::string & s0 = tks[i].getId();
+                if (tks[i].isId("NOP", false)) {
                     ++i;
                     pBytes->push_back(0x00);
                     
-                } else if (s0 == "HALT") {
+                } else if (tks[i].isId("HALT", false)) {
                     ++i;
                     pBytes->push_back(0x01);
                     
-                } else if (s0 == "EFCALL") {
+                } else if (tks[i].isId("EFCALL", false)) {
                     ++i;
                     if (tks[i].getType() == TokenType::TOKEN_LITERAL_STRING) {
                         pBytes->push_back(0x02);
@@ -225,7 +225,7 @@ public:
                     }
                     
                     
-                } else if (s0 == "CALL") {
+                } else if (tks[i].isId("CALL", false)) {
                     ++i;
                     if (tks[i].isId()) {
                         pBytes->push_back(0x03);
@@ -240,23 +240,23 @@ public:
                         ASMBR_E("非法的 EFCALL 参数");
                     }
                 
-                } else if (s0 == "NRET") {
+                } else if (tks[i].isId("NRET", false)) {
                     ++i;
                     pBytes->push_back(0x04);
                 
-                } else if (s0 == "RET") {
+                } else if (tks[i].isId("RET", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -265,40 +265,40 @@ public:
     
                     pBytes->push_back(0x05);
                 
-                } else if (s0 == "RSZ") {
+                } else if (tks[i].isId("RSZ", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
-                    } else if (tks[i].isId("VOID")) {
+                    } else if (tks[i].isId("VOID", false)) {
                         gh = 0B00000000;
                     } else {
                         ASMBR_E("非法的粒度");
                     }
                     ++i;
                     
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh |= 0B00000001;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh |= 0B00000010;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh |= 0B00000100;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh |= 0B00001000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh |= 0B00001011;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh |= 0B00001111;
-                    } else if (tks[i].isId("VOID")) {
+                    } else if (tks[i].isId("VOID", false)) {
                         gh |= 0B00000000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -308,19 +308,19 @@ public:
                     pBytes->push_back(0x06);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "BAND") {
+                } else if (tks[i].isId("BAND", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -330,19 +330,19 @@ public:
                     pBytes->push_back(0x08);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "BOR") {
+                } else if (tks[i].isId("BOR", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -352,19 +352,19 @@ public:
                     pBytes->push_back(0x09);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "BXOR") {
+                } else if (tks[i].isId("BXOR", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -374,19 +374,19 @@ public:
                     pBytes->push_back(0x0A);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "BNOT") {
+                } else if (tks[i].isId("BNOT", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -396,19 +396,19 @@ public:
                     pBytes->push_back(0x0B);
                     pBytes->push_back(gh);
                     
-                } else if (s0 == "SHL") {
+                } else if (tks[i].isId("SHL", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -418,19 +418,19 @@ public:
                     pBytes->push_back(0x0C);
                     pBytes->push_back(gh);
                     
-                } else if (s0 == "SHR") {
+                } else if (tks[i].isId("SHR", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -440,19 +440,19 @@ public:
                     pBytes->push_back(0x0D);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "SHRZ") {
+                } else if (tks[i].isId("SHRZ", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -462,19 +462,19 @@ public:
                     pBytes->push_back(0x0E);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "LT") {
+                } else if (tks[i].isId("LT", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -484,19 +484,19 @@ public:
                     pBytes->push_back(0x10);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "LE") {
+                } else if (tks[i].isId("LE", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -506,19 +506,19 @@ public:
                     pBytes->push_back(0x11);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "EQ") {
+                } else if (tks[i].isId("EQ", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -528,19 +528,19 @@ public:
                     pBytes->push_back(0x12);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "NE") {
+                } else if (tks[i].isId("NE", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -550,19 +550,19 @@ public:
                     pBytes->push_back(0x13);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "GE") {
+                } else if (tks[i].isId("GE", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -572,19 +572,19 @@ public:
                     pBytes->push_back(0x14);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "GT") {
+                } else if (tks[i].isId("GT", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -594,31 +594,31 @@ public:
                     pBytes->push_back(0x15);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "LNOT") {
+                } else if (tks[i].isId("LNOT", false)) {
                     ++i;
                     pBytes->push_back(0x18);
     
-                } else if (s0 == "LOR") {
+                } else if (tks[i].isId("LOR", false)) {
                     ++i;
                     pBytes->push_back(0x19);
     
-                } else if (s0 == "LAND") {
+                } else if (tks[i].isId("LAND", false)) {
                     ++i;
                     pBytes->push_back(0x1A);
     
-                } else if (s0 == "ADD") {
+                } else if (tks[i].isId("ADD", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -628,19 +628,19 @@ public:
                     pBytes->push_back(0x20);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "SUB") {
+                } else if (tks[i].isId("SUB", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -650,19 +650,19 @@ public:
                     pBytes->push_back(0x21);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "MUL") {
+                } else if (tks[i].isId("MUL", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -672,19 +672,19 @@ public:
                     pBytes->push_back(0x22);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "DIV") {
+                } else if (tks[i].isId("DIV", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -694,19 +694,19 @@ public:
                     pBytes->push_back(0x23);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "MOD") {
+                } else if (tks[i].isId("MOD", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -716,19 +716,19 @@ public:
                     pBytes->push_back(0x24);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "NEG") {
+                } else if (tks[i].isId("NEG", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -738,23 +738,23 @@ public:
                     pBytes->push_back(0x25);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "OFFSET") {
+                } else if (tks[i].isId("OFFSET", false)) {
                     ++i;
                     pBytes->push_back(0x30);
     
-                } else if (s0 == "HPUSH") {
+                } else if (tks[i].isId("HPUSH", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -764,19 +764,19 @@ public:
                     pBytes->push_back(0x31);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "HPOP") {
+                } else if (tks[i].isId("HPOP", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -786,11 +786,11 @@ public:
                     pBytes->push_back(0x32);
                     pBytes->push_back(gh);
     
-                } else if (s0 == "LEN") {
+                } else if (tks[i].isId("LEN", false)) {
                     ++i;
                     pBytes->push_back(0x33);
     
-                } else if (s0 == "MKVEC") {
+                } else if (tks[i].isId("MKVEC", false)) {
                     ++i;
                     
                     if (tks[i].getType() == TOKEN_LITERAL_INT) {
@@ -805,17 +805,17 @@ public:
                     }
                     ++i;
                     
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh |= 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh |= 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh |= 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh |= 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh |= 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh |= 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -825,9 +825,9 @@ public:
                     pBytes->push_back(0x34);
                     pBytes->push_back(gh);
                     
-                } else if (s0 == "IPUSH") {
+                } else if (tks[i].isId("IPUSH", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
                         pBytes->push_back(0x40);
                         pBytes->push_back(gh);
@@ -840,7 +840,7 @@ public:
                             ASMBR_E("非法的字面量");
                         }
                         
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
                         pBytes->push_back(0x40);
                         pBytes->push_back(gh);
@@ -854,7 +854,7 @@ public:
                             ASMBR_E("非法的字面量");
                         }
                         
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
                         pBytes->push_back(0x40);
                         pBytes->push_back(gh);
@@ -870,7 +870,7 @@ public:
                             ASMBR_E("非法的字面量");
                         }
                         
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
                         pBytes->push_back(0x40);
                         pBytes->push_back(gh);
@@ -890,7 +890,7 @@ public:
                             ASMBR_E("非法的字面量");
                         }
                         
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
                         pBytes->push_back(0x40);
                         pBytes->push_back(gh);
@@ -915,7 +915,7 @@ public:
                         pBytes->push_back(((char *)&f)[2]);
                         pBytes->push_back(((char *)&f)[3]);
                         
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                         pBytes->push_back(0x40);
                         pBytes->push_back(gh);
@@ -949,25 +949,25 @@ public:
                     }
                     ++i;
                     
-                } else if (s0 == "DEF") {
+                } else if (tks[i].isId("DEF", false)) {
                     ++i;
                     int siz = 0;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
                         siz = 1;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
                         siz = 2;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
                         siz = 4;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
                         siz = 8;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
                         siz = 4;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                         siz = 8;
                     } else {
@@ -996,19 +996,19 @@ public:
                     }
                     ++i;
                     
-                } else if (s0 == "PUSH") {
+                } else if (tks[i].isId("PUSH", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -1035,19 +1035,19 @@ public:
                     }
                     ++i;
     
-                } else if (s0 == "POP") {
+                } else if (tks[i].isId("POP", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -1074,19 +1074,19 @@ public:
                     }
                     ++i;
     
-                } else if (s0 == "TOP") {
+                } else if (tks[i].isId("TOP", false)) {
                     ++i;
-                    if (tks[i].isId("B")) {
+                    if (tks[i].isId("B", false)) {
                         gh = 0B00010000;
-                    } else if (tks[i].isId("W")) {
+                    } else if (tks[i].isId("W", false)) {
                         gh = 0B00100000;
-                    } else if (tks[i].isId("DW")) {
+                    } else if (tks[i].isId("DW", false)) {
                         gh = 0B01000000;
-                    } else if (tks[i].isId("QW")) {
+                    } else if (tks[i].isId("QW", false)) {
                         gh = 0B10000000;
-                    } else if (tks[i].isId("FLT")) {
+                    } else if (tks[i].isId("FLT", false)) {
                         gh = 0B10110000;
-                    } else if (tks[i].isId("DBL")) {
+                    } else if (tks[i].isId("DBL", false)) {
                         gh = 0B11110000;
                     } else {
                         ASMBR_E("非法的粒度");
@@ -1113,7 +1113,7 @@ public:
                     }
                     ++i;
     
-                } else if (s0 == "J") {
+                } else if (tks[i].isId("J", false)) {
                     ++i;
                     if (tks[i].isPunc<'#'>()) {
                         size_t offset;
@@ -1133,7 +1133,7 @@ public:
                     } else {
                         ASMBR_E("非法的标签标记");
                     }
-                } else if (s0 == "JT") {
+                } else if (tks[i].isId("JT", false)) {
                     ++i;
                     if (tks[i].isPunc<'#'>()) {
                         size_t offset;
@@ -1153,7 +1153,7 @@ public:
                     } else {
                         ASMBR_E("非法的标签标记");
                     }
-                } else if (s0 == "JF") {
+                } else if (tks[i].isId("JF", false)) {
                     ++i;
                     if (tks[i].isPunc<'#'>()) {
                         size_t offset;
