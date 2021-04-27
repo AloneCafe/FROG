@@ -95,7 +95,18 @@ private:
     }
     
 public:
+    const std::vector<char> & getBytesFuncs() const {
+        return _bytesFuncs;
+    }
+    
+    const std::vector<char> & getBytesStatic() const {
+        return _bytesStatic;
+    }
+    
+public:
     AsmParser(const std::string & filename) : _filename(filename), _ut(_filename) {}
+    AsmParser() : _filename("<stdin>"), _ut() {}
+    ~AsmParser() = default;
     
     void parse() {
         const std::vector<Token> tks = _ut.tokenize();
@@ -183,10 +194,12 @@ public:
                 }
                 
             } else if (tks[i].isId()) {
+                
                 std::vector<char> * pBytes;
                 AddrLocateTable * pALT;
                 AddrRelocateTable * pART;
                 UniVarAllocTable *pUVAT;
+                
                 if (stat == BUILDING_FUNC) {
                     pBytes = &_bytesFuncs;
                     pALT = &_altFuncs;
