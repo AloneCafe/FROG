@@ -24,7 +24,4 @@ public:
 	
 };
 
-std::vector<Function> GlobalFuncMap::_funcs;
-std::unordered_map<std::string, size_t> GlobalFuncMap::_idxMap;
-
 #endif

@@ -51,7 +51,7 @@ set(SRCS_FROG_COMPILER
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
         ${SRCDIR}/ILGenerator.cpp
-        ${SRCDIR}/ExprDefinition.cpp src/FrontParser.cpp src/GlobalFuncMap.cpp src/GUIDGenerator.cpp)
+        ${SRCDIR}/ExprDefinition.cpp src/FrontParser.cpp src/GlobalFuncMap.cpp src/GUIDGenerator.cpp src/LocalCodeBinder.cpp src/PreAllocatedEntry.cpp src/SemanticParser.cpp)
 
 set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ILParser.hpp
