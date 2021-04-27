@@ -84,16 +84,18 @@ int main(int argc, const char * argv[]) {
         
         std::string outputContext;
         if (flagStdin) {
-            UniParser up;
-            outputContext = std::move(up.parse());
+            UniAsmParser up;
+            //outputContext = std::move(up.parse());
+            // TODO 需确定字节码文件格式
             
         } else {
             if (inFileNames.empty()) {
                 std::cerr << "~ 输入文件列表为空" << std::endl;
                 return 1;
             }
-            UniParser up(inFileNames);
-            outputContext = std::move(up.parse());
+            UniAsmParser up(inFileNames);
+            //outputContext = std::move(up.parse());
+            // TODO 需确定字节码文件格式
         }
         
         if (flagStdout) {

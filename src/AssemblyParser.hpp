@@ -7,7 +7,7 @@
 
 #include "UnitedTokenizer.hpp"
 
-#define ASMBR_E(x) raiseFatalErrAt(tks[i], (x))
+#define ASMBR_E(x) return raiseFatalErrAt(tks[i], (x)), false;
 
 class AddrLocateTable {
 protected:
@@ -91,7 +91,6 @@ private:
     
     void raiseFatalErrAt(const Token & tk, const std::string & msg) {
         std::cerr << "~ 汇编文件 " << _filename << " (第 " << tk.lineno() << " 行, 第 " << tk.colno() << " 列), " << msg << std::endl;
-        exit(1);
     }
     
 public:
@@ -108,7 +107,7 @@ public:
     AsmParser() : _filename("<stdin>"), _ut() {}
     ~AsmParser() = default;
     
-    void parse() {
+    bool parse() {
         const std::vector<Token> tks = _ut.tokenize();
         size_t sizTks = tks.size();
         
@@ -117,8 +116,9 @@ public:
             BUILDING_STATIC,
             BUILDING_FUNC,
         } stat = INITIAL;
-        
-        for (size_t i = 0; i < sizTks; ++i) {
+    
+        size_t i;
+        for (i = 0; i < sizTks; ++i) {
             if (tks[i].isPunc<'.'>()) {
                 ++i;
                 if (tks[i].isId("FUNC", false)) {
@@ -1239,13 +1239,20 @@ public:
                 ASMBR_E("非法的语法元素");
             }
         }
+        
+        if (stat != INITIAL) {
+            ASMBR_E("意外的结尾且未闭合区块");
+        }
+        
+        return true;
     }
 };
 
 class UniAsmParser {
 private:
     std::vector<std::string> _filenames;
-    std::vector<char> _bytes;
+    std::vector<char> _bytesFuncs;
+    std::vector<char> _bytesStatic;
     
 public:
     UniAsmParser(const std::vector<std::string> & filenames)
@@ -1253,44 +1260,37 @@ public:
     UniAsmParser() = default;
     ~UniAsmParser() = default;
     
-    std::string parse() {
-        std::stringstream ss;
+    bool parse() {
         if (!_filenames.empty()) {
-            std::vector<FileStructurePtr> fileStus;
             for (const std::string & filename : _filenames) {
-                AsmStaticParser asp(filename);
-                FileStructurePtr pFileStu = asp.parse();
-                if (!pFileStu)
-                    return "";
-                fileStus.push_back(pFileStu);
+                AsmParser ap(filename);
+                bool result = ap.parse();
+                if (!result)
+                    return false;
+                
+                for (auto b : ap.getBytesFuncs()) {
+                    _bytesFuncs.push_back(b);
+                }
+                for (auto b : ap.getBytesStatic()) {
+                    _bytesStatic.push_back(b);
+                }
             }
-    
-            AsmFuncParser afp;
-            afp.parse(fileStus);
-            if (afp.hasErr()) {
-                for (const auto & e : afp.getErrList())
-                    std::cerr << e.getMsg() << std::endl;
-                return "";
-            }
-            ss << afp._asmk.getContextRef().str();
             
         } else {
-            AsmStaticParser asp;
-            FileStructurePtr pFileStu = asp.parse();
-            if (!pFileStu)
-                return "";
+            AsmParser ap;
+            bool result = ap.parse();
+            if (!result)
+                return false;
     
-            AsmFuncParser afp;
-            afp.parse({ pFileStu });
-            if (afp.hasErr()) {
-                for (const auto & e : afp.getErrList())
-                    std::cerr << e.getMsg() << std::endl;
-                return "";
+            for (auto b : ap.getBytesFuncs()) {
+                _bytesFuncs.push_back(b);
             }
-            ss << afp._asmk.getContextRef().str();
+            for (auto b : ap.getBytesStatic()) {
+                _bytesStatic.push_back(b);
+            }
         }
         
-        return ss.str();
+        return true;
     }
 
 };
