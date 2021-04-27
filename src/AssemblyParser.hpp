@@ -6,45 +6,10 @@
 #include <cassert>
 
 #include "UnitedTokenizer.hpp"
+#include "ByteCodeRelocator.hpp"
 
 #define ASMBR_E(x) return raiseFatalErrAt(tks[i], (x)), false;
 
-class AddrLocateTable {
-protected:
-    std::unordered_map<std::string, size_t> _map;
-    
-public:
-    virtual std::pair<bool, size_t> getOffset(const std::string & symbolName) const {
-        auto it = _map.cbegin();
-        if ((it = _map.find(symbolName)) != _map.cend()) {
-            return std::make_pair(true, it->second);
-        }
-        return std::make_pair(false, 0);
-    }
-    
-    virtual bool setOffset(const std::string & symbolName, size_t offset) {
-        auto it = _map.insert(std::make_pair(symbolName, offset));
-        return it.second;
-    }
-};
-
-class AddrRelocateTable {
-private:
-    std::unordered_multimap<std::string, size_t> _map;
-
-public:
-    virtual std::pair<bool, size_t> getOffset(const std::string & symbolName) const {
-        auto it = _map.cbegin();
-        if ((it = _map.find(symbolName)) != _map.cend()) {
-            return std::make_pair(true, it->second);
-        }
-        return std::make_pair(false, 0);
-    }
-    
-    virtual void setOffset(const std::string & symbolName, size_t offset) {
-        auto it = _map.insert(std::make_pair(symbolName, offset));
-    }
-};
 
 class UniVarAllocTable {
 private:
@@ -98,6 +63,7 @@ private:
     std::vector<char> _bytesFuncs;
     AddrLocateTable _altFuncs;
     AddrRelocateTable _artFuncs;
+    
     UniVarAllocTable _uvat;
     
     UniTokenizer _ut;
@@ -105,6 +71,7 @@ private:
     void raiseFatalErrAt(const Token & tk, const std::string & msg) {
         std::cerr << "~ 汇编文件 " << _filename << " (第 " << tk.lineno() + 1 << " 行, 第 " << tk.colno() << " 列), " << msg << std::endl;
     }
+    
     
 public:
     const std::vector<char> & getBytesFuncs() const {
@@ -1257,6 +1224,12 @@ public:
         if (stat != INITIAL) {
             ASMBR_E("意外的结尾且未闭合区块");
         }
+        
+        // 进行重定位
+        if (!ByteCodeRelocator::relocateStatic(_bytesStatic, _altStatic, _artStatic))
+            return false;
+        if (!ByteCodeRelocator::relocateFuncs(_bytesFuncs, _altFuncs, _artFuncs))
+            return false;
         
         return true;
     }

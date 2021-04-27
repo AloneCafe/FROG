@@ -62,7 +62,6 @@ public:
             b2hex(bytes[i], h);
             std::cout << h << ((i + 1) % 8 == 0 ? "\n" : " ");
         }
-        return;
     }
 };
 

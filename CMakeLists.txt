@@ -91,7 +91,7 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
         ${SRCDIR}/UnitedAssemblyParser.hpp
-        ${SRCDIR}/ByteCodeGenerator.hpp)
+        ${SRCDIR}/ByteCodeGenerator.hpp src/ByteCodeRelocator.hpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
