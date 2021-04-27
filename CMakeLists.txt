@@ -45,7 +45,7 @@ set(SRCS_FROG_COMPILER
         ${SRCDIR}/TokenDefinition.hpp
         ${SRCDIR}/TokenScanner.cpp
         ${SRCDIR}/TokenScanner.hpp
-        ${SRCDIR}/UnitedParser.hpp
+        ${SRCDIR}/UnitedSemanticParser.hpp
         ${SRCDIR}/UnitedTokenizer.cpp
         ${SRCDIR}/UnitedTokenizer.hpp
         ${SRCDIR}/UTFSequence.cpp
@@ -85,12 +85,13 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/TokenDefinition.hpp
         ${SRCDIR}/TokenScanner.cpp
         ${SRCDIR}/TokenScanner.hpp
-        ${SRCDIR}/UnitedParser.hpp
+        ${SRCDIR}/UnitedSemanticParser.hpp
         ${SRCDIR}/UnitedTokenizer.cpp
         ${SRCDIR}/UnitedTokenizer.hpp
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
-)
+        ${SRCDIR}/UnitedAssemblyParser.hpp
+        ${SRCDIR}/ByteCodeGenerator.hpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})

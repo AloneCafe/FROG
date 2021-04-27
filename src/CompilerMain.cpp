@@ -1,6 +1,6 @@
 #include "TokenScanner.hpp"
 #include "UnitedTokenizer.hpp"
-#include "UnitedParser.hpp"
+#include "UnitedSemanticParser.hpp"
 
 static const char * pLogoC =
 "  _____                      ____                          _  _             \n"
@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
     
         std::string outputContext;
         if (flagStdin) {
-            UniParser up;
+            UniSemParser up;
             outputContext = std::move(up.parse());
             
         } else {
@@ -114,7 +114,7 @@ int main(int argc, const char * argv[]) {
                 std::cerr << "~ 输入文件列表为空" << std::endl;
                 return 1;
             }
-            UniParser up(inFileNames, extraFileNames);
+            UniSemParser up(inFileNames, extraFileNames);
             outputContext = std::move(up.parse());
         }
         
@@ -125,8 +125,10 @@ int main(int argc, const char * argv[]) {
                 std::cerr << "~ 未指定输出文件" << std::endl;
                 return 1;
             }
-            std::ofstream ofs(outFileName, std::ios::out);
-            ofs << outputContext;
+            if (!outputContext.empty()) {
+                std::ofstream ofs(outFileName, std::ios::out);
+                ofs << outputContext;
+            }
         }
         
     } else {

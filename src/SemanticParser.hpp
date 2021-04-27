@@ -52,7 +52,7 @@ if (_CHK == OnlyGen) {              \
 
 class SemParser {
 	friend class Parser;
-    friend class UniParser;
+    friend class UniSemParser;
 private:
 	AsmMaker _asmk;
 
