@@ -63,13 +63,13 @@ int main(int argc, const char * argv[]) {
                 } else if (s == "-I" || s == "--stdin") {
                     flagStdin = true;
                     if (!inFileNames.empty()) {
-                        std::cerr << "~ 显式指定标准输入, 已忽略源文件列表" << std::endl;
+                        std::cerr << "~ 显式指定标准输入, 已忽略汇编文件列表" << std::endl;
                     }
                     
                 } else if (s == "-O" || s == "--stdout") {
                     flagStdout = true;
                     if (!outFileName.empty()) {
-                        std::cerr << "~ 显式指定标准输出, 将不会生成目标汇编文件" << std::endl;
+                        std::cerr << "~ 显式指定标准输出, 将不会生成字节码文件" << std::endl;
                     }
                     
                 } else if (s == "-h" || s == "--help") {

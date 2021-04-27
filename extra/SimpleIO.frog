@@ -1,0 +1,172 @@
+// simpleio library
+// stdout functions
+func void Print(double d) {
+    asm {
+         "PUSH DBL @d;"
+         "EFCALL \"stdout_dbl\";"
+    }
+}
+
+func void Print(float f) {
+    asm {
+         "PUSH FLT @f;"
+         "EFCALL \"stdout_flt\";"
+    }
+}
+
+func void Print(long l) {
+    asm {
+         "PUSH QW @l;"
+         "EFCALL \"stdout_nl\";"
+    }
+}
+
+func void Print(int a) {
+    asm {
+        "PUSH DW @a;"
+        "EFCALL \"stdout_ni\";"
+    }
+}
+
+func void Print(short a) {
+    asm {
+        "PUSH DW @a;"
+        "EFCALL \"stdout_ns\";"
+    }
+}
+
+func void Print(byte b) {
+     asm {
+         "PUSH B @b;"
+         "EFCALL \"stdout_nb\";"
+     }
+}
+
+func void Print(char c) {
+     asm {
+         "PUSH B @c;"
+         "EFCALL \"stdout_c\";"
+     }
+}
+
+func void Print(char[] s) {
+     asm {
+         "PUSH DW @s;"
+         "EFCALL \"stdout_s\";"
+     }
+}
+
+
+// stderr functions
+func void PrintError(double d) {
+    asm {
+         "PUSH DBL @d;"
+         "EFCALL \"stderr_dbl\";"
+    }
+}
+
+func void PrintError(float f) {
+    asm {
+         "PUSH FLT @f;"
+         "EFCALL \"stderr_flt\";"
+    }
+}
+
+func void PrintError(long l) {
+    asm {
+         "PUSH QW @l;"
+         "EFCALL \"stderr_nl\";"
+    }
+}
+
+func void PrintError(int a) {
+    asm {
+        "PUSH DW @a;"
+        "EFCALL \"stderr_ni\";"
+    }
+}
+
+func void PrintError(short a) {
+    asm {
+        "PUSH DW @a;"
+        "EFCALL \"stderr_ns\";"
+    }
+}
+
+func void PrintError(byte b) {
+     asm {
+         "PUSH B @b;"
+         "EFCALL \"stderr_nb\";"
+     }
+}
+
+func void PrintError(char c) {
+     asm {
+         "PUSH B @c;"
+         "EFCALL \"stderr_c\";"
+     }
+}
+
+func void PrintError(char[] s) {
+     asm {
+         "PUSH DW @s;"
+         "EFCALL \"stderr_s\";"
+     }
+}
+
+// stdin functions
+func double ScanDouble() {
+    asm {
+         "EFCALL \"stdin_dbl\";"
+         "RET DBL;"
+    }
+}
+
+func float ScanFloat() {
+    asm {
+         "EFCALL \"stdin_flt\";"
+         "RET FLT;"
+    }
+}
+
+func long ScanLong() {
+    asm {
+         "EFCALL \"stdin_nl\";"
+         "RET QW;"
+    }
+}
+
+func int ScanInt() {
+    asm {
+        "EFCALL \"stdin_ni\";"
+        "RET DW;"
+    }
+}
+
+func short ScanShort() {
+    asm {
+        "EFCALL \"stdin_ns\";"
+        "RET W;"
+    }
+}
+
+func byte ScanByte() {
+     asm {
+         "EFCALL \"stdin_nb\";"
+         "RET B;"
+     }
+}
+
+func char ScanChar() {
+     asm {
+         "EFCALL \"stdin_c\";"
+         "RET B;"
+     }
+}
+
+func char[] ScanChar() {
+    asm {
+        "EFCALL \"stdin_s\";"
+        "RET DW;"
+    }
+}

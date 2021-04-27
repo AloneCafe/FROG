@@ -76,6 +76,7 @@ public:
 class AsmParser {
 private:
     std::string _filename;
+    
     std::vector<char> _bytesStatic;
     AddrLocateTable _altStatic;
     AddrRelocateTable _artStatic;
@@ -94,7 +95,9 @@ private:
     }
     
 public:
-    AsmParser(const std::string & filename) : _filename(filename), _ut(_filename) {
+    AsmParser(const std::string & filename) : _filename(filename), _ut(_filename) {}
+    
+    void parse() {
         const std::vector<Token> tks = _ut.tokenize();
         size_t sizTks = tks.size();
         
@@ -1223,11 +1226,6 @@ public:
                 ASMBR_E("非法的语法元素");
             }
         }
-        
-    }
-    
-    void parse() {
-    
     }
 };
 
