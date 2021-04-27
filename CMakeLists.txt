@@ -53,7 +53,7 @@ set(SRCS_FROG_COMPILER
         src/ILGenerator.cpp)
 
 set(SRCS_FROG_ASSEMBLER
-        ${SRCDIR}/AssemblyParser.hpp
+        ${SRCDIR}/ILParser.hpp
         ${SRCDIR}/AssemblerMain.cpp
         ${SRCDIR}/ILGenerator.hpp
         ${SRCDIR}/CharScanner.cpp
@@ -72,9 +72,9 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ErrorDriver.hpp
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
-        ${SRCDIR}/UnitedAssemblyParser.hpp
+        ${SRCDIR}/UnitedILParser.hpp
         ${SRCDIR}/ByteCodeGenerator.hpp
-        ${SRCDIR}/ByteCodeRelocator.hpp)
+        ${SRCDIR}/ByteCodeRelocator.hpp src/ILParser.cpp src/ByteCodeGenerator.cpp src/ByteCodeRelocator.cpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})

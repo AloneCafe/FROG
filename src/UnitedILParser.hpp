@@ -1,10 +1,10 @@
-#ifndef __UNI_ASM_PARSER_HEADER__
-#define __UNI_ASM_PARSER_HEADER__
+#ifndef __UNI_IL_PARSER_HEADER__
+#define __UNI_IL_PARSER_HEADER__
 
-#include "AssemblyParser.hpp"
+#include "ILParser.hpp"
 #include "ByteCodeGenerator.hpp"
 
-class UniAsmParser {
+class UniILParser {
 private:
     std::vector<std::string> _filenames;
     std::vector<char> _bytesFuncs;
@@ -20,15 +20,15 @@ public:
     }
 
 public:
-    UniAsmParser(const std::vector<std::string> & filenames)
+    UniILParser(const std::vector<std::string> & filenames)
             : _filenames(filenames) { }
-    UniAsmParser() = default;
-    ~UniAsmParser() = default;
+    UniILParser() = default;
+    ~UniILParser() = default;
     
     bool parse() {
         if (!_filenames.empty()) {
             for (const std::string & filename : _filenames) {
-                AsmParser ap(filename);
+                ILParser ap(filename);
                 bool result = ap.parse();
                 if (!result)
                     return false;
@@ -40,7 +40,7 @@ public:
             }
             
         } else {
-            AsmParser ap;
+            ILParser ap;
             bool result = ap.parse();
             if (!result)
                 return false;

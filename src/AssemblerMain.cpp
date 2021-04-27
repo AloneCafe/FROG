@@ -1,5 +1,5 @@
 #include "TokenScanner.hpp"
-#include "UnitedAssemblyParser.hpp"
+#include "UnitedILParser.hpp"
 
 static const char * pLogoAS =
         " ______                                                 _     _           \n"
@@ -83,7 +83,7 @@ int main(int argc, const char * argv[]) {
     
         std::vector<char> outputByteCode;
         if (flagStdin) {
-            UniAsmParser up;
+            UniILParser up;
             if (up.parse())
                 outputByteCode = std::move(ByteCodeGenerator::make(up.getBytesStatic(), up.getBytesFuncs()));
             
@@ -92,7 +92,7 @@ int main(int argc, const char * argv[]) {
                 std::cerr << "~ 输入文件列表为空" << std::endl;
                 return 1;
             }
-            UniAsmParser up(inFileNames);
+            UniILParser up(inFileNames);
             if (up.parse())
                 outputByteCode = std::move(ByteCodeGenerator::make(up.getBytesStatic(), up.getBytesFuncs()));
         }
