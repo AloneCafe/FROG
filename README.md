@@ -34,4 +34,4 @@ FROG 是一种简单的、结构化的、面向过程的、静态类型 & 强类
 FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语言的基本语法类似，只是稍有不同之处。
 本语言源程序结构简单、语法清晰明了，易于上手使用。
 * ~~FROG 语法简明手册~~
-* ~~FROG 汇编指令手册~~
+* [FROG 汇编 & 虚拟机简明手册](https://github.com/AloneCafe/frog-docs/blob/master/ASM.md)
