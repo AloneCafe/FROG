@@ -14,7 +14,7 @@ set(EN_FROG_VM fgvm)
 set(SRCDIR src)
 
 set(SRCS_FROG_COMPILER
-        ${SRCDIR}/AssemblyMaker.hpp
+        ${SRCDIR}/ILGenerator.hpp
         ${SRCDIR}/SyntaxTreeBasicParser.hpp
         ${SRCDIR}/SyntaxTreeErrorDriver.hpp
         ${SRCDIR}/SyntaxTreeParser.hpp
@@ -50,12 +50,12 @@ set(SRCS_FROG_COMPILER
         ${SRCDIR}/UnitedTokenizer.hpp
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
-)
+        src/ILGenerator.cpp)
 
 set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/AssemblyParser.hpp
         ${SRCDIR}/AssemblerMain.cpp
-        ${SRCDIR}/AssemblyMaker.hpp
+        ${SRCDIR}/ILGenerator.hpp
         ${SRCDIR}/CharScanner.cpp
         ${SRCDIR}/CharScanner.hpp
         ${SRCDIR}/LineScanner.cpp

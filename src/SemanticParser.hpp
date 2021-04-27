@@ -4,13 +4,13 @@
 #include <memory>
 
 #include "GUIDGenerator.hpp"
-#include "AssemblyMaker.hpp"
+#include "ILGenerator.hpp"
 #include "SemanticErrorDriver.hpp"
 #include "LocalCodeBinder.hpp"
 #include "GlobalFuncMap.hpp"
 
 #define ASMMAKER_ENABLE(x) \
-AsmMaker * x, temp; \
+ILGenerator * x, temp; \
 if (_CHK == OnlyChk) { \
 x = &temp; \
 } else { \
@@ -54,7 +54,7 @@ class SemParser {
 	friend class Parser;
     friend class UniSemParser;
 private:
-	AsmMaker _asmk;
+	ILGenerator _asmk;
 
 public:
 	class ExprTypeConstraint {
