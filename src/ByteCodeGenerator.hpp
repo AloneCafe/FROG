@@ -31,8 +31,8 @@ public:
 };
 
 class ByteCodeHexPrinter {
-    static void b2hex(char b, char hex[2], bool upcase = false) {
-        char hb[2] = { char(b / 0x10), char(b % 0x10) };
+    static void b2hex(uint8_t b, char hex[2], bool upcase = true) {
+        uint8_t hb[2] = { uint8_t(b / 0x10), uint8_t(b % 0x10) };
         for (size_t i = 0; i < 2; ++i) {
             switch (hb[i]) {
             case 0x0: hex[i] = '0'; break;
@@ -60,8 +60,9 @@ public:
         for (size_t i = 0; i < sizeBytes; ++i) {
             char h[2];
             b2hex(bytes[i], h);
-            std::cout << h << ((i > 7 && (i + 1) % 8 == 0) ? " " : "\n");
+            std::cout << h << ((i + 1) % 8 == 0 ? "\n" : " ");
         }
+        return;
     }
 };
 

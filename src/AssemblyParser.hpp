@@ -73,15 +73,15 @@ public:
                 _currFuncsOffset += varSiz;
             return it.second;
         }
-        
-        
     }
     
     void resetNonStatic() {
         _currFuncsOffset = 0;
-        for (auto it = _map.cbegin(); it != _map.cend(); ++it) {
+        for (auto it = _map.cbegin(); it != _map.cend(); ) {
             if (!it->second.first) {
-                _map.erase(it);
+                it = _map.erase(it);
+            } else {
+                ++it;
             }
         }
     }
@@ -1247,7 +1247,7 @@ public:
                 }
             
             } else if (tks[i].isEnd()) {
-                ASMBR_E("意外的文件结尾");
+                break; // 跳出分析循环
     
             } else {
                 ASMBR_E("非法的语法元素");
