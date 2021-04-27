@@ -12,7 +12,7 @@
 #include "StructureBase.hpp"
 #include "TokenDefinition.hpp"
 
-struct Expression {
+struct Expr {
 public:
     enum class Operator : int {
         OPT_LOGIC_NOT = 0,        // ! E0
@@ -86,31 +86,23 @@ public:
         LEAF_SUPER,
         LEAF_TYPE, // 用于类型转换，或者将来某种用途
     };
-    using ExprPtr = std::shared_ptr<Expression>;
+    
+    using ExprPtr = std::shared_ptr<Expr>;
     using LeafScalar = TokenValue;
     using LeafType = VarType;
     
     long _lineno;
     long _colno;
     
-    long lineno() const { return _lineno; }
-    long colno() const { return _colno; }
+    long lineno() const;
+    long colno() const;
 
 private:
-    static constexpr size_t UNLIMITED = 0;
-    static constexpr size_t __opt2exprCnt[] = {
-            1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-            3, UNLIMITED, UNLIMITED, 1, 1, 1, 2
-    };
+    static size_t UNLIMITED;
+    static const size_t __opt2exprCnt[];
 
 public:
-    size_t getExprCnt() const {
-        return _nSubCnt;
-    }
+    size_t getExprCnt() const;
 
 private:
     Operator _op;
@@ -119,91 +111,42 @@ private:
     LeafScalar _leafScalar;         // 叶子节点时
     LeafType _leafType;
     
-    Expression() = default;
+    Expr() = default;
 
 public:
-    Operator getOp() const { return _op; }
-    const ExprPtr & getSubExprPtr(size_t i) const { return _subExprs[i]; }
-    const LeafScalar & getLeafScalar() const { return _leafScalar; }
-    const LeafType & getLeafType() const { return _leafType; }
-    const ExprPtr & operator[](size_t i) const { return _subExprs[i]; }
+    Operator getOp() const;
     
-    static ExprPtr newCallExpr(ExprPtr callerExpr, const std::vector<ExprPtr> & argExprList, long lineno, long colno) {
-        ExprPtr pExpr(new Expression());
-        pExpr->_op = Operator::OPT_CALL;
-        pExpr->_lineno = lineno;
-        pExpr->_colno = colno;
-        pExpr->_subExprs.push_back(callerExpr);
-        std::for_each(argExprList.cbegin(), argExprList.cend(), [=](const auto & e) {
-            pExpr->_subExprs.push_back(e);
-        });
-        pExpr->_nSubCnt = pExpr->_subExprs.size();
-        return pExpr;
-    }
+    const ExprPtr & getSubExprPtr(size_t i) const;
+    
+    const LeafScalar & getLeafScalar() const;
+    
+    const LeafType & getLeafType() const;
+    
+    const ExprPtr & operator[](size_t i) const;
+    
+    static ExprPtr newCallExpr(ExprPtr callerExpr, const std::vector<ExprPtr> & argExprList, long lineno, long colno);
 
-    static ExprPtr newCommaExpr(const std::vector<ExprPtr> & commaExprList, long lineno, long colno) {
-		ExprPtr pExpr(new Expression());
-		pExpr->_op = Operator::OPT_CALL;
-		pExpr->_lineno = lineno;
-		pExpr->_colno = colno;
-		std::for_each(commaExprList.cbegin(), commaExprList.cend(), [=](const auto & e) {
-			pExpr->_subExprs.push_back(e);
-			});
-		pExpr->_nSubCnt = pExpr->_subExprs.size();
-		return pExpr;
-    }
+    static ExprPtr newCommaExpr(const std::vector<ExprPtr> & commaExprList, long lineno, long colno);
     
-    static ExprPtr newExpr(const Operator & op, const std::initializer_list<ExprPtr> & exprs, long lineno, long colno) {
-        assert(op < Operator::DELIMITER_OPT_LEAF && "op 类型必须是非叶子节点");
-        ExprPtr pExpr(new Expression());
-        pExpr->_op = op;
-        pExpr->_subExprs = exprs;
-        pExpr->_nSubCnt = exprs.size();
-        pExpr->_lineno = lineno;
-        pExpr->_colno = colno;
-        return pExpr;
-    }
+    static ExprPtr newExpr(const Operator & op, const std::initializer_list<ExprPtr> & exprs, long lineno, long colno);
     
-    static ExprPtr newLeafScalar(const Operator & op, const TokenValue & tv, long lineno, long colno) {
-        assert(op > Operator::DELIMITER_OPT_LEAF && "op 类型必须是叶子节点");
-        ExprPtr pExpr(new Expression());
-        pExpr->_op = op;
-        pExpr->_nSubCnt = 1;
-        pExpr->_leafScalar = tv;
-        pExpr->_lineno = lineno;
-        pExpr->_colno = colno;
-        return pExpr;
-    }
+    static ExprPtr newLeafScalar(const Operator & op, const TokenValue & tv, long lineno, long colno);
     
-    static ExprPtr newLeafType(const VarType & type, long lineno, long colno) {
-        ExprPtr pExpr(new Expression());
-        pExpr->_op = Operator::LEAF_TYPE;
-        pExpr->_nSubCnt = 1;
-        pExpr->_leafType = type;
-        pExpr->_lineno = lineno;
-        pExpr->_colno = colno;
-        return pExpr;
-    }
+    static ExprPtr newLeafType(const VarType & type, long lineno, long colno);
     
-    static ExprPtr newLeafPure(const Operator & op, long lineno, long colno) {
-        assert(op > Operator::DELIMITER_OPT_LEAF && "op 类型必须是叶子节点");
-        ExprPtr pExpr(new Expression());
-        pExpr->_op = op;
-        pExpr->_nSubCnt = 1;
-        pExpr->_lineno = lineno;
-        pExpr->_colno = colno;
-        return pExpr;
-    }
+    static ExprPtr newLeafPure(const Operator & op, long lineno, long colno);
     
-    bool isLeaf() const { return _op > Operator::DELIMITER_OPT_LEAF; }
-    bool isOpt() const { return _op < Operator::DELIMITER_OPT_LEAF; }
+    bool isLeaf() const;
     
-    Expression(const Expression &) = delete;
-    Expression & operator=(const Expression &) = delete;
+    bool isOpt() const;
+    
+    Expr(const Expr &) = delete;
+    
+    Expr & operator=(const Expr &) = delete;
     
 };
 
-using ExprOp = typename Expression::Operator;
-using ExprPtr = typename Expression::ExprPtr;
+using ExprOp = typename Expr::Operator;
+using ExprPtr = typename Expr::ExprPtr;
 
 #endif

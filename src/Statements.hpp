@@ -56,7 +56,7 @@ public:
             const ExprPtr & pObjExpr,
             size_t stmtIdx) {
         
-        _pCondExpr = Expression::newExpr(Expression::Operator::OPT_EQ,
+        _pCondExpr = Expr::newExpr(Expr::Operator::OPT_EQ,
                 {pSrcExpr, pObjExpr}, pSrcExpr->_lineno, pSrcExpr->_colno);
         // 此处破例使用
         _stmtIdx = stmtIdx;

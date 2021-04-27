@@ -50,7 +50,8 @@ set(SRCS_FROG_COMPILER
         ${SRCDIR}/UnitedTokenizer.hpp
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
-        src/ILGenerator.cpp)
+        ${SRCDIR}/ILGenerator.cpp
+        ${SRCDIR}/ExprDefinition.cpp)
 
 set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ILParser.hpp
@@ -74,7 +75,10 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/UTFSequence.hpp
         ${SRCDIR}/UnitedILParser.hpp
         ${SRCDIR}/ByteCodeGenerator.hpp
-        ${SRCDIR}/ByteCodeRelocator.hpp src/ILParser.cpp src/ByteCodeGenerator.cpp src/ByteCodeRelocator.cpp)
+        ${SRCDIR}/ByteCodeRelocator.hpp
+        ${SRCDIR}/ILParser.cpp
+        ${SRCDIR}/ByteCodeGenerator.cpp
+        ${SRCDIR}/ByteCodeRelocator.cpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})

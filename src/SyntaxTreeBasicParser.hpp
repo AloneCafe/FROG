@@ -285,13 +285,13 @@ private:
     ExprPtr _buildExprDotList(TokenIter & it) {
         assert(it->isId());
         AST_REC_LOCATION1
-        ExprPtr pLeft = Expression::newLeafScalar(ExprOp::LEAF_ID, it->getVal(), AST_ARG_LOCATION1);
+        ExprPtr pLeft = Expr::newLeafScalar(ExprOp::LEAF_ID, it->getVal(), AST_ARG_LOCATION1);
         ++ it;
         if (it->isPunc<'.'>()) {
             AST_REC_LOCATION1
             ++ it;
             ExprPtr pRight = _buildExprDotList(it);
-            ExprPtr pCon = Expression::newExpr(ExprOp::OPT_DOT, {pLeft, pRight}, AST_ARG_LOCATION1);
+            ExprPtr pCon = Expr::newExpr(ExprOp::OPT_DOT, {pLeft, pRight}, AST_ARG_LOCATION1);
             return pCon;
             
         } else if (it->isEnd()) {
@@ -316,7 +316,7 @@ private:
         
         // pLeft 主要是左侧 (通常是 ExprDotList 或者 ExprIndexList)
         // 此处左右合并为完整的二元 OPT_INDEX 表达式
-        ExprPtr pNewLeft = Expression::newExpr(ExprOp::OPT_INDEX, {pLeft, pRight}, AST_ARG_LOCATION1);
+        ExprPtr pNewLeft = Expr::newExpr(ExprOp::OPT_INDEX, {pLeft, pRight}, AST_ARG_LOCATION1);
         
         if (it->isPunc<']'>()) {
             ++it;
@@ -365,14 +365,14 @@ private:
             ++it;
             VarType objType;
             parseDefType(it, objType);
-            ExprPtr pLeft = Expression::newLeafType(objType, AST_ARG_LOCATION1);
+            ExprPtr pLeft = Expr::newLeafType(objType, AST_ARG_LOCATION1);
             if (it->isPunc<'('>()) {
                 AST_REC_LOCATION2
                 ++it;
                 ExprPtr pRight = buildExpression(it);
                 if (it->isPunc<')'>()) {
                     ++it;
-                    ExprPtr pCon = Expression::newExpr(ExprOp::OPT_TYPE_CONVERT, {pLeft, pRight}, AST_ARG_LOCATION2);
+                    ExprPtr pCon = Expr::newExpr(ExprOp::OPT_TYPE_CONVERT, {pLeft, pRight}, AST_ARG_LOCATION2);
                     return pCon;
                     
                 } else if (it->isEnd()) {
@@ -412,7 +412,7 @@ private:
         } else if (it->isId()) {
             TokenValue tv;
             tv._str = it->getId();
-            ExprPtr pId = Expression::newLeafScalar(ExprOp::LEAF_ID, tv, AST_ARG_LOCATION1);
+            ExprPtr pId = Expr::newLeafScalar(ExprOp::LEAF_ID, tv, AST_ARG_LOCATION1);
             ++it;
             if (it->isPunc<'('>()) { // 调用表达式
                 AST_REC_LOCATION1
@@ -422,8 +422,8 @@ private:
                 
                 // 完成表达式构建
                 // 此处不可用 newExpr() 构造 OPT_CALL 表达式
-                // return Expression::newCallExpr(ExprOp::OPT_CALL, ...);
-                ExprPtr pCallExpr = Expression::newCallExpr(pId, refArgList, AST_ARG_LOCATION1);
+                // return Expr::newCallExpr(ExprOp::OPT_CALL, ...);
+                ExprPtr pCallExpr = Expr::newCallExpr(pId, refArgList, AST_ARG_LOCATION1);
                 
                 // 下标表达式
                 if (it->isPunc<'['>()) {
@@ -449,58 +449,58 @@ private:
             }
             
         } else if (it->isType(TOKEN_LITERAL_CHARSEQ)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_CHAR_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_CHAR_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_STRING)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_STRING_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_STRING_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_INT)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_INT_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_INT_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_LONG)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_LONG_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_LONG_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_UNSIGNED_INT)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_INT_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_INT_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_UNSIGNED_LONG)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_LONG_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_LONG_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_FLOAT)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_FLOAT_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_FLOAT_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_DOUBLE)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_DOUBLE_LITERAL, it->getVal(), AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_DOUBLE_LITERAL, it->getVal(), AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isType(TOKEN_LITERAL_LONG_DOUBLE)) {
-            ExprPtr pExpr = Expression::newLeafScalar(ExprOp::LEAF_LONG_DOUBLE_LITERAL, it->getVal(),
+            ExprPtr pExpr = Expr::newLeafScalar(ExprOp::LEAF_LONG_DOUBLE_LITERAL, it->getVal(),
                     AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isKwTrue()) { // true
-            ExprPtr pExpr = Expression::newLeafPure(ExprOp::LEAF_TRUE_LITERAL, AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafPure(ExprOp::LEAF_TRUE_LITERAL, AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
         } else if (it->isKwFalse()) { // false
-            ExprPtr pExpr = Expression::newLeafPure(ExprOp::LEAF_FALSE_LITERAL, AST_ARG_LOCATION1);
+            ExprPtr pExpr = Expr::newLeafPure(ExprOp::LEAF_FALSE_LITERAL, AST_ARG_LOCATION1);
             ++it;
             return pExpr;
             
@@ -532,7 +532,7 @@ private:
         }
         
         ++it;
-        return Expression::newExpr(op, {pExpr}, AST_ARG_LOCATION1);
+        return Expr::newExpr(op, {pExpr}, AST_ARG_LOCATION1);
     }
     
     /*
@@ -575,7 +575,7 @@ private:
         
         ++it;
         ExprPtr pExpr = _buildExprUnaryR2L(it);
-        return Expression::newExpr(op, {pExpr}, AST_ARG_LOCATION1);
+        return Expr::newExpr(op, {pExpr}, AST_ARG_LOCATION1);
     }
     
     /*
@@ -607,7 +607,7 @@ private:
         
         ++it;
         ExprPtr pRight = _buildExprUnaryR2L(it);
-        ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
+        ExprPtr pNewLeft = Expr::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprMulDivMod1(it, pNewLeft);
     }
     
@@ -641,7 +641,7 @@ private:
         
         ++it;
         ExprPtr pRight = _buildExprMulDivMod(it);
-        ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
+        ExprPtr pNewLeft = Expr::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprAddSub1(it, pNewLeft);
     }
     
@@ -676,7 +676,7 @@ private:
         
         ++it;
         ExprPtr pRight = _buildExprAddSub(it);
-        ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
+        ExprPtr pNewLeft = Expr::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprShift1(it, pNewLeft);
     }
     
@@ -714,7 +714,7 @@ private:
         
         ++it;
         ExprPtr pRight = _buildExprShift(it);
-        ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
+        ExprPtr pNewLeft = Expr::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprRelation1(it, pNewLeft);
     }
     
@@ -748,7 +748,7 @@ private:
         
         ++it;
         ExprPtr pRight = _buildExprRelation(it);
-        ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
+        ExprPtr pNewLeft = Expr::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprEqNe1(it, pNewLeft);
     }
     
@@ -768,7 +768,7 @@ private:
             ++it;
             ExprPtr pRight = _buildExprEqNe(it);
             ExprPtr pNewLeft =
-                    Expression::newExpr(ExprOp::OPT_BIT_AND, {pLeft, pRight}, AST_ARG_LOCATION1);
+                    Expr::newExpr(ExprOp::OPT_BIT_AND, {pLeft, pRight}, AST_ARG_LOCATION1);
             return _buildExprBitAnd1(it, pNewLeft);
             
         } else if (it->isEnd()) {
@@ -796,7 +796,7 @@ private:
             ++it;
             ExprPtr pRight = _buildExprBitAnd(it);
             ExprPtr pNewLeft =
-                    Expression::newExpr(ExprOp::OPT_BIT_XOR, {pLeft, pRight}, AST_ARG_LOCATION1);
+                    Expr::newExpr(ExprOp::OPT_BIT_XOR, {pLeft, pRight}, AST_ARG_LOCATION1);
             return _buildExprBitXor1(it, pNewLeft);
             
         } else if (it->isEnd()) {
@@ -824,7 +824,7 @@ private:
             ++it;
             ExprPtr pRight = _buildExprBitXor(it);
             ExprPtr pNewLeft =
-                    Expression::newExpr(ExprOp::OPT_BIT_OR, {pLeft, pRight}, AST_ARG_LOCATION1);
+                    Expr::newExpr(ExprOp::OPT_BIT_OR, {pLeft, pRight}, AST_ARG_LOCATION1);
             return _buildExprBitOr1(it, pNewLeft);
             
         } else if (it->isEnd()) {
@@ -852,7 +852,7 @@ private:
             ++it;
             ExprPtr pRight = _buildExprBitOr(it);
             ExprPtr pNewLeft =
-                    Expression::newExpr(ExprOp::OPT_LOGIC_AND, {pLeft, pRight}, AST_ARG_LOCATION1);
+                    Expr::newExpr(ExprOp::OPT_LOGIC_AND, {pLeft, pRight}, AST_ARG_LOCATION1);
             return _buildExprLogicOr1(it, pNewLeft);
             
         } else if (it->isEnd()) {
@@ -879,7 +879,7 @@ private:
         if (it->isPunc<'||'>()) {
             ++it;
             ExprPtr pRight = _buildExprLogicAnd(it);
-            ExprPtr pNewLeft = Expression::newExpr(ExprOp::OPT_LOGIC_OR, {pLeft, pRight}, AST_ARG_LOCATION1);
+            ExprPtr pNewLeft = Expr::newExpr(ExprOp::OPT_LOGIC_OR, {pLeft, pRight}, AST_ARG_LOCATION1);
             return _buildExprLogicOr1(it, pNewLeft);
             
         } else if (it->isEnd()) {
@@ -910,7 +910,7 @@ private:
             if (it->isPunc<':'>()) {
                 ++it;
                 pRight = _buildExprCond(it);
-                return Expression::newExpr(ExprOp::OPT_COND, {pLeft, pMid, pRight}, AST_ARG_LOCATION1);
+                return Expr::newExpr(ExprOp::OPT_COND, {pLeft, pMid, pRight}, AST_ARG_LOCATION1);
                 
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
@@ -989,7 +989,7 @@ private:
         ++it;
         //ExprPtr pRight = _buildExprCond(it);
         ExprPtr pRight = _buildExprAssign(it); // 从右到左结合性
-        ExprPtr pNewLeft = Expression::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
+        ExprPtr pNewLeft = Expr::newExpr(op, {pLeft, pRight}, AST_ARG_LOCATION1);
         return _buildExprAssign1(it, pNewLeft);
     }
     
@@ -1009,7 +1009,7 @@ private:
         if (it->isPunc<','>()) {
             ++ it;
             ExprPtr pRight = _buildExprAssign(it);
-            ExprPtr pNewLeft = Expression::newExpr(ExprOp::OPT_COMMA, {pLeft, pRight}, AST_ARG_LOCATION1);
+            ExprPtr pNewLeft = Expr::newExpr(ExprOp::OPT_COMMA, {pLeft, pRight}, AST_ARG_LOCATION1);
             return _buildExprComma1(it, pNewLeft);
             
         } else if (it->isEnd()) {
@@ -1055,7 +1055,7 @@ private:
         commaList.push_back(pExpr);
         _parseCommaList1(it, commaList);
         if (commaList.size() > 1) {
-            return Expression::newCommaExpr(commaList, AST_ARG_LOCATION1);
+            return Expr::newCommaExpr(commaList, AST_ARG_LOCATION1);
         } else {
             return commaList[0];
         }
@@ -1610,8 +1610,8 @@ private:
                                 
                             } else { // 说明只是 else, 不递进
                                 AST_REC_LOCATION1
-                                pCondExpr = Expression::newLeafPure(
-                                        Expression::Operator::LEAF_TRUE_LITERAL, AST_ARG_LOCATION1);
+                                pCondExpr = Expr::newLeafPure(
+                                        Expr::Operator::LEAF_TRUE_LITERAL, AST_ARG_LOCATION1);
                                 isElse = true;
                             }
                             
@@ -1762,7 +1762,7 @@ private:
             AST_REC_LOCATION1
             ++it;
             StmtPtr pStmt = nullptr;
-            ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
+            ExprPtr pDummyExpr = Expr::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
             
             if (it->isPunc<';'>()) {
                 ++it; // 不带返回值的 return 语句闭合
@@ -1791,7 +1791,7 @@ private:
             AST_REC_LOCATION1
             ++it;
             
-            ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
+            ExprPtr pDummyExpr = Expr::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
             StmtPtr pStmt = IStmt::newBreakStmt(pDummyExpr);
             if (it->isPunc<';'>()) {
                 ++it; // 语句闭合
@@ -1808,7 +1808,7 @@ private:
             AST_REC_LOCATION1
             ++it;
             
-            ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
+            ExprPtr pDummyExpr = Expr::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
             StmtPtr pStmt = IStmt::newContinueStmt(pDummyExpr);
             if (it->isPunc<';'>()) {
                 ++it; // 语句闭合
@@ -1831,7 +1831,7 @@ private:
                 while (1) {
                     if (it->isPunc<'}'>()) {
                         ++it; // 正确闭合
-                        ExprPtr pDummyExpr = Expression::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
+                        ExprPtr pDummyExpr = Expr::newLeafPure(ExprOp::LEAF_ID, AST_ARG_LOCATION1);
                         return IStmt::newInlineASM(ss.str(), pDummyExpr);
         
                     } else if (it->getType() == TokenType::TOKEN_LITERAL_STRING) {

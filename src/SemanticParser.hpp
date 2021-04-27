@@ -1499,11 +1499,11 @@ private:
 				newOp = ExprOp::OPT_RSHIFT_ZERO; break;
 			default: assert(0);
 			}
-			ExprPtr pNewRightExpr = Expression::newExpr(newOp,
+			ExprPtr pNewRightExpr = Expr::newExpr(newOp,
 				{ pLeftExpr, pRightExpr },
 				pExpr->lineno(), pExpr->colno());
 
-			ExprPtr pNewExpr = Expression::newExpr(ExprOp::OPT_ASSIGN,
+			ExprPtr pNewExpr = Expr::newExpr(ExprOp::OPT_ASSIGN,
 				{ pLeftExpr, pNewRightExpr },
 				pExpr->lineno(), pExpr->colno());
 			return gen4expr<_CHK>(pNewExpr, demand);
@@ -2087,10 +2087,10 @@ private:
             // 单个表达式
             TokenValue tv;
             tv._str = gvar.getName().toString();
-            ExprPtr pExprLeafId = Expression::newLeafScalar(ExprOp::LEAF_ID, tv,
+            ExprPtr pExprLeafId = Expr::newLeafScalar(ExprOp::LEAF_ID, tv,
                     gvar.getName().lineno(), gvar.getName().colno());
             ExprPtr pNewAssignExpr =
-                    Expression::newExpr(ExprOp::OPT_ASSIGN, { pExprLeafId, gvar.getInitExprNativePtr()->_pExpr },
+                    Expr::newExpr(ExprOp::OPT_ASSIGN, {pExprLeafId, gvar.getInitExprNativePtr()->_pExpr },
                             gvar.getName().lineno(), gvar.getName().colno());
             gen4expr<OnlyGen>(pNewAssignExpr, "void");
         
