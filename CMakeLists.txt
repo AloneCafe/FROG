@@ -5,8 +5,25 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(${SRCDIR})
 
-#add_compile_definitions(_DEBUG)
-add_compile_options(-Wall)
+include (TestBigEndian)
+TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
+if(IS_BIG_ENDIAN)
+    message(FATAL_ERROR "Detected big-endian, FAILED")
+else()
+    message(STATUS "Check little-endian, OK")
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CXX_FLAGS -Wall -Wextra -O2)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CXX_FLAGS -Wall -Wextra -O2)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    set(CXX_FLAGS /Wall /O2)
+else ()
+    message(FATAL_ERROR "Unsupported C++ compiler")
+endif ()
+
+add_compile_options(${CXX_FLAGS})
 
 set(EN_FROG_COMPILER fgc)
 set(EN_FROG_ASSEMBLER fgas)
@@ -15,73 +32,75 @@ set(EN_FROG_VM fgvm)
 set(SRCDIR src)
 
 set(SRCS_FROG_COMPILER
+        ${SRCDIR}/CompilerMain.cpp
+        ${SRCDIR}/ILGenerator.cpp
         ${SRCDIR}/ILGenerator.hpp
+        ${SRCDIR}/SyntaxTreeBasicParser.cpp
         ${SRCDIR}/SyntaxTreeBasicParser.hpp
+        ${SRCDIR}/SyntaxTreeErrorDriver.cpp
         ${SRCDIR}/SyntaxTreeErrorDriver.hpp
+        ${SRCDIR}/SyntaxTreeParser.cpp
         ${SRCDIR}/SyntaxTreeParser.hpp
         ${SRCDIR}/CharScanner.cpp
         ${SRCDIR}/CharScanner.hpp
-        ${SRCDIR}/CompilerMain.cpp
         ${SRCDIR}/ErrorDriver.cpp
         ${SRCDIR}/ErrorDriver.hpp
+        ${SRCDIR}/ExprDefinition.cpp
         ${SRCDIR}/ExprDefinition.hpp
+        ${SRCDIR}/FrontParser.cpp
         ${SRCDIR}/FrontParser.hpp
+        ${SRCDIR}/GlobalFuncMap.cpp
         ${SRCDIR}/GlobalFuncMap.hpp
+        ${SRCDIR}/GUIDGenerator.cpp
         ${SRCDIR}/GUIDGenerator.hpp
         ${SRCDIR}/LineScanner.cpp
         ${SRCDIR}/LineScanner.hpp
         ${SRCDIR}/LittleAssist.cpp
         ${SRCDIR}/LittleAssist.hpp
+        ${SRCDIR}/LocalCodeBinder.cpp
         ${SRCDIR}/LocalCodeBinder.hpp
+        ${SRCDIR}/LocalVarDefinition.cpp
         ${SRCDIR}/LocalVarDefinition.hpp
+        ${SRCDIR}/ParserConfigure.cpp
         ${SRCDIR}/ParserConfigure.hpp
+        ${SRCDIR}/PreAllocatedEntry.cpp
         ${SRCDIR}/PreAllocatedEntry.hpp
+        ${SRCDIR}/SemanticErrorDriver.cpp
         ${SRCDIR}/SemanticErrorDriver.hpp
+        ${SRCDIR}/SemanticParser.cpp
         ${SRCDIR}/SemanticParser.hpp
         ${SRCDIR}/Statements.cpp
         ${SRCDIR}/Statements.hpp
+        ${SRCDIR}/Structure.cpp
         ${SRCDIR}/Structure.hpp
+        ${SRCDIR}/StructureBase.cpp
         ${SRCDIR}/StructureBase.hpp
+        ${SRCDIR}/Token.cpp
         ${SRCDIR}/Token.hpp
+        ${SRCDIR}/TokenDefinition.cpp
         ${SRCDIR}/TokenDefinition.hpp
         ${SRCDIR}/TokenScanner.cpp
         ${SRCDIR}/TokenScanner.hpp
+        ${SRCDIR}/UnitedSemanticParser.cpp
         ${SRCDIR}/UnitedSemanticParser.hpp
         ${SRCDIR}/UnitedTokenizer.cpp
         ${SRCDIR}/UnitedTokenizer.hpp
         ${SRCDIR}/UTFSequence.cpp
-        ${SRCDIR}/UTFSequence.hpp
-        ${SRCDIR}/ILGenerator.cpp
-        ${SRCDIR}/ExprDefinition.cpp
-        ${SRCDIR}/FrontParser.cpp
-        ${SRCDIR}/GlobalFuncMap.cpp
-        ${SRCDIR}/GUIDGenerator.cpp
-        ${SRCDIR}/LocalCodeBinder.cpp
-        ${SRCDIR}/PreAllocatedEntry.cpp
-        ${SRCDIR}/SemanticParser.cpp
-        ${SRCDIR}/UnitedSemanticParser.cpp
-        ${SRCDIR}/Structure.cpp
-        ${SRCDIR}/SyntaxTreeParser.cpp
-        ${SRCDIR}/TokenDefinition.cpp
-        ${SRCDIR}/Token.cpp
-        ${SRCDIR}/StructureBase.cpp
-        ${SRCDIR}/SyntaxTreeBasicParser.cpp
-        ${SRCDIR}/ParserConfigure.cpp
-        ${SRCDIR}/LocalVarDefinition.cpp
-        ${SRCDIR}/SemanticErrorDriver.cpp
-        ${SRCDIR}/SyntaxTreeErrorDriver.cpp)
+        ${SRCDIR}/UTFSequence.hpp)
 
 set(SRCS_FROG_ASSEMBLER
-        ${SRCDIR}/ILParser.hpp
         ${SRCDIR}/AssemblerMain.cpp
-        ${SRCDIR}/ILGenerator.hpp
+        ${SRCDIR}/ILParser.cpp
+        ${SRCDIR}/ILParser.hpp
         ${SRCDIR}/CharScanner.cpp
         ${SRCDIR}/CharScanner.hpp
         ${SRCDIR}/LineScanner.cpp
         ${SRCDIR}/LineScanner.hpp
         ${SRCDIR}/LittleAssist.cpp
         ${SRCDIR}/LittleAssist.hpp
+        ${SRCDIR}/Token.cpp
         ${SRCDIR}/Token.hpp
+        ${SRCDIR}/TokenDefinition.cpp
         ${SRCDIR}/TokenDefinition.hpp
         ${SRCDIR}/TokenScanner.cpp
         ${SRCDIR}/TokenScanner.hpp
@@ -91,15 +110,12 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ErrorDriver.hpp
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
-        ${SRCDIR}/UnitedILParser.hpp
-        ${SRCDIR}/ByteCodeGenerator.hpp
-        ${SRCDIR}/ByteCodeRelocator.hpp
-        ${SRCDIR}/ILParser.cpp
-        ${SRCDIR}/ByteCodeGenerator.cpp
-        ${SRCDIR}/ByteCodeRelocator.cpp
         ${SRCDIR}/UnitedILParser.cpp
-        ${SRCDIR}/TokenDefinition.cpp
-        ${SRCDIR}/Token.cpp)
+        ${SRCDIR}/UnitedILParser.hpp
+        ${SRCDIR}/ByteCodeGenerator.cpp
+        ${SRCDIR}/ByteCodeGenerator.hpp
+        ${SRCDIR}/ByteCodeRelocator.cpp
+        ${SRCDIR}/ByteCodeRelocator.hpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
