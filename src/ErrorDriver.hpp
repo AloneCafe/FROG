@@ -183,8 +183,8 @@ public:
     }
     bool hasErr() const { return ! _errors.empty(); }
     
-    auto assocFuncBeforeExit(const FuncBeforeExit newFunc) {
-        auto oldFunc = _pfuncBeforeExit;
+    FuncBeforeExit assocFuncBeforeExit(const FuncBeforeExit & newFunc) {
+        FuncBeforeExit oldFunc = _pfuncBeforeExit;
         return _pfuncBeforeExit = newFunc, oldFunc;
     }
 };

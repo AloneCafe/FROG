@@ -7,8 +7,6 @@
 
 #include "TokenDefinition.hpp"
 
-class Token; // 前置声明，积累在这里
-template <int Ts> bool isPunc(const Token *);
 
 class Token {
 private:
@@ -16,6 +14,9 @@ private:
     long _begin_lines;
     long _begin_cols;
     TokenValue _val;
+    
+private:
+    bool _isPunc(int p) const;
 
 public:
     Token() :
@@ -56,6 +57,11 @@ public:
                 );
     }*/
     
+    template <int Ts>
+    bool isPunc() const {
+        return getType() > TOKEN_ID && getType() < TOKEN_LITERAL_CHARSEQ && _isPunc(Ts);
+    }
+    
     bool isEnd() const;
     
     bool isId(void) const;
@@ -67,11 +73,6 @@ public:
     bool isType(const TokenType & tt) const;
     
     bool isKw() const;
-    
-    template <int Ts>
-    bool isPunc() const {
-        return ::isPunc<Ts>(this);
-    }
     
     bool isKwPrivate() const;
     
@@ -184,9 +185,10 @@ public:
 
 using TokenIter = typename std::vector<Token>::const_iterator;
 
+/*
 template <int Ts>
 bool isPunc(const Token * pToken) {
     return pToken->getType() > TOKEN_ID && pToken->getType() < TOKEN_LITERAL_CHARSEQ;
-}
+}*/
 
 #endif

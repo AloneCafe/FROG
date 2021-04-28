@@ -52,7 +52,7 @@ ExprPtr Expr::newCallExpr(ExprPtr callerExpr, const std::vector<ExprPtr> & argEx
     pExpr->_lineno = lineno;
     pExpr->_colno = colno;
     pExpr->_subExprs.push_back(callerExpr);
-    std::for_each(argExprList.cbegin(), argExprList.cend(), [=](const auto & e) {
+    std::for_each(argExprList.cbegin(), argExprList.cend(), [=](const ExprPtr & e) {
         pExpr->_subExprs.push_back(e);
     });
     pExpr->_nSubCnt = pExpr->_subExprs.size();
@@ -64,7 +64,7 @@ ExprPtr Expr::newCommaExpr(const std::vector<ExprPtr> & commaExprList, long line
     pExpr->_op = Operator::OPT_CALL;
     pExpr->_lineno = lineno;
     pExpr->_colno = colno;
-    std::for_each(commaExprList.cbegin(), commaExprList.cend(), [=](const auto & e) {
+    std::for_each(commaExprList.cbegin(), commaExprList.cend(), [=](const ExprPtr & e) {
         pExpr->_subExprs.push_back(e);
     });
     pExpr->_nSubCnt = pExpr->_subExprs.size();

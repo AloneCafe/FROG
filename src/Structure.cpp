@@ -57,11 +57,11 @@ void FileStructure::addGlobalVar(const GlobalVar & gv) {
     _gvars.push_back(gv);
 }
 
-const auto & FileStructure::getFuncs() const {
+const std::vector<Function> & FileStructure::getFuncs() const {
     return _funs;
 }
 
-const auto & FileStructure::getGlobalVars() const {
+const std::vector<GlobalVar> & FileStructure::getGlobalVars() const {
     return _gvars;
 }
 

@@ -30,8 +30,9 @@ template <class T, class HASH>
 class PreAllocator {
 private:
     std::vector<std::pair<PreAllocEntry<T>, VarType>> _entries;
-    std::unordered_map<T, int32_t, HASH>
-            _fastIndexes;
+    
+    std::unordered_map<T, int32_t, HASH> _fastIndexes;
+    
     bool _resetFlag = false;
     
 public:
@@ -60,11 +61,11 @@ public:
         }
     }
     
-    auto & getFastIdxTableRef() const {
+    std::unordered_map<T, int32_t, HASH> & getFastIdxTableRef() const {
         return _fastIndexes;
     }
     
-    auto & getEntriesRef() const {
+    std::vector<std::pair<PreAllocEntry<T>, VarType>> & getEntriesRef() const {
         return _entries;
     }
 };

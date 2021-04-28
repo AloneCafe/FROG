@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.19)
 project(frog)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
 include_directories(${SRCDIR})
 
 #add_compile_definitions(_DEBUG)
+add_compile_options(-Wall)
 
 set(EN_FROG_COMPILER fgc)
 set(EN_FROG_ASSEMBLER fgas)

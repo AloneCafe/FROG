@@ -69,9 +69,9 @@ struct FileStructure {
     
     void addGlobalVar(const GlobalVar & gv);
 
-    const auto & getFuncs() const;
+    const std::vector<Function> & getFuncs() const;
     
-    const auto & getGlobalVars() const;
+    const std::vector<GlobalVar> & getGlobalVars() const;
 
     static FileStructurePtr newFileStu(
             const std::string & filename,

@@ -77,7 +77,7 @@ struct IStmt {
     virtual StmtType getStmtType() const = 0;
     
     void setDummyExpr(const ExprPtr & pExpr) { _pDummyExpr = pExpr; }
-    const auto & getDummyExpr() { return _pDummyExpr; }
+    const ExprPtr & getDummyExpr() { return _pDummyExpr; }
     
     static StmtPtr newPureExprStmt(const ExprPtr & pExpr);
     static StmtPtr newDefineStmt(const std::vector<LocalVar> & defScopeObjs);
@@ -107,7 +107,9 @@ public:
         return StmtType::Stmts;
     }
     
-    const auto & getStmtList() const { return _stmts; }
+    const std::vector<StmtPtr> & getStmtList() const {
+        return _stmts;
+    }
 
     ONLY_STMT_FACTORY(Stmts)(const std::vector<StmtPtr> stmts) {
         _stmts = stmts;
@@ -123,7 +125,9 @@ public:
         return StmtType::InlineASM;
     }
     
-    const auto & getASMCodes() const { return _asmcodes; }
+    const std::string & getASMCodes() const {
+        return _asmcodes;
+    }
 
     ONLY_STMT_FACTORY(InlineASM)(const std::string & asmcodes, const ExprPtr & pDummyExpr) {
         _asmcodes = asmcodes;
@@ -161,7 +165,9 @@ public:
         return StmtType::Define;
     }
     
-    const auto & getDefScopeObjs() const { return _defScopeObjs; }
+    const std::vector<LocalVar> & getDefScopeObjs() const {
+        return _defScopeObjs;
+    }
 
     ONLY_STMT_FACTORY(DefineStmt)(const std::vector<LocalVar> & defScopeObjs) {
         _defScopeObjs = defScopeObjs;
@@ -178,9 +184,17 @@ struct ForStmt : public IStmt {
         return StmtType::For;
     }
     
-    const auto & getFirstStmt() const { return _defStmtOrInitExpr; }
-    const auto & getSecondStmt() const { return _pCondStmt; }
-    const auto & getThirdStmt() const { return _pIncreStmt; }
+    const StmtPtr & getFirstStmt() const {
+        return _defStmtOrInitExpr;
+    }
+    
+    const StmtPtr & getSecondStmt() const {
+        return _pCondStmt;
+    }
+    
+    const StmtPtr & getThirdStmt() const {
+        return _pIncreStmt;
+    }
 
     ONLY_STMT_FACTORY(ForStmt)(const StmtPtr & defStmtOrInitExpr,
             const StmtPtr & pCondStmt,

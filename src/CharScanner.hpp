@@ -11,34 +11,62 @@ struct UtfCharInfo {
     UtfChar _ch;
     long _lineno;
     long _colno;
-    UtfCharInfo()
-            : _ch(), _lineno(0), _colno(0) { }
-    UtfCharInfo(UtfChar ch, long lineno, long colno)
-            : _ch(ch), _lineno(lineno), _colno(colno) { }
+    UtfCharInfo() :
+        _ch(),
+        _lineno(0),
+        _colno(0) { }
+        
+    UtfCharInfo(UtfChar ch, long lineno, long colno) :
+        _ch(ch),
+        _lineno(lineno),
+        _colno(colno) { }
     
     bool isAsciChar() const { return _ch.isAsciChar(); }
+    
     bool isUtfCharSeq() const { return _ch.isUtfCharSeq(); }
+    
     UtfChar operator()() { return _ch; }
+    
     bool operator==(char c) { return _ch == c; }
+    
     bool operator!=(char c) { return _ch != c; }
+    
     bool isalpha() { return _ch.isAsciChar() && ::isalpha(_ch.getAsciChar()); }
+    
     bool isdigit() { return _ch.isAsciChar() && ::isdigit(_ch.getAsciChar()); }
+    
     bool isblank() { return _ch.isAsciChar() && ::isblank(_ch.getAsciChar()); }
+    
     bool isalnum() { return _ch.isAsciChar() && ::isalnum(_ch.getAsciChar()); }
+    
     bool iscntrl() { return _ch.isAsciChar() && ::iscntrl(_ch.getAsciChar()); }
+    
     bool isgraph() { return _ch.isAsciChar() && ::isgraph(_ch.getAsciChar()); }
+    
     bool isprint() { return _ch.isAsciChar() && ::isprint(_ch.getAsciChar()); }
+    
     bool islower() { return _ch.isAsciChar() && ::islower(_ch.getAsciChar()); }
+    
     bool isupper() { return _ch.isAsciChar() && ::isupper(_ch.getAsciChar()); }
+    
     bool ispunct() { return _ch.isAsciChar() && ::ispunct(_ch.getAsciChar()); }
+    
     bool isspace() { return _ch.isAsciChar() && ::isspace(_ch.getAsciChar()); }
+    
     bool isxdigit() { return _ch.isAsciChar() && ::isxdigit(_ch.getAsciChar()); }
+    
     bool isodigit() { return _ch.isAsciChar() && (_ch.getAsciChar() >= '0' && _ch.getAsciChar() <= '7'); }
+    
     void toupper() { _ch.setAsciChar(::toupper(_ch.getAsciChar())); }
+    
     void tolower() { _ch.setAsciChar(::tolower(_ch.getAsciChar())); }
+    
     bool isEof() { return _ch.isAsciChar() && _ch.getAsciChar() == CHARACTER_EOF; }
+    
     int xdigit2int();
+    
     int odigit2int();
+    
     int digit2int();
 };
 

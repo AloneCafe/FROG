@@ -1,246 +1,160 @@
 #include "TokenScanner.hpp"
 #include "Token.hpp"
 
-template <>
-inline bool isPunc<'@'>(const Token * pToken) {
-    return pToken->isType(TOKEN_AT);
-}
 
-template <>
-inline bool isPunc<'#'>(const Token * pToken) {
-    return pToken->isType(TOKEN_SINGLE_HASH);
+bool Token::_isPunc(int p) const {
+    if (p == '->') {
+        return isType(TOKEN_ARROW);
+        
+    } else if (p == '.') {
+        return isType(TOKEN_DOT);
+        
+    } else if (p == '=') {
+        return isType(TOKEN_ASSIGN);
+        
+    } else if (p == '>>>=') {
+        return isType(TOKEN_ASSIGN_WITH_RSHIFT_ZERO);
+        
+    } else if (p == '>>=') {
+        return isType(TOKEN_ASSIGN_WITH_RSHIFT);
+        
+    } else if (p == '<<=') {
+        return isType(TOKEN_ASSIGN_WITH_LSHIFT);
+        
+    } else if (p == '@') {
+        return isType(TOKEN_AT);
+    
+    } else if (p == '#') {
+        return isType(TOKEN_SINGLE_HASH);
+    
+    } else if (p == '##') {
+        return isType(TOKEN_DOUBLE_HASH);
+    
+    } else if (p == '(') {
+        return isType(TOKEN_LP);
+    
+    } else if (p == ')') {
+        return isType(TOKEN_RP);
+    
+    } else if (p == '[') {
+        return isType(TOKEN_LBRACKET);
+    
+    } else if (p == ']') {
+        return isType(TOKEN_RBRACKET);
+    
+    } else if (p == '{') {
+        return isType(TOKEN_LBRACE);
+    
+    } else if (p == '}') {
+        return isType(TOKEN_RBRACE);
+    
+    } else if (p == '<') {
+        return isType(TOKEN_LT);
+    
+    } else if (p == '<=') {
+        return isType(TOKEN_LE);
+    
+    } else if (p == '>') {
+        return isType(TOKEN_GT);
+    
+    } else if (p == '>=') {
+        return isType(TOKEN_GE);
+    
+    } else if (p == '==') {
+        return isType(TOKEN_EQ);
+    
+    } else if (p == '!=') {
+        return isType(TOKEN_NE);
+    
+    } else if (p == '!') {
+        return isType(TOKEN_LOGIC_NOT);
+    
+    } else if (p == '&&') {
+        return isType(TOKEN_LOGIC_AND);
+    
+    } else if (p == '||') {
+        return isType(TOKEN_LOGIC_OR);
+    
+    } else if (p == '~') {
+        return isType(TOKEN_BIT_NOT);
+    
+    } else if (p == '&') {
+        return isType(TOKEN_BIT_AND);
+    
+    } else if (p == '|') {
+        return isType(TOKEN_BIT_OR);
+    
+    } else if (p == '^') {
+        return isType(TOKEN_BIT_XOR);
+    
+    } else if (p == '+') {
+        return isType(TOKEN_PLUS);
+    
+    } else if (p == '-') {
+        return isType(TOKEN_MINUS);
+    
+    } else if (p == '*') {
+        return isType(TOKEN_MUL);
+    
+    } else if (p == '/') {
+        return isType(TOKEN_DIV);
+    
+    } else if (p == '%') {
+        return isType(TOKEN_MOD);
+    
+    } else if (p == '<<') {
+        return isType(TOKEN_LSHIFT);
+    
+    } else if (p == '>>') {
+        return isType(TOKEN_RSHIFT);
+    
+    } else if (p == '>>>') {
+        return isType(TOKEN_RSHIFT_ZERO);
+    
+    } else if (p == '?') {
+        return isType(TOKEN_QUESTION);
+    
+    } else if (p == ':') {
+        return isType(TOKEN_COLON);
+    
+    } else if (p == ';') {
+        return isType(TOKEN_SEMICOLON);
+    
+    } else if (p == ',') {
+        return isType(TOKEN_COMMA);
+    
+    } else if (p == '++') {
+        return isType(TOKEN_PLUSPLUS);
+    
+    } else if (p == '--') {
+        return isType(TOKEN_MINUSMINUS);
+    
+    } else if (p == '+=') {
+        return isType(TOKEN_ASSIGN_WITH_ADD);
+    
+    } else if (p == '-=') {
+        return isType(TOKEN_ASSIGN_WITH_SUB);
+    
+    } else if (p == '*=') {
+        return isType(TOKEN_ASSIGN_WITH_MUL);
+    
+    } else if (p == '/=') {
+        return isType(TOKEN_ASSIGN_WITH_DIV);
+    
+    } else if (p == '%=') {
+        return isType(TOKEN_ASSIGN_WITH_MOD);
+    
+    } else if (p == '&=') {
+        return isType(TOKEN_ASSIGN_WITH_BIT_AND);
+    
+    } else if (p == '|=') {
+        return isType(TOKEN_ASSIGN_WITH_BIT_OR);
+    
+    } else if (p == '^=') {
+        return isType(TOKEN_ASSIGN_WITH_BIT_XOR);
+    }
+    return false;
 }
-
-template <>
-inline bool isPunc<'##'>(const Token * pToken) {
-    return pToken->isType(TOKEN_DOUBLE_HASH);
-}
-
-template <>
-inline bool isPunc<'('>(const Token * pToken) {
-    return pToken->isType(TOKEN_LP);
-}
-
-template <>
-inline bool isPunc<')'>(const Token * pToken) {
-    return pToken->isType(TOKEN_RP);
-}
-
-template <>
-inline bool isPunc<'['>(const Token * pToken) {
-    return pToken->isType(TOKEN_LBRACKET);
-}
-
-template <>
-inline bool isPunc<']'>(const Token * pToken) {
-    return pToken->isType(TOKEN_RBRACKET);
-}
-
-template <>
-inline bool isPunc<'{'>(const Token * pToken) {
-    return pToken->isType(TOKEN_LBRACE);
-}
-
-template <>
-inline bool isPunc<'}'>(const Token * pToken) {
-    return pToken->isType(TOKEN_RBRACE);
-}
-
-template <>
-inline bool isPunc<'<'>(const Token * pToken) {
-    return pToken->isType(TOKEN_LT);
-}
-
-template <>
-inline bool isPunc<'<='>(const Token * pToken) {
-    return pToken->isType(TOKEN_LE);
-}
-
-template <>
-inline bool isPunc<'>'>(const Token * pToken) {
-    return pToken->isType(TOKEN_GT);
-}
-
-template <>
-inline bool isPunc<'>='>(const Token * pToken) {
-    return pToken->isType(TOKEN_GE);
-}
-
-template <>
-inline bool isPunc<'=='>(const Token * pToken) {
-    return pToken->isType(TOKEN_EQ);
-}
-
-template <>
-inline bool isPunc<'!='>(const Token * pToken) {
-    return pToken->isType(TOKEN_NE);
-}
-
-template <>
-inline bool isPunc<'!'>(const Token * pToken) {
-    return pToken->isType(TOKEN_LOGIC_NOT);
-}
-
-template <>
-inline bool isPunc<'&&'>(const Token * pToken) {
-    return pToken->isType(TOKEN_LOGIC_AND);
-}
-
-template <>
-inline bool isPunc<'||'>(const Token * pToken) {
-    return pToken->isType(TOKEN_LOGIC_OR);
-}
-
-template <>
-inline bool isPunc<'~'>(const Token * pToken) {
-    return pToken->isType(TOKEN_BIT_NOT);
-}
-
-template <>
-inline bool isPunc<'&'>(const Token * pToken) {
-    return pToken->isType(TOKEN_BIT_AND);
-}
-
-template <>
-inline bool isPunc<'|'>(const Token * pToken) {
-    return pToken->isType(TOKEN_BIT_OR);
-}
-template <>
-inline bool isPunc<'^'>(const Token * pToken) {
-    return pToken->isType(TOKEN_BIT_XOR);
-}
-template <>
-inline bool isPunc<'+'>(const Token * pToken) {
-    return pToken->isType(TOKEN_PLUS);
-}
-template <>
-inline bool isPunc<'-'>(const Token * pToken) {
-    return pToken->isType(TOKEN_MINUS);
-}
-template <>
-inline bool isPunc<'*'>(const Token * pToken) {
-    return pToken->isType(TOKEN_MUL);
-}
-template <>
-inline bool isPunc<'/'>(const Token * pToken) {
-    return pToken->isType(TOKEN_DIV);
-}
-template <>
-inline bool isPunc<'%'>(const Token * pToken) {
-    return pToken->isType(TOKEN_MOD);
-}
-template <>
-inline bool isPunc<'<<'>(const Token * pToken) {
-    return pToken->isType(TOKEN_LSHIFT);
-}
-template <>
-inline bool isPunc<'>>'>(const Token * pToken) {
-    return pToken->isType(TOKEN_RSHIFT);
-}
-template <>
-inline bool isPunc<'>>>'>(const Token * pToken) {
-    return pToken->isType(TOKEN_RSHIFT_ZERO);
-}
-template <>
-inline bool isPunc<'?'>(const Token * pToken) {
-    return pToken->isType(TOKEN_QUESTION);
-}
-
-template <>
-inline bool isPunc<':'>(const Token * pToken) {
-    return pToken->isType(TOKEN_COLON);
-}
-
-template <>
-inline bool isPunc<';'>(const Token * pToken) {
-    return pToken->isType(TOKEN_SEMICOLON);
-}
-
-template <>
-inline bool isPunc<','>(const Token * pToken) {
-    return pToken->isType(TOKEN_COMMA);
-}
-
-template <>
-inline bool isPunc<'++'>(const Token * pToken) {
-    return pToken->isType(TOKEN_PLUSPLUS);
-}
-
-template <>
-inline bool isPunc<'--'>(const Token * pToken) {
-    return pToken->isType(TOKEN_MINUSMINUS);
-}
-
-template <>
-inline bool isPunc<'+='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_ADD);
-}
-
-template <>
-inline bool isPunc<'-='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_SUB);
-}
-
-template <>
-inline bool isPunc<'*='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_MUL);
-}
-
-template <>
-inline bool isPunc<'/='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_DIV);
-}
-
-template <>
-inline bool isPunc<'%='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_MOD);
-}
-
-template <>
-inline bool isPunc<'&='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_BIT_AND);
-}
-
-template <>
-inline bool isPunc<'|='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_BIT_OR);
-}
-
-template <>
-inline bool isPunc<'^='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_BIT_XOR);
-}
-
-template <>
-inline bool isPunc<'<<='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_LSHIFT);
-}
-
-template <>
-inline bool isPunc<'>>='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_RSHIFT);
-}
-
-template <>
-inline bool isPunc<'>>>='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN_WITH_RSHIFT_ZERO);
-}
-
-template <>
-inline bool isPunc<'='>(const Token * pToken) {
-    return pToken->isType(TOKEN_ASSIGN);
-}
-
-template <>
-inline bool isPunc<'.'>(const Token * pToken) {
-    return pToken->isType(TOKEN_DOT);
-}
-
-template <>
-inline bool isPunc<'->'>(const Token * pToken) {
-    return pToken->isType(TOKEN_ARROW);
-}
-
 
 const enum TokenType & Token::getType() const { return this->_type; }
 
@@ -533,3 +447,5 @@ bool Token::isKwGoto() const {
 bool Token::isKwConst() const {
     return _type == TOKEN_RW_CONST;
 }
+
+
