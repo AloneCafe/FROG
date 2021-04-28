@@ -25,9 +25,9 @@ endif ()
 
 add_compile_options(${CXX_FLAGS})
 
-set(EN_FROG_COMPILER fgc)
-set(EN_FROG_ASSEMBLER fgas)
-set(EN_FROG_VM fgvm)
+set(EN_FROG_COMPILER fc)
+set(EN_FROG_ASSEMBLER fas)
+set(EN_FROG_VM fvm)
 
 set(SRCDIR src)
 
@@ -117,7 +117,11 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ByteCodeRelocator.cpp
         ${SRCDIR}/ByteCodeRelocator.hpp)
 
+set(SRCS_FROG_VM
+        ${SRCDIR}/VirtualMachineMain.cpp)
+
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
+add_executable(${EN_FROG_VM} ${SRCS_FROG_VM})
 
 file(COPY extra/SimpleIO.frog DESTINATION ${CMAKE_BINARY_DIR}/extra)
