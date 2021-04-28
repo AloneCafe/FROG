@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.0)
 project(frog)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -118,7 +118,15 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ByteCodeRelocator.hpp)
 
 set(SRCS_FROG_VM
-        ${SRCDIR}/VirtualMachineMain.cpp)
+        ${SRCDIR}/VirtualMachineMain.cpp
+        ${SRCDIR}/LittleAssist.cpp
+        ${SRCDIR}/LittleAssist.hpp
+        ${SRCDIR}/UTFSequence.cpp
+        ${SRCDIR}/UTFSequence.hpp
+        ${SRCDIR}/FakeCPU.cpp
+        ${SRCDIR}/FakeCPU.hpp
+        ${SRCDIR}/FakeOPROM.cpp
+        ${SRCDIR}/FakeOPROM.hpp src/VMException.cpp src/VMException.hpp src/FakeOPStack.cpp src/FakeOPStack.hpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})

@@ -1,4 +1,5 @@
-// simpleio library
+// SimpleIO library
+
 // stdout functions
 func void Print(double d) {
     asm {
