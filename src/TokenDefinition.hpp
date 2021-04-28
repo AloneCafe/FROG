@@ -1,6 +1,9 @@
 #ifndef __TOKEN_DEF_HEADER__
 #define __TOKEN_DEF_HEADER__
 
+#include <cstdint>
+#include <string>
+
 // 最长标识符字符长度限制
 
 #define __CHARSEQ_MAXSIZE             128

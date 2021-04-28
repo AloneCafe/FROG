@@ -11,48 +11,19 @@ private:
     std::vector<char> _bytesStatic;
 
 public:
-    const std::vector<char> & getBytesFuncs() const {
-        return _bytesFuncs;
-    }
+    const std::vector<char> & getBytesFuncs() const;
     
-    const std::vector<char> & getBytesStatic() const {
-        return _bytesStatic;
-    }
+    const std::vector<char> & getBytesStatic() const;
 
 public:
     UniILParser(const std::vector<std::string> & filenames)
             : _filenames(filenames) { }
+            
     UniILParser() = default;
+    
     ~UniILParser() = default;
     
-    bool parse() {
-        if (!_filenames.empty()) {
-            for (const std::string & filename : _filenames) {
-                ILParser ap(filename);
-                bool result = ap.parse();
-                if (!result)
-                    return false;
-                
-                for (auto b : ap.getBytesFuncs())
-                    _bytesFuncs.push_back(b);
-                for (auto b : ap.getBytesStatic())
-                    _bytesStatic.push_back(b);
-            }
-            
-        } else {
-            ILParser ap;
-            bool result = ap.parse();
-            if (!result)
-                return false;
-            
-            for (auto b : ap.getBytesFuncs())
-                _bytesFuncs.push_back(b);
-            for (auto b : ap.getBytesStatic())
-                _bytesStatic.push_back(b);
-        }
-        
-        return true;
-    }
+    bool parse();
     
 };
 

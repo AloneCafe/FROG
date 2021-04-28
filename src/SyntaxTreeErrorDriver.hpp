@@ -10,29 +10,55 @@ private:
     std::shared_ptr<typename std::enable_if<
             std::is_base_of<ErrorDriverBase, T>::value, T>::type>
             _pErrDrv;
+    
     std::string _filename;
 
 public:
-    explicit AstErrorDriver(const std::string & filename)
-            : _pErrDrv(std::make_shared<T>()), _filename(filename) { }
+    explicit AstErrorDriver(const std::string & filename) :
+        _pErrDrv(std::make_shared<T>()),
+        _filename(filename) { }
     
     virtual ~AstErrorDriver() = default;
+    
     void postErr(const ErrorType & type, const Token & tk) {
         _pErrDrv->postErr(type, _filename, tk.lineno(), tk.colno());
     }
+    
     void fatalErr(const ErrorType & type, const Token & tk) {
         _pErrDrv->fatalErr(type, _filename, tk.lineno(), tk.colno());
     }
-    auto lastErr() const { return _pErrDrv->lastErr(); }
-    bool hasErr() const { return _pErrDrv->hasErr(); }
-    void clearLastErr() { _pErrDrv->clearLastErr(); }
-    void clearLastErr(size_t n) { _pErrDrv->clearLastErr(n); }
-    auto getErrCount() const { return _pErrDrv->getErrList().size(); }
-    auto getErrList() const -> const std::vector<Error> & {
+    
+    const Error & lastErr() const {
+        return _pErrDrv->lastErr();
+    }
+    
+    bool hasErr() const {
+        return _pErrDrv->hasErr();
+    }
+    
+    void clearLastErr() {
+        _pErrDrv->clearLastErr();
+    }
+    
+    void clearLastErr(size_t n) {
+        _pErrDrv->clearLastErr(n);
+    }
+    
+    size_t getErrCount() const {
+        return _pErrDrv->getErrList().size();
+    }
+    
+    const std::vector<Error> & getErrList() const {
         return _pErrDrv->getErrList();
     }
-    std::string getFileName() const { return _filename; }
-    void setFileName(const std::string & newFileName) { _filename = newFileName; }
+    
+    std::string getFileName() const {
+        return _filename;
+    }
+    
+    void setFileName(const std::string & newFileName) {
+        _filename = newFileName;
+    }
 };
 
 #endif

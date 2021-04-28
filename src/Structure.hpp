@@ -2,6 +2,7 @@
 #define __STRUCTURE_CLASS_HEADER__
 
 #include <vector>
+
 #include "StructureBase.hpp"
 #include "ExprDefinition.hpp"
 #include "Statements.hpp"
@@ -11,11 +12,9 @@ private:
     StmtsPtr _pStmts = nullptr; //必须具备某种行为，能够放入表达式
 
 public:
-    void setStmtsPtr(const StmtsPtr & pStmts) {
-        _pStmts = pStmts;
-    }
+    void setStmtsPtr(const StmtsPtr & pStmts);
     
-    const auto & getStmtsPtr() const { return _pStmts; }
+    const StmtsPtr & getStmtsPtr() const;
     
     FunctionStructure() = default;
     //FunctionStructure(const FunctionStructure &) = delete;
@@ -29,26 +28,27 @@ struct Function {
     FunctionStructure _funStu;
 
 public:
-    void setName(const LocatedUtfString & name) { _name = name; }
-    void setRetType(const VarType & retType) { _retType = retType; }
-    void setFormalArgList(const FormalArgList & fal) { _fal = fal; }
+    void setName(const LocatedUtfString & name);
     
-    const auto & getName() const { return _name; }
-    const auto & getRetType() const { return _retType; }
-    const auto & getFormalArgList() const { return _fal; }
-    const auto & getFuncStu() const { return _funStu; }
+    void setRetType(const VarType & retType);
+    
+    void setFormalArgList(const FormalArgList & fal);
+    
+    const LocatedUtfString & getName() const;
+    
+    const VarType & getRetType() const;
+    
+    const FormalArgList & getFormalArgList() const;
+    
+    const FunctionStructure & getFuncStu() const;
     
     Function() = default;
     //Function(const Function &) = delete;
     //Function & operator=(const Function &) = delete;
     
-    FunctionStructure & getFuncStuRef() {
-        return _funStu;
-    }
+    FunctionStructure & getFuncStuRef();
     
-    const auto & getContextStmtsPtr() const {
-        return _funStu.getStmtsPtr();
-    }
+    const StmtsPtr & getContextStmtsPtr() const;
 };
 
 using GlobalVar = LocalVar;
@@ -65,29 +65,20 @@ struct FileStructure {
     FileStructure(const FileStructure &) = delete;
     FileStructure & operator=(const FileStructure &) = delete;
 
-    void addFunc(const Function & f) { _funs.push_back(f); }
-    void addGlobalVar(const GlobalVar & gv) { _gvars.push_back(gv); }
-
-    const auto & getFuncs() const { return _funs; }
-    const auto & getGlobalVars() const { return _gvars; }
-
-    static FileStructurePtr newFileStu(const std::string & filename, const std::vector<GlobalVar> & gvars, const std::vector<Function> & funs) {
-        FileStructurePtr pFileStu = std::make_shared<FileStructure>();
-        pFileStu->_filename = filename;
-        pFileStu->_gvars = gvars;
-        pFileStu->_funs = funs;
-        return pFileStu;
-    }
-
-    static FileStructurePtr newFileStu(const std::string & filename) {
-        FileStructurePtr pFileStu = std::make_shared<FileStructure>();
-        pFileStu->_filename = filename;
-        return pFileStu;
-    }
+    void addFunc(const Function & f);
     
-    static FileStructurePtr makeAll2One(const std::vector<FileStructurePtr> & fileStus) {
-        return nullptr; // TODO
-    }
+    void addGlobalVar(const GlobalVar & gv);
+
+    const auto & getFuncs() const;
+    
+    const auto & getGlobalVars() const;
+
+    static FileStructurePtr newFileStu(
+            const std::string & filename,
+            const std::vector<GlobalVar> & gvars,
+            const std::vector<Function> & funs);
+
+    static FileStructurePtr newFileStu(const std::string & filename);
 };
 
 #endif

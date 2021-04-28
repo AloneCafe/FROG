@@ -1,5 +1,5 @@
-#ifndef __TOKENSCAN_HEADER__
-#define __TOKENSCAN_HEADER__
+#ifndef __TOKEN_SCANNER_HEADER__
+#define __TOKEN_SCANNER_HEADER__
 
 #include <iostream>
 #include <fstream>
@@ -19,113 +19,6 @@
 extern const std::map<std::string, TokenType> Keyword2TokenType;
 
 extern const char * TokenType2String[];
-
-namespace TokenHelper {
-template <int Ts>
-inline bool isPunc(const Token * pToken) {
-    return pToken->getType() > TOKEN_ID && pToken->getType() < TOKEN_LITERAL_CHARSEQ;
-}
-template <>
-inline bool isPunc<'@'>(const Token * pToken) { return pToken->isType(TOKEN_AT); }
-template <>
-inline bool isPunc<'#'>(const Token * pToken) { return pToken->isType(TOKEN_SINGLE_HASH); }
-template <>
-inline bool isPunc<'##'>(const Token * pToken) { return pToken->isType(TOKEN_DOUBLE_HASH); }
-template <>
-inline bool isPunc<'('>(const Token * pToken) { return pToken->isType(TOKEN_LP); }
-template <>
-inline bool isPunc<')'>(const Token * pToken) { return pToken->isType(TOKEN_RP); }
-template <>
-inline bool isPunc<'['>(const Token * pToken) { return pToken->isType(TOKEN_LBRACKET); }
-template <>
-inline bool isPunc<']'>(const Token * pToken) { return pToken->isType(TOKEN_RBRACKET); }
-template <>
-inline bool isPunc<'{'>(const Token * pToken) { return pToken->isType(TOKEN_LBRACE); }
-template <>
-inline bool isPunc<'}'>(const Token * pToken) { return pToken->isType(TOKEN_RBRACE); }
-template <>
-inline bool isPunc<'<'>(const Token * pToken) { return pToken->isType(TOKEN_LT); }
-template <>
-inline bool isPunc<'<='>(const Token * pToken) { return pToken->isType(TOKEN_LE); }
-template <>
-inline bool isPunc<'>'>(const Token * pToken) { return pToken->isType(TOKEN_GT); }
-template <>
-inline bool isPunc<'>='>(const Token * pToken) { return pToken->isType(TOKEN_GE); }
-template <>
-inline bool isPunc<'=='>(const Token * pToken) { return pToken->isType(TOKEN_EQ); }
-template <>
-inline bool isPunc<'!='>(const Token * pToken) { return pToken->isType(TOKEN_NE); }
-template <>
-inline bool isPunc<'!'>(const Token * pToken) { return pToken->isType(TOKEN_LOGIC_NOT); }
-template <>
-inline bool isPunc<'&&'>(const Token * pToken) { return pToken->isType(TOKEN_LOGIC_AND); }
-template <>
-inline bool isPunc<'||'>(const Token * pToken) { return pToken->isType(TOKEN_LOGIC_OR); }
-template <>
-inline bool isPunc<'~'>(const Token * pToken) { return pToken->isType(TOKEN_BIT_NOT); }
-template <>
-inline bool isPunc<'&'>(const Token * pToken) { return pToken->isType(TOKEN_BIT_AND); }
-template <>
-inline bool isPunc<'|'>(const Token * pToken) { return pToken->isType(TOKEN_BIT_OR); }
-template <>
-inline bool isPunc<'^'>(const Token * pToken) { return pToken->isType(TOKEN_BIT_XOR); }
-template <>
-inline bool isPunc<'+'>(const Token * pToken) { return pToken->isType(TOKEN_PLUS); }
-template <>
-inline bool isPunc<'-'>(const Token * pToken) { return pToken->isType(TOKEN_MINUS); }
-template <>
-inline bool isPunc<'*'>(const Token * pToken) { return pToken->isType(TOKEN_MUL); }
-template <>
-inline bool isPunc<'/'>(const Token * pToken) { return pToken->isType(TOKEN_DIV); }
-template <>
-inline bool isPunc<'%'>(const Token * pToken) { return pToken->isType(TOKEN_MOD); }
-template <>
-inline bool isPunc<'<<'>(const Token * pToken) { return pToken->isType(TOKEN_LSHIFT); }
-template <>
-inline bool isPunc<'>>'>(const Token * pToken) { return pToken->isType(TOKEN_RSHIFT); }
-template <>
-inline bool isPunc<'>>>'>(const Token * pToken) { return pToken->isType(TOKEN_RSHIFT_ZERO); }
-template <>
-inline bool isPunc<'?'>(const Token * pToken) { return pToken->isType(TOKEN_QUESTION); }
-template <>
-inline bool isPunc<':'>(const Token * pToken) { return pToken->isType(TOKEN_COLON); }
-template <>
-inline bool isPunc<';'>(const Token * pToken) { return pToken->isType(TOKEN_SEMICOLON); }
-template <>
-inline bool isPunc<','>(const Token * pToken) { return pToken->isType(TOKEN_COMMA); }
-template <>
-inline bool isPunc<'++'>(const Token * pToken) { return pToken->isType(TOKEN_PLUSPLUS); }
-template <>
-inline bool isPunc<'--'>(const Token * pToken) { return pToken->isType(TOKEN_MINUSMINUS); }
-template <>
-inline bool isPunc<'+='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_ADD); }
-template <>
-inline bool isPunc<'-='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_SUB); }
-template <>
-inline bool isPunc<'*='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_MUL); }
-template <>
-inline bool isPunc<'/='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_DIV); }
-template <>
-inline bool isPunc<'%='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_MOD); }
-template <>
-inline bool isPunc<'&='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_BIT_AND); }
-template <>
-inline bool isPunc<'|='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_BIT_OR); }
-template <>
-inline bool isPunc<'^='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_BIT_XOR); }
-template <>
-inline bool isPunc<'<<='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_LSHIFT); }
-template <>
-inline bool isPunc<'>>='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_RSHIFT); }
-template <>
-inline bool isPunc<'>>>='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN_WITH_RSHIFT_ZERO); }
-template <>
-inline bool isPunc<'='>(const Token * pToken) { return pToken->isType(TOKEN_ASSIGN); }
-template <>
-inline bool isPunc<'.'>(const Token * pToken) { return pToken->isType(TOKEN_DOT); }
-template <>
-inline bool isPunc<'->'>(const Token * pToken) { return pToken->isType(TOKEN_ARROW); }
-}
 
 // 预处理单词扫描器状态枚举
 enum TokenScannerState {

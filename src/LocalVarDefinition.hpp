@@ -15,23 +15,19 @@ public:
     
     struct IInitEntity {
         virtual InitEntityType getEntityType() const = 0;
-        static InitEntityPtr newInitExpr(const ExprPtr & pExpr) {
-            InitEntityPtr pEntity(new InitExpr(pExpr));
-            return pEntity;
-        }
-        static InitEntityPtr newInitList(const std::vector<InitEntityPtr> & entities) {
-            InitEntityPtr pEntity(new InitList(entities));
-            return pEntity;
-        }
+        
+        static InitEntityPtr newInitExpr(const ExprPtr & pExpr);
+        
+        static InitEntityPtr newInitList(const std::vector<InitEntityPtr> & entities);
     };
     
     struct InitExpr : public IInitEntity {
         ExprPtr _pExpr; // 一般表达式
-        InitEntityType getEntityType() const override {
-            return InitEntityType::Expr;
-        }
         
-        explicit InitExpr(const ExprPtr & pExpr) { _pExpr = pExpr; }
+        InitEntityType getEntityType() const override;
+        
+        explicit InitExpr(const ExprPtr & pExpr);
+        
         InitExpr(const InitExpr &) = delete;
         InitExpr operator=(const InitExpr &) = delete;
     };
@@ -39,13 +35,11 @@ public:
     struct InitList : public IInitEntity {
         // List 中可能包含的元素：List 或者 Expr，用智能指针的多态形式来表示
         std::vector<InitEntityPtr> _entities;
-        InitEntityType getEntityType() const override {
-            return InitEntityType::List;
-        }
         
-        explicit InitList(const std::vector<InitEntityPtr> & entities) {
-            _entities = entities;
-        }
+        InitEntityType getEntityType() const override;
+        
+        explicit InitList(const std::vector<InitEntityPtr> & entities);
+        
         InitList(const InitList &) = delete;
         InitList operator=(const InitList &) = delete;
     };
@@ -56,51 +50,35 @@ protected:
     InitEntityPtr _pEntity = nullptr; // 如果不给初始化表达式，此处应设为 nullptr
 
 public:
-    void setName(const LocatedUtfString & name) { _name = name; }
-    void setType(const VarType & type) { _type = type; }
+    void setName(const LocatedUtfString & name);
     
-    bool hasInit() const { return _pEntity != nullptr; }
+    void setType(const VarType & type);
+    
+    bool hasInit() const;
 
-    const auto & getType() const { return _type; }
-    const auto & getName() const { return _name; }
+    const VarType & getType() const;
     
-    static void copySameModifierAndType(const LocalVar & from, LocalVar & to) {
-        to._type = from._type;
-    }
+    const LocatedUtfString & getName() const;
     
-    bool isListInit() const {
-        assert(_pEntity != nullptr);
-        return _pEntity->getEntityType() == InitEntityType::List;
-    }
+    static void copySameModifierAndType(const LocalVar & from, LocalVar & to);
     
-    bool isExprInit() const {
-        assert(_pEntity != nullptr);
-        return _pEntity->getEntityType() == InitEntityType::Expr;
-    }
+    bool isListInit() const;
     
-    void setInitList(const std::vector<InitEntityPtr> & entities) {
-        assert(_pEntity == nullptr); // 必须为 nullptr
-        _pEntity = IInitEntity::newInitList(entities);
-    }
+    bool isExprInit() const;
     
-    void setInitExpr(const ExprPtr & pExpr) {
-        assert(_pEntity == nullptr); // 必须为 nullptr
-        _pEntity = IInitEntity::newInitExpr(pExpr);
-    }
+    void setInitList(const std::vector<InitEntityPtr> & entities);
+    
+    void setInitExpr(const ExprPtr & pExpr);
 
-    InitList * getInitListNativePtr() const {
-        assert(isListInit());
-        return static_cast<InitList *>(_pEntity.get());
-    }
+    InitList * getInitListNativePtr() const;
 
-    InitExpr * getInitExprNativePtr() const {
-        assert(isExprInit());
-        return static_cast<InitExpr *>(_pEntity.get());
-    }
+    InitExpr * getInitExprNativePtr() const;
     
     LocalVar() = default;
     //ScopeObject(const ScopeObject &) = delete;
     //ScopeObject & operator=(const ScopeObject &) = delete;
 };
+
+
 
 #endif

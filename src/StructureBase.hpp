@@ -13,80 +13,41 @@ protected:
     int _degree = 0;
 
 public:
-    static VarType buildFromStr(const std::string & str) {
-        VarType objType;
-        std::stringstream ss;
-        auto it = str.cbegin();
-        while (it != str.cend() && !isdigit(*it)) {
-            ss << *it;
-            ++it;
-        }
-        objType._lowLvType = LocatedUtfString::make(ss.str().c_str(), -1, -1);
-        
-        std::stringstream nums;
-        while (it != str.cend()) {
-            
-            if (isdigit(*it)) {
-                ++it;
-                nums << *it;
-            }
-        }
-        objType._degree = atoi(nums.str().c_str());
-        
-        return objType;
-    }
+    static VarType buildFromStr(const std::string & str);
     
-    VarType(const std::string & s) {
-        *this = buildFromStr(s);
-    }
-    VarType(const char *p) {
-        std::string s = p;
-        *this = buildFromStr(s);
-    }
+    VarType(const std::string & s);
+    
+    VarType(const char *p);
+    
     VarType() = default;
     VarType(const VarType &) = default;
     VarType & operator=(const VarType &) = default;
     
-    bool operator==(const VarType & objType) const {
-        return _lowLvType == objType._lowLvType && _degree == objType._degree;
-    }
-    bool operator==(const std::string & str) const {
-        return toString() == str;
-	}
-	bool operator==(const char * str) const {
-		return toString() == str;
-	}
+    bool operator==(const VarType & objType) const;
     
-    bool operator!=(const VarType & objType) const {
-        return !(_lowLvType == objType._lowLvType && _degree == objType._degree);
-    }
-    bool operator!=(const std::string & str) const {
-        return toString() != str;
-    }
-    bool operator!=(const char * str) const {
-        return toString() != str;
-    }
+    bool operator==(const std::string & str) const;
     
-    std::string toString() const {
-        std::stringstream ss;
-        if (_lowLvType.empty())
-            return "";
-        ss << _lowLvType.toString();
-        if (_degree > 0)
-            ss << _degree;
-        return ss.str();
-    }
+	bool operator==(const char * str) const;
     
-    const LocatedUtfString & getLowLvType() const { return _lowLvType; }
-    LocatedUtfString & getLowLvTypeRef() { return _lowLvType; }
-    int & getDegreeRef() { return _degree; }
-    int getDegree() const { return _degree; }
-    void setLowLvType(const LocatedUtfString & lowLvType) { _lowLvType = lowLvType; }
-    void setDegree(int degree) { _degree = degree; }
-};
-
-struct FixedVarType : public VarType {
-
+    bool operator!=(const VarType & objType) const;
+    
+    bool operator!=(const std::string & str) const;
+    
+    bool operator!=(const char * str) const;
+    
+    std::string toString() const;
+    
+    const LocatedUtfString & getLowLvType() const;
+    
+    LocatedUtfString & getLowLvTypeRef();
+    
+    int & getDegreeRef();
+    
+    int getDegree() const;
+    
+    void setLowLvType(const LocatedUtfString & lowLvType);
+    
+    void setDegree(int degree);
 };
 
 using VarName = LocatedUtfString;
@@ -97,11 +58,13 @@ private:
     LocatedUtfString _name;
 
 public:
-    void setType(const VarType & type) { _type = type; }
-    void setName(const LocatedUtfString & name) { _name = name; }
+    void setType(const VarType & type);
     
-    auto & getType() const { return _type; }
-    auto & getName() const { return _name; }
+    void setName(const LocatedUtfString & name);
+    
+    const VarType & getType() const;
+    
+    const LocatedUtfString & getName() const;
 };
 
 using FormalArgList = std::vector<FormalArg>;

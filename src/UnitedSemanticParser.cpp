@@ -1,3 +1,9 @@
+#include <memory>
+#include <fstream>
+#include <vector>
+#include <string>
+
+#include "FrontParser.hpp"
 #include "UnitedSemanticParser.hpp"
 
 std::string UniSemParser::parse() {

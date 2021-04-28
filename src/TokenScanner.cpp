@@ -1,4 +1,5 @@
 #include "TokenScanner.hpp"
+#include "Token.hpp"
 
 #define POST_PT_E(x) postErr((x), _filename, lineno, colno)
 
@@ -176,66 +177,8 @@ const std::map<std::string, TokenType> Keyword2TokenType = {
         std::make_pair("asm", TOKEN_KW_ASM),
         std::make_pair("void", TOKEN_KW_VOID),
         std::make_pair("goto", TOKEN_RW_GOTO),
-        std::make_pair("const", TOKEN_RW_CONST)};
-
-const enum TokenType & Token::getType() const { return this->_type; }
-
-const TokenValue & Token::getVal() const { return this->_val; }
-
-const std::string & Token::getId() const { return _val._str; }
-
-long Token::lineno() const { return this->_begin_lines; }
-
-long Token::colno() const { return this->_begin_cols; }
-
-std::string Token::toDebugString() const {
-    switch (_type) {
-    default:
-        return StringOperator::format(R"([<'%s'>, %ld, %ld])",
-                TokenType2String[_type], _begin_lines,
-                _begin_cols);
-    case TOKEN_ID:
-        return StringOperator::format(R"([<'%s', '%s'>, %ld, %ld])",
-                TokenType2String[_type], _val._str.c_str(),
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_CHARSEQ:
-        return StringOperator::format(R"([<'%s', '%s'>, %ld, %ld])",
-                TokenType2String[_type], _val._str.c_str(),
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_STRING:
-        return StringOperator::format(R"([<'%s', '%s'>, %ld, %ld])",
-                TokenType2String[_type], _val._str.c_str(),
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_INT:
-        return StringOperator::format(R"([<'%s', '%d'>, %ld, %ld])",
-                TokenType2String[_type], _val.u._d,
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_LONG:
-        return StringOperator::format(R"([<'%s', '%ld'>, %ld, %ld])",
-                TokenType2String[_type], _val.u._l,
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_UNSIGNED_INT:
-        return StringOperator::format(R"([<'%s', '%u'>, %ld, %ld])",
-                TokenType2String[_type], _val.u._ud,
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_UNSIGNED_LONG:
-        return StringOperator::format(R"([<'%s', '%lu'>, %ld, %ld])",
-                TokenType2String[_type], _val.u._ul,
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_FLOAT:
-        return StringOperator::format(R"([<'%s', '%E'>, %ld, %ld])",
-                TokenType2String[_type], _val.u._lf,
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_DOUBLE:
-        return StringOperator::format(R"([<'%s', '%lE'>, %ld, %ld])",
-                TokenType2String[_type], _val.u._lf,
-                _begin_lines, _begin_cols);
-    case TOKEN_LITERAL_LONG_DOUBLE:
-        return StringOperator::format(R"([<'%s', '%llE'>, %ld, %ld])",
-                TokenType2String[_type], _val.u._llf,
-                _begin_lines, _begin_cols);
-    }
-}
+        std::make_pair("const", TOKEN_RW_CONST)
+};
 
 Token & TokenScanner::realNextToken() {
     StateIndicator<TokenScannerState> si(TS_INITIAL); // 状态指示对象

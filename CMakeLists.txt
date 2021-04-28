@@ -51,7 +51,24 @@ set(SRCS_FROG_COMPILER
         ${SRCDIR}/UTFSequence.cpp
         ${SRCDIR}/UTFSequence.hpp
         ${SRCDIR}/ILGenerator.cpp
-        ${SRCDIR}/ExprDefinition.cpp src/FrontParser.cpp src/GlobalFuncMap.cpp src/GUIDGenerator.cpp src/LocalCodeBinder.cpp src/PreAllocatedEntry.cpp src/SemanticParser.cpp src/UnitedSemanticParser.cpp)
+        ${SRCDIR}/ExprDefinition.cpp
+        ${SRCDIR}/FrontParser.cpp
+        ${SRCDIR}/GlobalFuncMap.cpp
+        ${SRCDIR}/GUIDGenerator.cpp
+        ${SRCDIR}/LocalCodeBinder.cpp
+        ${SRCDIR}/PreAllocatedEntry.cpp
+        ${SRCDIR}/SemanticParser.cpp
+        ${SRCDIR}/UnitedSemanticParser.cpp
+        ${SRCDIR}/Structure.cpp
+        ${SRCDIR}/SyntaxTreeParser.cpp
+        ${SRCDIR}/TokenDefinition.cpp
+        ${SRCDIR}/Token.cpp
+        ${SRCDIR}/StructureBase.cpp
+        ${SRCDIR}/SyntaxTreeBasicParser.cpp
+        ${SRCDIR}/ParserConfigure.cpp
+        ${SRCDIR}/LocalVarDefinition.cpp
+        ${SRCDIR}/SemanticErrorDriver.cpp
+        ${SRCDIR}/SyntaxTreeErrorDriver.cpp)
 
 set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ILParser.hpp
@@ -78,7 +95,10 @@ set(SRCS_FROG_ASSEMBLER
         ${SRCDIR}/ByteCodeRelocator.hpp
         ${SRCDIR}/ILParser.cpp
         ${SRCDIR}/ByteCodeGenerator.cpp
-        ${SRCDIR}/ByteCodeRelocator.cpp)
+        ${SRCDIR}/ByteCodeRelocator.cpp
+        ${SRCDIR}/UnitedILParser.cpp
+        ${SRCDIR}/TokenDefinition.cpp
+        ${SRCDIR}/Token.cpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
