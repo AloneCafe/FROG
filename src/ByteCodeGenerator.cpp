@@ -11,18 +11,18 @@ std::vector<char> ByteCodeGenerator::make(const std::vector<char> & bytesStatic,
     bch._sizeStatic = bytesStatic.size();
     bch._offsetFuncs = bch._offsetStatic + bch._sizeStatic;
     bch._sizeFuncs = bytesFuncs.size();
-    for (size_t i = 0; i < sizeof(bch); ++i)
+    for (uint32_t i = 0; i < sizeof(bch); ++i)
         bytecodes.push_back(((char *)&bch)[i]);
-    for (size_t i = 0; i < bch._sizeStatic; ++i)
+    for (uint32_t i = 0; i < bch._sizeStatic; ++i)
         bytecodes.push_back(bytesStatic[i]);
-    for (size_t i = 0; i < bch._sizeFuncs; ++i)
+    for (uint32_t i = 0; i < bch._sizeFuncs; ++i)
         bytecodes.push_back(bytesFuncs[i]);
     return std::move(bytecodes);
 }
 
 void ByteCodeHexPrinter::b2hex(uint8_t b, char hex[2], bool upcase) {
     uint8_t hb[2] = { uint8_t(b / 0x10), uint8_t(b % 0x10) };
-    for (size_t i = 0; i < 2; ++i) {
+    for (uint32_t i = 0; i < 2; ++i) {
         switch (hb[i]) {
         case 0x0: hex[i] = '0'; break;
         case 0x1: hex[i] = '1'; break;
@@ -44,9 +44,9 @@ void ByteCodeHexPrinter::b2hex(uint8_t b, char hex[2], bool upcase) {
     }
 }
 
-void ByteCodeHexPrinter::print(const std::vector<char> & bytes, size_t coln) {
-    size_t sizeBytes = bytes.size();
-    for (size_t i = 0; i < sizeBytes; ++i) {
+void ByteCodeHexPrinter::print(const std::vector<char> & bytes, uint32_t coln) {
+    uint32_t sizeBytes = bytes.size();
+    for (uint32_t i = 0; i < sizeBytes; ++i) {
         char h[2];
         b2hex(bytes[i], h);
         std::cout << h << ((i + 1) % 8 == 0 ? "\n" : " ");

@@ -3,9 +3,9 @@
 
 #include "ExprDefinition.hpp"
 
-size_t Expr::UNLIMITED = 0;
+uint32_t Expr::UNLIMITED = 0;
 
-const size_t Expr::__opt2exprCnt[] = {
+const uint32_t Expr::__opt2exprCnt[] = {
         1, 1, 1, 1, 1, 1,
         2, 2, 2, 2, 2, 2, 2, 2,
         2, 2, 2, 2, 2,
@@ -22,7 +22,7 @@ long Expr::colno() const {
     return _colno;
 }
 
-size_t Expr::getExprCnt() const {
+uint32_t Expr::getExprCnt() const {
     return _nSubCnt;
 }
 
@@ -30,7 +30,7 @@ Expr::Operator Expr::getOp() const {
     return _op;
 }
 
-const ExprPtr & Expr::getSubExprPtr(size_t i) const {
+const ExprPtr & Expr::getSubExprPtr(uint32_t i) const {
     return _subExprs[i];
 }
 
@@ -42,7 +42,7 @@ const Expr::LeafType & Expr::getLeafType() const {
     return _leafType;
 }
 
-const ExprPtr & Expr::operator[](size_t i) const {
+const ExprPtr & Expr::operator[](uint32_t i) const {
     return _subExprs[i];
 }
 

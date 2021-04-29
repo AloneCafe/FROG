@@ -27,11 +27,11 @@ clearLastErr() {
 }
 
 template<> void AstErrorDriver<ErrorDriver>::
-clearLastErr(size_t n) {
+clearLastErr(uint32_t n) {
     _pErrDrv->clearLastErr(n);
 }
 
-template<> size_t AstErrorDriver<ErrorDriver>::
+template<> uint32_t AstErrorDriver<ErrorDriver>::
 getErrCount() const {
     return _pErrDrv->getErrList().size();
 }

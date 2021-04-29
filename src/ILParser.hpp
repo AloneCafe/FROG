@@ -20,7 +20,7 @@ private:
 public:
     std::pair<bool, std::pair<bool, int>> getOffset(const std::string & varName) const;
     
-    bool setOffset(const std::string & varName, size_t varSiz, bool isStatic);
+    bool setOffset(const std::string & varName, uint32_t varSiz, bool isStatic);
     
     void resetNonStatic();
 };

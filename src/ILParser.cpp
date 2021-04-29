@@ -9,7 +9,7 @@ UniVarAllocTable::getOffset(const std::string & varName) const {
     return std::make_pair(false, std::make_pair(0, 0));
 }
 
-bool UniVarAllocTable::setOffset(const std::string & varName, size_t varSiz, bool isStatic) {
+bool UniVarAllocTable::setOffset(const std::string & varName, uint32_t varSiz, bool isStatic) {
     if (isStatic) {
         auto it = _map.insert(std::make_pair(varName, std::make_pair(isStatic, _currStaticOffset)));
         if (it.second)
@@ -48,7 +48,7 @@ const std::vector<char> & ILParser::getBytesStatic() const {
 
 bool ILParser::parse() {
     const std::vector<Token> tks = _ut.tokenize();
-    size_t sizTks = tks.size();
+    uint32_t sizTks = tks.size();
     
     enum {
         INITIAL,
@@ -56,7 +56,7 @@ bool ILParser::parse() {
         BUILDING_FUNC,
     } stat = INITIAL;
     
-    size_t i;
+    uint32_t i;
     for (i = 0; i < sizTks; ++i) {
         if (tks[i].isPunc<'.'>()) {
             ++i;
@@ -939,7 +939,7 @@ bool ILParser::parse() {
                     }
                     auto pair = pUVAT->getOffset(tks[i].getId());
                     assert(pair.first);
-                    size_t offset = pair.second.second;
+                    uint32_t offset = pair.second.second;
                     pBytes->push_back(((char *)&offset)[0]);
                     pBytes->push_back(((char *)&offset)[1]);
                     pBytes->push_back(((char *)&offset)[2]);
@@ -977,7 +977,7 @@ bool ILParser::parse() {
                     if (!pair.first) {
                         IL_PARSER_E("该变量未用 DEF 指令定义");
                     }
-                    size_t offset = pair.second.second;
+                    uint32_t offset = pair.second.second;
                     pBytes->push_back(((char *)&offset)[0]);
                     pBytes->push_back(((char *)&offset)[1]);
                     pBytes->push_back(((char *)&offset)[2]);
@@ -1015,7 +1015,7 @@ bool ILParser::parse() {
                     if (!pair.first) {
                         IL_PARSER_E("该变量未用 DEF 指令定义");
                     }
-                    size_t offset = pair.second.second;
+                    uint32_t offset = pair.second.second;
                     pBytes->push_back(((char *)&offset)[0]);
                     pBytes->push_back(((char *)&offset)[1]);
                     pBytes->push_back(((char *)&offset)[2]);
@@ -1053,7 +1053,7 @@ bool ILParser::parse() {
                     if (!pair.first) {
                         IL_PARSER_E("该变量未用 DEF 指令定义");
                     }
-                    size_t offset = pair.second.second;
+                    uint32_t offset = pair.second.second;
                     pBytes->push_back(((char *)&offset)[0]);
                     pBytes->push_back(((char *)&offset)[1]);
                     pBytes->push_back(((char *)&offset)[2]);
@@ -1067,7 +1067,7 @@ bool ILParser::parse() {
             } else if (tks[i].isId("J", false)) {
                 ++i;
                 if (tks[i].isPunc<'#'>()) {
-                    size_t offset;
+                    uint32_t offset;
                     ++i;
                     pBytes->push_back(0x60);
                     if (tks[i].isId()) {
@@ -1088,7 +1088,7 @@ bool ILParser::parse() {
             } else if (tks[i].isId("JT", false)) {
                 ++i;
                 if (tks[i].isPunc<'#'>()) {
-                    size_t offset;
+                    uint32_t offset;
                     ++i;
                     pBytes->push_back(0x61);
                     if (tks[i].isId()) {
@@ -1109,7 +1109,7 @@ bool ILParser::parse() {
             } else if (tks[i].isId("JF", false)) {
                 ++i;
                 if (tks[i].isPunc<'#'>()) {
-                    size_t offset;
+                    uint32_t offset;
                     ++i;
                     pBytes->push_back(0x62);
                     if (tks[i].isId()) {
@@ -1139,7 +1139,7 @@ bool ILParser::parse() {
             }
             
         } else if (tks[i].isPunc<'#'>()) {
-            size_t offset;
+            uint32_t offset;
             ++i;
             if (stat == BUILDING_FUNC) {
                 offset = _bytesFuncs.size();

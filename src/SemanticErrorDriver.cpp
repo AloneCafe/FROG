@@ -36,11 +36,11 @@ clearLastErr() {
 }
 
 template<> void SemErrorDriver<ErrorDriver>::
-clearLastErr(size_t n) {
+clearLastErr(uint32_t n) {
     _pErrDrv->clearLastErr(n);
 }
 
-template<> size_t SemErrorDriver<ErrorDriver>::
+template<> uint32_t SemErrorDriver<ErrorDriver>::
 getErrCount() const {
     return _pErrDrv->getErrList().size();
 }

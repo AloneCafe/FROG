@@ -102,9 +102,9 @@ UtfString SeqConverter::toEscape(UtfChar & native) {
 
 UtfString SeqConverter::toNative(UtfString & escape) {
     UtfString native;
-    size_t len = escape.length();
+    uint32_t len = escape.length();
     bool readingEscape = false;
-    for (size_t i = 0; i < len; ++i) {
+    for (uint32_t i = 0; i < len; ++i) {
         UtfChar & uc = escape[i];
         
         if (!readingEscape) {
@@ -209,9 +209,9 @@ std::string SeqConverter::toEscape(char native) {
 
 std::string SeqConverter::toNative(const std::string & escape) {
     std::string native;
-    size_t len = escape.length();
+    uint32_t len = escape.length();
     bool readingEscape = false;
-    for (size_t i = 0; i < len; ++i) {
+    for (uint32_t i = 0; i < len; ++i) {
         char uc = escape[i];
         
         if (!readingEscape) {
@@ -288,8 +288,8 @@ bool FileSystem::fileExist(const std::string & filename) {
 
 std::string FileSystem::path2FileName(const std::string & filename) {
     std::stack<char> path;
-    size_t len = filename.size();
-    for (size_t i = len; i >= 1; --i) {
+    uint32_t len = filename.size();
+    for (uint32_t i = len; i >= 1; --i) {
         char ch = filename[i - 1];
         if (ch == '/' || ch == '\\')
             break;

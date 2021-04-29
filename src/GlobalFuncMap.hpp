@@ -11,7 +11,7 @@
 class GlobalFuncMap {
 private:
 	static std::vector<Function> _funcs;
-	static std::unordered_map<std::string, size_t> _idxMap;
+	static std::unordered_map<std::string, uint32_t> _idxMap;
 
 public:
 	static Function * getFuncByMangling(const std::string & fname, const std::vector<FormalArg> & fargs);

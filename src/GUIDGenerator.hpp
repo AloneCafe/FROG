@@ -13,7 +13,7 @@ class BasicGuidGen {
 	static std::set<std::string> _set;
 	static char _salts[26 + 26 + 10];
 protected:
-	static std::string apply(size_t bits = 8);
+	static std::string apply(uint32_t bits = 8);
 };
 
 struct IBreakContinueAnchor {

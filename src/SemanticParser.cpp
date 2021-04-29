@@ -80,8 +80,8 @@ bool SemParser::checkMultiTypeMatching(
         const std::vector<VarType> & orderedTypeMatchList,
         VarType & okChoice)
 {
-    size_t sizList = orderedTypeMatchList.size();
-    for (size_t i = 0; i < sizList; ++i) {
+    uint32_t sizList = orderedTypeMatchList.size();
+    for (uint32_t i = 0; i < sizList; ++i) {
         const auto & typeMatch = orderedTypeMatchList[i];
         SEM_E_COUNT_RECOND;
         VarType fromChoice = gen4expr<OnlyChk>(pExpr, typeMatch);
@@ -237,8 +237,8 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
         degree -= 1;
         const std::vector<LocalVar::InitEntityPtr> & initList =
                 gvar.getInitListNativePtr()->_entities;
-        size_t sizInitList = initList.size();
-        for (size_t i = 0; i < sizInitList; ++i) {
+        uint32_t sizInitList = initList.size();
+        for (uint32_t i = 0; i < sizInitList; ++i) {
             const LocalVar::InitEntityPtr & pInitEntity = initList[i];
             LocalVar::InitEntityType iet = pInitEntity->getEntityType();
             if (iet == LocalVar::InitEntityType::Expr) {
@@ -259,7 +259,7 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                         
                         int count = 0;
                         std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
-                            size_t sizLinearOffsets = linearOffsets.size();
+                            uint32_t sizLinearOffsets = linearOffsets.size();
                             //_asmk.append_PUSH_VAR(realNameStr);
                             if (varType == "long") {
                                 _asmk.append_PUSH_VAR_QW(realNameStr);
@@ -281,7 +281,7 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                             
                             _asmk.append_IPUSH_DW(linearOffsets[0]);
                             _asmk.append_OFFSET();
-                            for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                            for (uint32_t i = 1; i < sizLinearOffsets; ++i) {
                                 _asmk.append_HPUSH_DW();
                                 _asmk.append_IPUSH_DW(linearOffsets[i]);
                                 _asmk.append_OFFSET();
@@ -354,8 +354,8 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                 static std::function<bool(const std::vector<LocalVar::InitEntityPtr> &, int)> fRecursion =
                         [&](const std::vector<LocalVar::InitEntityPtr> & initList, int deg) -> bool {
                             deg -= 1;
-                            size_t sizInitList = initList.size();
-                            for (size_t i = 0; i < sizInitList; ++i) {
+                            uint32_t sizInitList = initList.size();
+                            for (uint32_t i = 0; i < sizInitList; ++i) {
                                 const LocalVar::InitEntityPtr & pInitEntity = initList[i];
                                 LocalVar::InitEntityType iet = pInitEntity->getEntityType();
                                 if (iet == LocalVar::InitEntityType::Expr) {
@@ -376,7 +376,7 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                                             
                                             int count = 0;
                                             std::for_each(vstr.cbegin(), vstr.cend(), [&](const char & ch){
-                                                size_t sizLinearOffsets = linearOffsets.size();
+                                                uint32_t sizLinearOffsets = linearOffsets.size();
                                                 //_asmk.append_PUSH_VAR(realNameStr);
                                                 if (varType == "long") {
                                                     _asmk.append_PUSH_VAR_QW(realNameStr);
@@ -398,7 +398,7 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                                                 
                                                 _asmk.append_IPUSH_DW(linearOffsets[0]);
                                                 _asmk.append_OFFSET();
-                                                for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                                for (uint32_t i = 1; i < sizLinearOffsets; ++i) {
                                                     _asmk.append_HPUSH_DW();
                                                     _asmk.append_IPUSH_DW(linearOffsets[i]);
                                                     _asmk.append_OFFSET();
@@ -414,10 +414,10 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                                             
                                         } else {
                                             
-                                            size_t sizLinearOffsets = linearOffsets.size();
+                                            uint32_t sizLinearOffsets = linearOffsets.size();
                                             _asmk.append_IPUSH_DW(linearOffsets[0]);
                                             _asmk.append_OFFSET();
-                                            for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                            for (uint32_t i = 1; i < sizLinearOffsets; ++i) {
                                                 _asmk.append_HPUSH_DW();
                                                 _asmk.append_IPUSH_DW(linearOffsets[i]);
                                                 _asmk.append_OFFSET();
@@ -436,7 +436,7 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                                     //_asmk.append_OFFSET();
                                     linearOffsets.push_back(i);
                                     
-                                    size_t sizLinearOffsets = linearOffsets.size();
+                                    uint32_t sizLinearOffsets = linearOffsets.size();
                                     //_asmk.append_PUSH_VAR(realNameStr);
                                     if (varType == "long") {
                                         _asmk.append_PUSH_VAR_QW(realNameStr);
@@ -458,7 +458,7 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
                                     
                                     _asmk.append_IPUSH_DW(linearOffsets[0]);
                                     _asmk.append_OFFSET();
-                                    for (size_t i = 1; i < sizLinearOffsets; ++i) {
+                                    for (uint32_t i = 1; i < sizLinearOffsets; ++i) {
                                         _asmk.append_HPUSH_DW();
                                         _asmk.append_IPUSH_DW(linearOffsets[i]);
                                         _asmk.append_OFFSET();
@@ -767,7 +767,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
                     AdvGuidGen::applyLabelGroup4If(pNativeIfStmt->_condEntries);
             _asmk.append_LABEL(lgIf._lbl_if_begin);
             
-            size_t i = 0, sz = pNativeIfStmt->_condEntries.size();
+            uint32_t i = 0, sz = pNativeIfStmt->_condEntries.size();
             for (const IfCondEntry & ice : pNativeIfStmt->_condEntries) {
                 _asmk.append_LABEL(lgIf._lbl_if_casenodes[i]);
                 
@@ -811,9 +811,9 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
             _asmk.append_LABEL(lgSwitch._lbl_switch_begin);
             
             bool flagHasDefault = false;
-            size_t iDefault;
-            size_t sizIdxEntries = idxEntries.size();
-            for (size_t i = 0; i < sizIdxEntries; ++i) {
+            uint32_t iDefault;
+            uint32_t sizIdxEntries = idxEntries.size();
+            for (uint32_t i = 0; i < sizIdxEntries; ++i) {
                 const SwitchIndexEntry & sie = idxEntries[i];
                 if (sie._type == SwitchIndexEntry::MarkType::Case) {
                     gen4expr<OnlyGen>(sie._pCondExpr, "boolean");
@@ -831,9 +831,9 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
             }
             
             _saBinder.makeScope(&lgSwitch);
-            size_t sizStmts = stmts.size(); // stmts
-            size_t ie = 0; // idxEntries
-            for (size_t is = 0; is < sizStmts; ++is) {
+            uint32_t sizStmts = stmts.size(); // stmts
+            uint32_t ie = 0; // idxEntries
+            for (uint32_t is = 0; is < sizStmts; ++is) {
                 // 可能存在空 case, 所以此处用 while
                 while (ie < sizIdxEntries && is == idxEntries[ie]._stmtIdx) {
                     _asmk.append_LABEL(lgSwitch._lbl_switch_casenodes[ie]);
@@ -883,11 +883,11 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
                     static_cast<InlineASM *>(pStmt.get());
             
             const std::string & asmstr = pNativeInlineASM->_asmcodes;
-            size_t sizAsmstr = asmstr.size();
-            size_t beg = 0, end = 0;
+            uint32_t sizAsmstr = asmstr.size();
+            uint32_t beg = 0, end = 0;
             int beginResign = 0;
             std::string resignVarName;
-            for (size_t i = 0; i < sizAsmstr; ++i) {
+            for (uint32_t i = 0; i < sizAsmstr; ++i) {
                 if (beginResign == 1) {
                     if (isblank(asmstr[i])) {
                     

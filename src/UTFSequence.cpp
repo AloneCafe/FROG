@@ -169,8 +169,8 @@ bool UtfString::operator==(const UtfString & utfStr) {
         return false;
     }
     
-    size_t sz = _utfCharVec.size();
-    for (size_t i = 0; i < sz; ++ i) {
+    uint32_t sz = _utfCharVec.size();
+    for (uint32_t i = 0; i < sz; ++ i) {
         if (_utfCharVec[i] != utfStr._utfCharVec[i]) {
             return false;
         }

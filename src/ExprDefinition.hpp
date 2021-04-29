@@ -98,15 +98,15 @@ public:
     long colno() const;
 
 private:
-    static size_t UNLIMITED;
-    static const size_t __opt2exprCnt[];
+    static uint32_t UNLIMITED;
+    static const uint32_t __opt2exprCnt[];
 
 public:
-    size_t getExprCnt() const;
+    uint32_t getExprCnt() const;
 
 private:
     Operator _op;
-    size_t _nSubCnt = 0;
+    uint32_t _nSubCnt = 0;
     std::vector<ExprPtr> _subExprs; // 非叶子节点时
     LeafScalar _leafScalar;         // 叶子节点时
     LeafType _leafType;
@@ -116,13 +116,13 @@ private:
 public:
     Operator getOp() const;
     
-    const ExprPtr & getSubExprPtr(size_t i) const;
+    const ExprPtr & getSubExprPtr(uint32_t i) const;
     
     const LeafScalar & getLeafScalar() const;
     
     const LeafType & getLeafType() const;
     
-    const ExprPtr & operator[](size_t i) const;
+    const ExprPtr & operator[](uint32_t i) const;
     
     static ExprPtr newCallExpr(ExprPtr callerExpr, const std::vector<ExprPtr> & argExprList, long lineno, long colno);
 

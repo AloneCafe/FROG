@@ -238,7 +238,7 @@ bool Token::isId(const char * s, bool caseSensitive) const {
     else {
         if (_type != TOKEN_ID) return false;
         if (_val._str.length() != strlen(s)) return false;
-        for (size_t i = 0; i < _val._str.length(); ++i) {
+        for (uint32_t i = 0; i < _val._str.length(); ++i) {
             if (toupper(s[i]) != toupper(_val._str[i])) {
                 return false;
             }

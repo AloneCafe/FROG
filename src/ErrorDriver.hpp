@@ -139,7 +139,7 @@ public:
 };
 
 struct ErrorHash {
-    size_t operator()(const std::tuple<ErrorType, int, int> & err) const {
+    uint32_t operator()(const std::tuple<ErrorType, int, int> & err) const {
         std::stringstream ss;
         ss << std::get<0>(err) 
             << "@" << std::get<1>(err) 
@@ -175,7 +175,7 @@ public:
     void clearLastErr() { 
         clearLastErr(1);
     }
-    void clearLastErr(size_t n) {
+    void clearLastErr(uint32_t n) {
         for (auto it = _errors.cend() - n; it < _errors.cend(); ++it) {
             _set.erase(std::make_tuple(it->getErrType(), it->lineno(), it->colno()));
         }

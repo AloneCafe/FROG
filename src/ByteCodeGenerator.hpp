@@ -25,7 +25,7 @@ class ByteCodeHexPrinter {
     static void b2hex(uint8_t b, char hex[2], bool upcase = true);
     
 public:
-    static void print(const std::vector<char> & bytes, size_t coln = 8);
+    static void print(const std::vector<char> & bytes, uint32_t coln = 8);
 };
 
 #endif

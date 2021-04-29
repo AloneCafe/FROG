@@ -1404,7 +1404,7 @@ private:
 
 		case ExprOp::OPT_COMMA: {
 			VarType choice;
-			size_t cnt = pExpr->getExprCnt(), i;
+			uint32_t cnt = pExpr->getExprCnt(), i;
 			for (i = 0; i < cnt - 1; ++i) {
 				gen4expr<_CHK == OnlyChk ? 
 					OnlyChk : OnlyGen>(pExpr->getSubExprPtr(i), "void");
@@ -1497,7 +1497,7 @@ private:
 			    for (const auto & func : perhapsFuncs) {
                     // 检查参数，并生成调用
                     const auto & fal = func.getFormalArgList();
-                    size_t argn = fal.size();
+                    uint32_t argn = fal.size();
                     if (pExpr->getExprCnt() - 1 != argn) {
                         // 参数个数不匹配
                         //SEM_E(E_FUNC_ARG_NUM_MISMATCH, pFuncExprId);
@@ -1505,7 +1505,7 @@ private:
                     
                     } else {
                         // 预先检查
-                        for (size_t i = argn; i > 0; --i) {
+                        for (uint32_t i = argn; i > 0; --i) {
                             const VarType & argTypeDemand = fal[i - 1].getType();
                             ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
                             SEM_E_COUNT_RECOND;
@@ -1517,7 +1517,7 @@ private:
                         }
                         
                         // 从右往左压栈
-                        for (size_t i = argn; i > 0; --i) {
+                        for (uint32_t i = argn; i > 0; --i) {
                             const VarType & argTypeDemand = fal[i - 1].getType();
                             ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
                             gen4expr<_CHK>(pArgExprId, argTypeDemand);
@@ -1539,7 +1539,7 @@ private:
                 for (const auto & func : perhapsFuncs) {
                     // 检查参数，并生成调用
                     const auto & fal = func.getFormalArgList();
-                    size_t argn = fal.size();
+                    uint32_t argn = fal.size();
                     if (pExpr->getExprCnt() - 1 != argn) {
                         // 参数个数不匹配
                         //SEM_E(E_FUNC_ARG_NUM_MISMATCH, pFuncExprId);
@@ -1547,7 +1547,7 @@ private:
                         
                     } else {
                         // 预先检查
-                        for (size_t i = argn; i > 0; --i) {
+                        for (uint32_t i = argn; i > 0; --i) {
                             const VarType & argTypeDemand = fal[i - 1].getType();
                             ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
                             SEM_E_COUNT_RECOND;
@@ -1559,7 +1559,7 @@ private:
                         }
                         
                         // 从右往左压栈
-                        for (size_t i = argn; i > 0; --i) {
+                        for (uint32_t i = argn; i > 0; --i) {
                             const VarType & argTypeDemand = fal[i - 1].getType();
                             ExprPtr pArgExprId = pExpr->getSubExprPtr(i);
                             gen4expr<_CHK>(pArgExprId, argTypeDemand);

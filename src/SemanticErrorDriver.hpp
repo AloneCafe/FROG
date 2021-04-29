@@ -34,9 +34,9 @@ public:
     
     void clearLastErr();
     
-    void clearLastErr(size_t n);
+    void clearLastErr(uint32_t n);
     
-    size_t getErrCount() const;
+    uint32_t getErrCount() const;
     
     const std::vector<Error> & getErrList() const;
     

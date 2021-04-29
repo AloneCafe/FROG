@@ -7,7 +7,7 @@
 #include "Structure.hpp"
 
 std::vector<Function> GlobalFuncMap::_funcs;
-std::unordered_map<std::string, size_t> GlobalFuncMap::_idxMap;
+std::unordered_map<std::string, uint32_t> GlobalFuncMap::_idxMap;
 
 Function * GlobalFuncMap::getFuncByMangling(
         const std::string & fname,

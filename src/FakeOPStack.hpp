@@ -1,5 +1,5 @@
-#ifndef __FAKEOPSTACK_HEADER__
-#define __FAKEOPSTACK_HEADER__
+#ifndef __FAKE_OPSTACK_HEADER__
+#define __FAKE_OPSTACK_HEADER__
 
 #include <stack>
 #include <cstdint>

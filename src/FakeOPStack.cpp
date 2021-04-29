@@ -16,7 +16,7 @@ int16_t FakeOPStack::popW() {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
     int16_t e = 0;
-    for (size_t i = 0; i < sizeof(int16_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int16_t); ++i) {
         e <<= 8;
         e |= _opStack.top();
         _opStack.pop();
@@ -29,7 +29,7 @@ int32_t FakeOPStack::popDW() {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
     int32_t e = 0;
-    for (size_t i = 0; i < sizeof(int32_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int32_t); ++i) {
         e <<= 8;
         e |= _opStack.top();
         _opStack.pop();
@@ -42,7 +42,7 @@ int64_t FakeOPStack::popQW() {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
     int64_t e = 0;
-    for (size_t i = 0; i < sizeof(int64_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int64_t); ++i) {
         e <<= 8;
         e |= _opStack.top();
         _opStack.pop();
@@ -55,7 +55,7 @@ float FakeOPStack::popFLT() {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
     int32_t e = 0;
-    for (size_t i = 0; i < sizeof(int32_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int32_t); ++i) {
         e <<= 8;
         e |= _opStack.top();
         _opStack.pop();
@@ -68,7 +68,7 @@ double FakeOPStack::popDBL() {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
     int64_t e = 0;
-    for (size_t i = 0; i < sizeof(int64_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int64_t); ++i) {
         e <<= 8;
         e |= _opStack.top();
         _opStack.pop();
@@ -81,31 +81,31 @@ void FakeOPStack::pushB(int8_t e) {
 }
 
 void FakeOPStack::pushW(int16_t e) {
-    for (size_t i = 0; i < sizeof(int16_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int16_t); ++i) {
         _opStack.push(reinterpret_cast<char *>(&e)[i]);
     }
 }
 
 void FakeOPStack::pushDW(int32_t e) {
-    for (size_t i = 0; i < sizeof(int32_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int32_t); ++i) {
         _opStack.push(reinterpret_cast<char *>(&e)[i]);
     }
 }
 
 void FakeOPStack::pushQW(int64_t e) {
-    for (size_t i = 0; i < sizeof(int64_t); ++i) {
+    for (uint32_t i = 0; i < sizeof(int64_t); ++i) {
         _opStack.push(reinterpret_cast<char *>(&e)[i]);
     }
 }
 
 void FakeOPStack::pushFLT(float e) {
-    for (size_t i = 0; i < sizeof(float); ++i) {
+    for (uint32_t i = 0; i < sizeof(float); ++i) {
         _opStack.push(reinterpret_cast<char *>(&e)[i]);
     }
 }
 
 void FakeOPStack::pushDBL(double e) {
-    for (size_t i = 0; i < sizeof(double); ++i) {
+    for (uint32_t i = 0; i < sizeof(double); ++i) {
         _opStack.push(reinterpret_cast<char *>(&e)[i]);
     }
 }

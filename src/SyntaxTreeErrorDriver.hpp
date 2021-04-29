@@ -40,11 +40,11 @@ public:
         _pErrDrv->clearLastErr();
     }
     
-    void clearLastErr(size_t n) {
+    void clearLastErr(uint32_t n) {
         _pErrDrv->clearLastErr(n);
     }
     
-    size_t getErrCount() const {
+    uint32_t getErrCount() const {
         return _pErrDrv->getErrList().size();
     }
     

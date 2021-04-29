@@ -9,10 +9,10 @@
 
 std::set<std::string> BasicGuidGen::_set;
 
-std::string BasicGuidGen::apply(size_t bits) {
+std::string BasicGuidGen::apply(uint32_t bits) {
     //srand(static_cast<unsigned int>(time(nullptr)));
     std::stringstream ss;
-    for (size_t i = 0; i < bits; ++i) {
+    for (uint32_t i = 0; i < bits; ++i) {
         ss << _salts[(rand() % sizeof(_salts))];
     }
     std::string s = ss.str();
@@ -100,8 +100,8 @@ LabelGroup::If AdvGuidGen::applyLabelGroup4If(const std::vector<IfCondEntry> & c
     ss1 << "if_" << s << "_begin";
     lgIf._lbl_if_begin = ss1.str();
     
-    size_t sz = condEntries.size();
-    for (size_t i = 0; i < sz; ++i) {
+    uint32_t sz = condEntries.size();
+    for (uint32_t i = 0; i < sz; ++i) {
         std::stringstream ss;
         ss << "if_" << s << "_entry_" << i;
         lgIf._lbl_if_casenodes.push_back(ss.str());
@@ -122,8 +122,8 @@ LabelGroup::Switch AdvGuidGen::applyLabelGroup4Switch(const std::vector<SwitchIn
     ss1 << "switch_" << s << "_begin";
     lgSwitch._lbl_switch_begin = ss1.str();
     
-    size_t sz = idxEntries.size();
-    for (size_t i = 0; i < sz; ++i) {
+    uint32_t sz = idxEntries.size();
+    for (uint32_t i = 0; i < sz; ++i) {
         std::stringstream ss;
         ss << "switch_" << s << "_entry_" << i;
         lgSwitch._lbl_switch_casenodes.push_back(ss.str());

@@ -48,13 +48,13 @@ struct SwitchIndexEntry {
         Case = 0, Default
     } _type = MarkType::Case;
     ExprPtr _pCondExpr = nullptr; // 若成立则以 _stmtIdx 位置的语句作为跳转点
-    size_t _stmtIdx = 0;
+    uint32_t _stmtIdx = 0;
 
 public:
     MarkType getMarkType() const { return _type; }
     explicit SwitchIndexEntry(const ExprPtr & pSrcExpr,
             const ExprPtr & pObjExpr,
-            size_t stmtIdx) {
+            uint32_t stmtIdx) {
         
         _pCondExpr = Expr::newExpr(Expr::Operator::OPT_EQ,
                 {pSrcExpr, pObjExpr}, pSrcExpr->_lineno, pSrcExpr->_colno);
@@ -63,7 +63,7 @@ public:
         _type = MarkType::Case;
     }
     
-    explicit SwitchIndexEntry(size_t stmtIdx) {
+    explicit SwitchIndexEntry(uint32_t stmtIdx) {
         _stmtIdx = stmtIdx;
         _type = MarkType::Default;
     }

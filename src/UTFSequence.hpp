@@ -96,8 +96,8 @@ public:
     bool operator==(const LocatedUtfString & lus) const {
         if (UtfString::_utfCharVec.size() != lus._utfCharVec.size())
             return false;
-        size_t sz = UtfString::_utfCharVec.size();
-        for (size_t i = 0; i < sz; ++ i) {
+        uint32_t sz = UtfString::_utfCharVec.size();
+        for (uint32_t i = 0; i < sz; ++ i) {
             if (const_cast<UtfChar &>(UtfString::_utfCharVec[i]) != lus._utfCharVec[i]) {
                 return false;
             }
@@ -124,7 +124,7 @@ public:
 };
 
 struct LocatedUtfStringHash {
-	size_t operator()(const LocatedUtfString & lus) const {
+	uint32_t operator()(const LocatedUtfString & lus) const {
 		return std::hash<std::string>{}(lus.toString());
 	}
 };

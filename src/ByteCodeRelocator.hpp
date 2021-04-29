@@ -8,23 +8,23 @@
 class AddrLocateTable {
     friend class ByteCodeRelocator;
 protected:
-    std::unordered_map<std::string, size_t> _map;
+    std::unordered_map<std::string, uint32_t> _map;
 
 public:
-    virtual std::pair<bool, size_t> getOffset(const std::string & symbolName) const;
+    virtual std::pair<bool, uint32_t> getOffset(const std::string & symbolName) const;
     
-    virtual bool setOffset(const std::string & symbolName, size_t offset);
+    virtual bool setOffset(const std::string & symbolName, uint32_t offset);
 };
 
 class AddrRelocateTable {
     friend class ByteCodeRelocator;
 private:
-    std::unordered_multimap<std::string, size_t> _map;
+    std::unordered_multimap<std::string, uint32_t> _map;
 
 public:
-    virtual std::pair<bool, size_t> getOffset(const std::string & symbolName) const;
+    virtual std::pair<bool, uint32_t> getOffset(const std::string & symbolName) const;
     
-    virtual void setOffset(const std::string & symbolName, size_t offset);
+    virtual void setOffset(const std::string & symbolName, uint32_t offset);
     
 };
 
