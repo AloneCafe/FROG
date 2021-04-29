@@ -1,5 +1,5 @@
-#ifndef __FAKECPU_HEADER__
-#define __FAKECPU_HEADER__
+#ifndef __FAKE_CPU_HEADER__
+#define __FAKE_CPU_HEADER__
 
 #include "FakeOPROM.hpp"
 
