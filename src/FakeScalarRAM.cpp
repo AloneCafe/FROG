@@ -1,6 +1,8 @@
 #include "FakeScalarRAM.hpp"
 #include "VMException.hpp"
 
+static int vmRandomInit = (srand(time(nullptr)), 0);
+
 std::vector<char> * FakeScalarRAM::tryResize(int32_t addr, int32_t siz) const {
     std::vector<char> * pSRAM;
     if (addr < 0) {
