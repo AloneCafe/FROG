@@ -5,7 +5,8 @@
 
 enum class VMET : int {
     E_OPROM_ACCESS_OVERFLOW,
-    E_OPSTACK_ACCESS_OVERFLOW
+    E_OPSTACK_ACCESS_OVERFLOW,
+    E_SRAM_REISZE_ERROR,
 };
 
 class VMException {

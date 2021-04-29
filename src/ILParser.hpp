@@ -13,8 +13,8 @@
 
 class UniVarAllocTable {
 private:
-    int _currStaticOffset = 0; // 负增长, 负方向存放
-    int _currFuncsOffset = 0;  // 正增长, 正方向存放
+    int32_t _currStaticOffset = INT32_MIN; // 负增长, 负方向存放
+    int32_t _currFuncsOffset = 0;  // 正增长, 正方向存放
     std::unordered_map<std::string, std::pair<bool, int>> _map;
 
 public:

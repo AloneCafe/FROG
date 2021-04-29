@@ -13,7 +13,7 @@ bool UniVarAllocTable::setOffset(const std::string & varName, uint32_t varSiz, b
     if (isStatic) {
         auto it = _map.insert(std::make_pair(varName, std::make_pair(isStatic, _currStaticOffset)));
         if (it.second)
-            _currStaticOffset -= varSiz;
+            _currStaticOffset += varSiz;
         return it.second;
     } else {
         auto it = _map.insert(std::make_pair(varName, std::make_pair(isStatic, _currFuncsOffset)));
