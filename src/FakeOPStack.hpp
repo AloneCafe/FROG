@@ -1,12 +1,13 @@
 #ifndef __FAKE_OPSTACK_HEADER__
 #define __FAKE_OPSTACK_HEADER__
 
-#include <stack>
+#include <vector>
 #include <cstdint>
 
 class FakeOPStack {
+    friend class GarbageCollector;
 private:
-    std::stack<char> _opStack;
+    std::vector<char> _opStack;
     
 public:
     FakeOPStack() = default;

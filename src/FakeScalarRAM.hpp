@@ -5,6 +5,7 @@
 #include <cstdint>
 
 class FakeScalarRAM {
+    friend class GarbageCollector;
 private:
     mutable std::vector<char> _staticSRAM;
     mutable std::vector<char> _funcsSRAM;

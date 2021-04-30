@@ -110,7 +110,9 @@ private:
     VectorHandler applyUniqueHandler() const;
 };
 
+
 class FakeVectorRAM {
+    friend class GarbageCollector;
 private:
     VectorsManager _vecman;
 
