@@ -78,6 +78,13 @@ VectorHandler VectorsManager::newVectorDBL() {
     return handler;
 }
 
+VectorsManager::~VectorsManager() {
+    for (const auto & e : _map) {
+        delete e.second;
+    }
+    _map.clear();
+}
+
 VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
     VectorHandler handler;
     if (degree == 0) {

@@ -90,11 +90,13 @@ public:
 
 
 class VectorsManager {
+    friend class GarbageCollector;
 private:
     std::unordered_map<VectorHandler, IVector *> _map;
     
 public:
     VectorsManager() = default;
+    virtual ~VectorsManager();
     
     VectorHandler newVectorVEC();
     VectorHandler newVectorB();
