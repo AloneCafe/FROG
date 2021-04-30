@@ -1,7 +1,7 @@
-#include "GarbageCollector.hpp"
+#include "GarbageCollectorTS.hpp"
 
 
-void GarbageCollector::mark_OPSTACK() {
+void GarbageCollectorTS::mark_OPSTACK() {
     VectorsManager & vecman = _vram._vecman;
     if (_ops._opStack.size() < sizeof(VectorHandler)) {
         return;
@@ -16,7 +16,7 @@ void GarbageCollector::mark_OPSTACK() {
     }
 }
 
-void GarbageCollector::mark_SRAM() {
+void GarbageCollectorTS::mark_SRAM() {
     VectorsManager & vecman = _vram._vecman;
     if (_sram._funcsSRAM.size() < sizeof(VectorHandler)) {
         return;
@@ -31,7 +31,7 @@ void GarbageCollector::mark_SRAM() {
     }
 }
 
-void GarbageCollector::sweep() {
+void GarbageCollectorTS::sweep() {
     VectorsManager & vecman = _vram._vecman;
     auto it = vecman._map.cbegin();
     while (it != vecman._map.cend()) {

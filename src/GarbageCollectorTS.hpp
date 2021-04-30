@@ -1,18 +1,18 @@
-#ifndef __GARBAGE_COLLECTOR_HEADER__
-#define __GARBAGE_COLLECTOR_HEADER__
+#ifndef __GARBAGE_COLLECTOR_TS_HEADER__
+#define __GARBAGE_COLLECTOR_TS_HEADER__
 
 #include "FakeVectorRAM.hpp"
 #include "FakeScalarRAM.hpp"
 #include "FakeOPStack.hpp"
 
-class GarbageCollector {
+class GarbageCollectorTS {
 private:
     const FakeOPStack & _ops;
     const FakeScalarRAM & _sram;
     FakeVectorRAM & _vram;
     
 public:
-    GarbageCollector(const FakeOPStack & opStack,
+    GarbageCollectorTS(const FakeOPStack & opStack,
                      const FakeScalarRAM & sram,
                      FakeVectorRAM & vram) :
         _ops(opStack),

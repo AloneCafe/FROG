@@ -126,7 +126,19 @@ set(SRCS_FROG_VM
         ${SRCDIR}/FakeCPU.cpp
         ${SRCDIR}/FakeCPU.hpp
         ${SRCDIR}/FakeOPROM.cpp
-        ${SRCDIR}/FakeOPROM.hpp src/VMException.cpp src/VMException.hpp src/FakeOPStack.cpp src/FakeOPStack.hpp src/FakeFNStack.cpp src/FakeFNStack.hpp src/FakeScalarRAM.cpp src/FakeScalarRAM.hpp src/FakeVectorRAM.cpp src/FakeVectorRAM.hpp src/GarbageCollector.cpp src/GarbageCollector.hpp)
+        ${SRCDIR}/FakeOPROM.hpp
+        ${SRCDIR}/VMException.cpp
+        ${SRCDIR}/VMException.hpp
+        ${SRCDIR}/FakeOPStack.cpp
+        ${SRCDIR}/FakeOPStack.hpp
+        ${SRCDIR}/FakeFNStack.cpp
+        ${SRCDIR}/FakeFNStack.hpp
+        ${SRCDIR}/FakeScalarRAM.cpp
+        ${SRCDIR}/FakeScalarRAM.hpp
+        ${SRCDIR}/FakeVectorRAM.cpp
+        ${SRCDIR}/FakeVectorRAM.hpp
+        ${SRCDIR}/GarbageCollectorTS.cpp
+        ${SRCDIR}/GarbageCollectorTS.hpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
