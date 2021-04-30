@@ -5,6 +5,9 @@
 #include <vector>
 #include <unordered_map>
 #include <cstdlib>
+#include <mutex>
+
+#include "TSMapWarpper.hpp"
 
 using VectorHandler = uint32_t;
 using ElemHandler = void *;
@@ -36,6 +39,7 @@ public:
     virtual ElemHandler getOffset(uint32_t i) const = 0;
     
     virtual uint32_t getElemSize() const = 0;
+    virtual uint32_t getTotalSize() const = 0;
     
     virtual VectorEntityType getVectorEntityType() const = 0;
     
@@ -57,6 +61,7 @@ public:
     void set(uint32_t i, const T & e);
     
     uint32_t getElemSize() const override;
+    uint32_t getTotalSize() const override;
     
     ElemHandler getOffset(uint32_t i) const override;
     
@@ -88,11 +93,10 @@ public:
 };
  */
 
-
 class VectorsManager {
     friend class GarbageCollector;
 private:
-    std::unordered_map<VectorHandler, IVector *> _map;
+    TSMapWrapper<VectorHandler, IVector *> _map;
     
 public:
     VectorsManager() = default;
@@ -107,6 +111,8 @@ public:
     VectorHandler newVectorDBL();
     
     IVector * getVectorByHandler(const VectorHandler & handler) const;
+    
+    uint32_t getTotalUse() const;
 
 private:
     VectorHandler applyUniqueHandler() const;
@@ -127,8 +133,6 @@ public:
     VectorHandler makeVectorDBL(uint32_t degree);
     
     ElemHandler getOffsetByHandler(const VectorHandler & handler);
-    
-    
     
 };
 
@@ -155,6 +159,11 @@ void RealVectorEntity<T>::set(uint32_t i, const T & e) {
 template <typename T>
 uint32_t RealVectorEntity<T>::getElemSize() const {
     return sizeof(T);
+}
+
+template <typename T>
+uint32_t RealVectorEntity<T>::getTotalSize() const {
+    return _vec.size() * sizeof(T);
 }
 
 template <typename T>

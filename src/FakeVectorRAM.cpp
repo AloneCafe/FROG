@@ -85,6 +85,14 @@ VectorsManager::~VectorsManager() {
     _map.clear();
 }
 
+uint32_t VectorsManager::getTotalUse() const {
+    uint32_t total = 0;
+    for (const auto & e : _map) {
+        total += e.second->getTotalSize();
+    }
+    return total;
+}
+
 VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
     VectorHandler handler;
     if (degree == 0) {

@@ -137,8 +137,10 @@ set(SRCS_FROG_VM
         ${SRCDIR}/FakeScalarRAM.hpp
         ${SRCDIR}/FakeVectorRAM.cpp
         ${SRCDIR}/FakeVectorRAM.hpp
-        ${SRCDIR}/GarbageCollectorTS.cpp
-        ${SRCDIR}/GarbageCollectorTS.hpp)
+        ${SRCDIR}/GarbageCollector.cpp
+        ${SRCDIR}/GarbageCollector.hpp
+        ${SRCDIR}/TSMapWarpper.cpp
+        ${SRCDIR}/TSMapWarpper.hpp)
 
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
