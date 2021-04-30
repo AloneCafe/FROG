@@ -77,3 +77,101 @@ VectorHandler VectorsManager::newVectorDBL() {
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
+
+VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
+    VectorHandler handler;
+    if (degree == 0) {
+        handler = _vecman.newVectorB();
+        return handler;
+    } else {
+        handler = _vecman.newVectorVEC();
+        IVector *pVec = _vecman.getVectorByHandler(handler);
+        VectorEntity<VectorHandler> *pNativeVec =
+                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        pNativeVec->set(0, makeVectorB(degree - 1));
+        return handler;
+    }
+}
+
+VectorHandler FakeVectorRAM::makeVectorW(uint32_t degree) {
+    VectorHandler handler;
+    if (degree == 0) {
+        handler = _vecman.newVectorW();
+        return handler;
+    } else {
+        handler = _vecman.newVectorVEC();
+        IVector *pVec = _vecman.getVectorByHandler(handler);
+        VectorEntity<VectorHandler> *pNativeVec =
+                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        pNativeVec->set(0, makeVectorW(degree - 1));
+        return handler;
+    }
+}
+
+VectorHandler FakeVectorRAM::makeVectorDW(uint32_t degree) {
+    VectorHandler handler;
+    if (degree == 0) {
+        handler = _vecman.newVectorDW();
+        return handler;
+    } else {
+        handler = _vecman.newVectorVEC();
+        IVector *pVec = _vecman.getVectorByHandler(handler);
+        VectorEntity<VectorHandler> *pNativeVec =
+                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        pNativeVec->set(0, makeVectorDW(degree - 1));
+        return handler;
+    }
+}
+
+VectorHandler FakeVectorRAM::makeVectorQW(uint32_t degree) {
+    VectorHandler handler;
+    if (degree == 0) {
+        handler = _vecman.newVectorQW();
+        return handler;
+    } else {
+        handler = _vecman.newVectorVEC();
+        IVector *pVec = _vecman.getVectorByHandler(handler);
+        VectorEntity<VectorHandler> *pNativeVec =
+                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        pNativeVec->set(0, makeVectorQW(degree - 1));
+        return handler;
+    }
+}
+
+VectorHandler FakeVectorRAM::makeVectorFLT(uint32_t degree) {
+    VectorHandler handler;
+    if (degree == 0) {
+        handler = _vecman.newVectorFLT();
+        return handler;
+    } else {
+        handler = _vecman.newVectorVEC();
+        IVector *pVec = _vecman.getVectorByHandler(handler);
+        VectorEntity<VectorHandler> *pNativeVec =
+                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        pNativeVec->set(0, makeVectorFLT(degree - 1));
+        return handler;
+    }
+}
+
+VectorHandler FakeVectorRAM::makeVectorDBL(uint32_t degree) {
+    VectorHandler handler;
+    if (degree == 0) {
+        handler = _vecman.newVectorDBL();
+        return handler;
+    } else {
+        handler = _vecman.newVectorVEC();
+        IVector *pVec = _vecman.getVectorByHandler(handler);
+        VectorEntity<VectorHandler> *pNativeVec =
+                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        pNativeVec->set(0, makeVectorDBL(degree - 1));
+        return handler;
+    }
+}
+
+VectorHandler FakeVectorRAM::getOffset(const VectorHandler & handler) {
+    VectorHandler newHandler;
+    IVector *pVec = _vecman.getVectorByHandler(handler);
+    uint32_t sizElem = pVec->getElemSize();
+    
+    return 0;
+}

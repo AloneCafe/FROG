@@ -7,6 +7,7 @@
 #include <cstdlib>
 
 using VectorHandler = uint32_t;
+using VectorFakeHandler = uint32_t;
 
 struct IVector {
 protected:
@@ -22,13 +23,19 @@ public:
     const VectorHandler & getHandler();
     
     void setMark(bool mark);
+    
     bool getMark() const;
+    
+    virtual VectorHandler toOffset(uint32_t i) const = 0;
+    
+    virtual uint32_t getElemSize() const = 0;
+    
 };
 
 template <typename T>
 class VectorEntity : public IVector {
 private:
-    std::vector<T> _vec;
+    mutable std::vector<T> _vec;
     
 public:
     VectorEntity(const VectorHandler & handler) :
@@ -36,8 +43,13 @@ public:
         
     virtual ~VectorEntity() = default;
     
-    const T & get(size_t i);
-    void set(size_t i, const T & e);
+    const T & get(uint32_t i) const;
+    
+    void set(uint32_t i, const T & e);
+    
+    uint32_t getElemSize() const override;
+    
+    VectorHandler toOffset(uint32_t i) const override;
 };
 
 
@@ -60,29 +72,30 @@ public:
 
 private:
     VectorHandler applyUniqueHandler() const;
-
 };
 
 class FakeVectorRAM {
 private:
-
+    VectorsManager _vecman;
 
 public:
-    VectorHandler makeVectorB(int degree);
-    VectorHandler makeVectorW(int degree);
-    VectorHandler makeVectorDW(int degree);
-    VectorHandler makeVectorQW(int degree);
-    VectorHandler makeVectorFLT(int degree);
-    VectorHandler makeVectorDBL(int degree);
+    VectorHandler makeVectorB(uint32_t degree);
+    VectorHandler makeVectorW(uint32_t degree);
+    VectorHandler makeVectorDW(uint32_t degree);
+    VectorHandler makeVectorQW(uint32_t degree);
+    VectorHandler makeVectorFLT(uint32_t degree);
+    VectorHandler makeVectorDBL(uint32_t degree);
     
+    VectorHandler getOffset(const VectorHandler & handler);
     
-
 };
 
 
 
+// member function templates implementation
+
 template <typename T>
-const T & VectorEntity<T>::get(size_t i) {
+const T & VectorEntity<T>::get(uint32_t i) const {
     if (i >= _vec.size()) {
         _vec.resize(i + 1, 0);
     }
@@ -90,13 +103,21 @@ const T & VectorEntity<T>::get(size_t i) {
 }
 
 template <typename T>
-void VectorEntity<T>::set(size_t i, const T & e) {
+void VectorEntity<T>::set(uint32_t i, const T & e) {
     if (i >= _vec.size()) {
         _vec.resize(i + 1, 0);
     }
     _vec[i] = e;
 }
 
+template <typename T>
+uint32_t VectorEntity<T>::getElemSize() const {
+    return sizeof(T);
+}
 
+template <typename T>
+VectorHandler VectorEntity<T>::toOffset(uint32_t i) const {
+
+}
 
 #endif
