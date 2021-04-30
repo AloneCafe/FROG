@@ -7,7 +7,14 @@
 #include <cstdlib>
 
 using VectorHandler = uint32_t;
+using ElemHandler = void *;
+
 using VectorFakeHandler = uint32_t;
+
+enum class VectorEntityType {
+    RealVector,
+    FakeVector
+};
 
 struct IVector {
 protected:
@@ -26,22 +33,24 @@ public:
     
     bool getMark() const;
     
-    virtual VectorHandler toOffset(uint32_t i) const = 0;
+    virtual ElemHandler getOffset(uint32_t i) const = 0;
     
     virtual uint32_t getElemSize() const = 0;
+    
+    virtual VectorEntityType getVectorEntityType() const = 0;
     
 };
 
 template <typename T>
-class VectorEntity : public IVector {
+class RealVectorEntity : public IVector {
 private:
     mutable std::vector<T> _vec;
     
 public:
-    VectorEntity(const VectorHandler & handler) :
+    RealVectorEntity(const VectorHandler & handler) :
         IVector(handler) {}
         
-    virtual ~VectorEntity() = default;
+    virtual ~RealVectorEntity() = default;
     
     const T & get(uint32_t i) const;
     
@@ -49,8 +58,35 @@ public:
     
     uint32_t getElemSize() const override;
     
-    VectorHandler toOffset(uint32_t i) const override;
+    ElemHandler getOffset(uint32_t i) const override;
+    
+    VectorEntityType getVectorEntityType() const override;
 };
+
+/*
+template <typename T>
+class FakeVectorEntity : public IVector {
+private:
+    mutable T * _pData;
+    typename std::vector<T>::size_type _siz;
+
+public:
+    FakeVectorEntity(const VectorHandler & handler) :
+            IVector(handler) {}
+    
+    virtual ~FakeVectorEntity() = default;
+    
+    const T & get(uint32_t i) const;
+    
+    void set(uint32_t i, const T & e);
+    
+    uint32_t getElemSize() const override;
+    
+    VectorHandler getOffset(uint32_t i) const override;
+    
+    VectorEntityType getVectorEntityType() const override;
+};
+ */
 
 
 class VectorsManager {
@@ -86,7 +122,9 @@ public:
     VectorHandler makeVectorFLT(uint32_t degree);
     VectorHandler makeVectorDBL(uint32_t degree);
     
-    VectorHandler getOffset(const VectorHandler & handler);
+    ElemHandler getOffsetByHandler(const VectorHandler & handler);
+    
+    
     
 };
 
@@ -95,7 +133,7 @@ public:
 // member function templates implementation
 
 template <typename T>
-const T & VectorEntity<T>::get(uint32_t i) const {
+const T & RealVectorEntity<T>::get(uint32_t i) const {
     if (i >= _vec.size()) {
         _vec.resize(i + 1, 0);
     }
@@ -103,7 +141,7 @@ const T & VectorEntity<T>::get(uint32_t i) const {
 }
 
 template <typename T>
-void VectorEntity<T>::set(uint32_t i, const T & e) {
+void RealVectorEntity<T>::set(uint32_t i, const T & e) {
     if (i >= _vec.size()) {
         _vec.resize(i + 1, 0);
     }
@@ -111,13 +149,52 @@ void VectorEntity<T>::set(uint32_t i, const T & e) {
 }
 
 template <typename T>
-uint32_t VectorEntity<T>::getElemSize() const {
+uint32_t RealVectorEntity<T>::getElemSize() const {
     return sizeof(T);
 }
 
 template <typename T>
-VectorHandler VectorEntity<T>::toOffset(uint32_t i) const {
-
+ElemHandler RealVectorEntity<T>::getOffset(uint32_t i) const {
+    return &_vec[i];
 }
+
+template <typename T>
+VectorEntityType RealVectorEntity<T>::getVectorEntityType() const {
+    return VectorEntityType::RealVector;
+}
+
+
+/*
+template <typename T>
+const T & FakeVectorEntity<T>::get(uint32_t i) const {
+    if (i >= _vec.size()) {
+        _vec.resize(i + 1, 0);
+    }
+    return _vec[i];
+}
+
+template <typename T>
+void FakeVectorEntity<T>::set(uint32_t i, const T & e) {
+    if (i >= _vec.size()) {
+        _vec.resize(i + 1, 0);
+    }
+    _vec[i] = e;
+}
+
+template <typename T>
+uint32_t FakeVectorEntity<T>::getElemSize() const {
+    return sizeof(T);
+}
+
+template <typename T>
+VectorHandler FakeVectorEntity<T>::getOffset(uint32_t i) const {
+    // TODO
+}
+
+template <typename T>
+VectorEntityType FakeVectorEntity<T>::getVectorEntityType() const {
+    return VectorEntityType::FakeVector;
+}
+*/
 
 #endif

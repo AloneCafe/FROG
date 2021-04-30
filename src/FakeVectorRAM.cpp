@@ -31,49 +31,49 @@ VectorHandler VectorsManager::applyUniqueHandler() const {
 
 VectorHandler VectorsManager::newVectorVEC() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new VectorEntity<VectorHandler>(handler);
+    IVector * pVec = new RealVectorEntity<VectorHandler>(handler);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorB() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new VectorEntity<int8_t>(handler);
+    IVector * pVec = new RealVectorEntity<int8_t>(handler);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorW() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new VectorEntity<int16_t>(handler);
+    IVector * pVec = new RealVectorEntity<int16_t>(handler);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorDW() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new VectorEntity<int32_t>(handler);
+    IVector * pVec = new RealVectorEntity<int32_t>(handler);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorQW() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new VectorEntity<int64_t>(handler);
+    IVector * pVec = new RealVectorEntity<int64_t>(handler);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorFLT() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new VectorEntity<float>(handler);
+    IVector * pVec = new RealVectorEntity<float>(handler);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorDBL() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new VectorEntity<double>(handler);
+    IVector * pVec = new RealVectorEntity<double>(handler);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
@@ -86,8 +86,8 @@ VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
     } else {
         handler = _vecman.newVectorVEC();
         IVector *pVec = _vecman.getVectorByHandler(handler);
-        VectorEntity<VectorHandler> *pNativeVec =
-                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        RealVectorEntity<VectorHandler> *pNativeVec =
+                static_cast<RealVectorEntity<VectorHandler> *>(pVec);
         pNativeVec->set(0, makeVectorB(degree - 1));
         return handler;
     }
@@ -101,8 +101,8 @@ VectorHandler FakeVectorRAM::makeVectorW(uint32_t degree) {
     } else {
         handler = _vecman.newVectorVEC();
         IVector *pVec = _vecman.getVectorByHandler(handler);
-        VectorEntity<VectorHandler> *pNativeVec =
-                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        RealVectorEntity<VectorHandler> *pNativeVec =
+                static_cast<RealVectorEntity<VectorHandler> *>(pVec);
         pNativeVec->set(0, makeVectorW(degree - 1));
         return handler;
     }
@@ -116,8 +116,8 @@ VectorHandler FakeVectorRAM::makeVectorDW(uint32_t degree) {
     } else {
         handler = _vecman.newVectorVEC();
         IVector *pVec = _vecman.getVectorByHandler(handler);
-        VectorEntity<VectorHandler> *pNativeVec =
-                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        RealVectorEntity<VectorHandler> *pNativeVec =
+                static_cast<RealVectorEntity<VectorHandler> *>(pVec);
         pNativeVec->set(0, makeVectorDW(degree - 1));
         return handler;
     }
@@ -131,8 +131,8 @@ VectorHandler FakeVectorRAM::makeVectorQW(uint32_t degree) {
     } else {
         handler = _vecman.newVectorVEC();
         IVector *pVec = _vecman.getVectorByHandler(handler);
-        VectorEntity<VectorHandler> *pNativeVec =
-                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        RealVectorEntity<VectorHandler> *pNativeVec =
+                static_cast<RealVectorEntity<VectorHandler> *>(pVec);
         pNativeVec->set(0, makeVectorQW(degree - 1));
         return handler;
     }
@@ -146,8 +146,8 @@ VectorHandler FakeVectorRAM::makeVectorFLT(uint32_t degree) {
     } else {
         handler = _vecman.newVectorVEC();
         IVector *pVec = _vecman.getVectorByHandler(handler);
-        VectorEntity<VectorHandler> *pNativeVec =
-                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        RealVectorEntity<VectorHandler> *pNativeVec =
+                static_cast<RealVectorEntity<VectorHandler> *>(pVec);
         pNativeVec->set(0, makeVectorFLT(degree - 1));
         return handler;
     }
@@ -161,17 +161,14 @@ VectorHandler FakeVectorRAM::makeVectorDBL(uint32_t degree) {
     } else {
         handler = _vecman.newVectorVEC();
         IVector *pVec = _vecman.getVectorByHandler(handler);
-        VectorEntity<VectorHandler> *pNativeVec =
-                static_cast<VectorEntity<VectorHandler> *>(pVec);
+        RealVectorEntity<VectorHandler> *pNativeVec =
+                static_cast<RealVectorEntity<VectorHandler> *>(pVec);
         pNativeVec->set(0, makeVectorDBL(degree - 1));
         return handler;
     }
 }
 
-VectorHandler FakeVectorRAM::getOffset(const VectorHandler & handler) {
-    VectorHandler newHandler;
-    IVector *pVec = _vecman.getVectorByHandler(handler);
-    uint32_t sizElem = pVec->getElemSize();
-    
+ElemHandler FakeVectorRAM::getOffsetByHandler(const VectorHandler & handler) {
+    return _vecman.getVectorByHandler(handler);
     return 0;
 }
