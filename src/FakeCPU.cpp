@@ -372,6 +372,336 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             }
             break;
         }
+
+        case 0x0C: { // SHL
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushB(b1 << bits);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushW(w1 << bits);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushDW(dw1 << bits);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushQW(qw1 << bits);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+
+        case 0x0D: { // SHR
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushB(b1 >> bits);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushW(w1 >> bits);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushDW(dw1 >> bits);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushQW(qw1 >> bits);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+
+        case 0x0E: { // SHRZ
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                uint8_t b1 = _pOPStack->popB();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushB(b1 >> bits);
+        
+            } else if (g == 0B0010) { // dst: W
+                uint16_t w1 = _pOPStack->popW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushW(w1 >> bits);
+        
+            } else if (g == 0B0100) { // dst: DW
+                uint32_t dw1 = _pOPStack->popDW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushDW(dw1 >> bits);
+        
+            } else if (g == 0B1000) { // dst: QW
+                uint64_t qw1 = _pOPStack->popQW();
+                auto bits = _pOPStack->popB();
+                _pOPStack->pushQW(qw1 >> bits);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+        
+        case 0x10: { // LT
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 < b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushB(w1 < w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushB(dw1 < dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushB(qw1 < qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushB(f1 < f2);
+                
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushB(d1 < d2);
+            }
+            break;
+        }
+
+        case 0x11: { // LE
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 <= b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushB(w1 <= w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushB(dw1 <= dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushB(qw1 <= qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushB(f1 <= f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushB(d1 <= d2);
+            }
+            break;
+        }
+
+        case 0x12: { // EQ
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 == b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushB(w1 == w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushB(dw1 == dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushB(qw1 == qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushB(f1 == f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushB(d1 == d2);
+            }
+            break;
+        }
+
+        case 0x13: { // NE
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 != b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushB(w1 != w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushB(dw1 != dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushB(qw1 != qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushB(f1 != f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushB(d1 != d2);
+            }
+            break;
+        }
+
+        case 0x14: { // GE
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 >= b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushB(w1 >= w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushB(dw1 >= dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushB(qw1 >= qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushB(f1 >= f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushB(d1 >= d2);
+            }
+            break;
+        }
+
+        case 0x15: { // GT
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 > b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushB(w1 > w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushB(dw1 > dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushB(qw1 > qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushB(f1 > f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushB(d1 > d2);
+            }
+            break;
+        }
         
         }
     }
