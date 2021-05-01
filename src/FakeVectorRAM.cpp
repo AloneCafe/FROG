@@ -1,4 +1,5 @@
 #include "FakeVectorRAM.hpp"
+#include "VMException.hpp"
 
 const VectorHandler & IVector::getHandler() {
     return _handler;
@@ -185,8 +186,19 @@ VectorHandler FakeVectorRAM::makeVectorDBL(uint32_t degree) {
 
 ElemHandler FakeVectorRAM::getElemHandlerByOffset(
         const VectorHandler & handler,
-        uint32_t offset)
+        uint32_t offset) const
 {
     IVector *pVec = _vecman.getVectorByHandler(handler);
+    if (!pVec)
+        throw VMException(VMET::E_ILLEGAL_VECTOR_HANDLER);
     return pVec->getOffset(offset);
+}
+
+int32_t FakeVectorRAM::getLen(
+        const VectorHandler & handler) const
+{
+    IVector *pVec = _vecman.getVectorByHandler(handler);
+    if (!pVec)
+        throw VMException(VMET::E_ILLEGAL_VECTOR_HANDLER);
+    return pVec->getTotalSize() / pVec->getElemSize();
 }

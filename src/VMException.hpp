@@ -14,6 +14,7 @@ enum class VMET : int {
     E_NOT_ATTACH_VRAM,
     E_ILLEGAL_GRANULARITY,
     E_DIVIDE_BY_ZERO,
+    E_ILLEGAL_VECTOR_HANDLER,
 };
 
 class VMException {

@@ -1169,6 +1169,97 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             break;
         }
         
+        case 0x33: { // LEN
+            ++pc;
+            VectorHandler handler = _pOPStack->popDW();
+            _pOPStack->pushDW(_pVRAM->getLen(handler));
+            break;
+        }
+
+        case 0x34: { // MKVEC
+            ++pc;
+            uint8_t gd = *reinterpret_cast
+                    <const uint8_t *>(&oprom[pc]);
+            uint8_t g, d;
+            g = (gd >> 4);
+            d = (gd & 0x0F);
+    
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                _pVRAM->makeVectorB(d);
+        
+            } else if (g == 0B0010) { // dst: W
+                _pVRAM->makeVectorW(d);
+        
+            } else if (g == 0B0100) { // dst: DW
+                _pVRAM->makeVectorDW(d);
+        
+            } else if (g == 0B1000) { // dst: QW
+                _pVRAM->makeVectorQW(d);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                _pVRAM->makeVectorFLT(d);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                _pVRAM->makeVectorDBL(d);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            
+            break;
+        }
+        
+        case 0x40: { // IPUSH
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                int8_t b;
+                for (uint32_t j = 0; j < sizeof(b); ++j)
+                    reinterpret_cast<char *>(&b)[j] = oprom[pc++];
+                _pOPStack->pushB(b);
+        
+            } else if (g == 0B0010) { // dst: W
+                int16_t w;
+                for (uint32_t j = 0; j < sizeof(w); ++j)
+                    reinterpret_cast<char *>(&w)[j] = oprom[pc++];
+                _pOPStack->pushW(w);
+                
+            } else if (g == 0B0100) { // dst: DW
+                int32_t dw;
+                for (uint32_t j = 0; j < sizeof(dw); ++j)
+                    reinterpret_cast<char *>(&dw)[j] = oprom[pc++];
+                _pOPStack->pushDW(dw);
+        
+            } else if (g == 0B1000) { // dst: QW
+                int64_t qw;
+                for (uint32_t j = 0; j < sizeof(qw); ++j)
+                    reinterpret_cast<char *>(&qw)[j] = oprom[pc++];
+                _pOPStack->pushQW(qw);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                float f;
+                for (uint32_t j = 0; j < sizeof(f); ++j)
+                    reinterpret_cast<char *>(&f)[j] = oprom[pc++];
+                _pOPStack->pushFLT(f);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                double d;
+                for (uint32_t j = 0; j < sizeof(d); ++j)
+                    reinterpret_cast<char *>(&d)[j] = oprom[pc++];
+                _pOPStack->pushDBL(d);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            
+            break;
+        }
+        
         }
     }
     

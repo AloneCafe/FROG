@@ -124,7 +124,9 @@ public:
     VectorHandler makeVectorDBL(uint32_t degree);
     
     ElemHandler getElemHandlerByOffset(
-            const VectorHandler & handler, uint32_t offset);
+            const VectorHandler & handler, uint32_t offset) const;
+    
+    int32_t getLen(const VectorHandler & handler) const;
     
 };
 
