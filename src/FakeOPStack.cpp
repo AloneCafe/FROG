@@ -76,6 +76,46 @@ double FakeOPStack::popDBL() {
     return *reinterpret_cast<double *>(&e);
 }
 
+
+int8_t FakeOPStack::topB() {
+    auto e = popB();
+    pushB(e);
+    return e;
+}
+
+int16_t FakeOPStack::topW() {
+    auto e = popW();
+    pushB(e);
+    return e;
+}
+
+int32_t FakeOPStack::topDW() {
+    auto e = popDW();
+    pushB(e);
+    return e;
+}
+
+int64_t FakeOPStack::topQW() {
+    auto e = popQW();
+    pushB(e);
+    return e;
+}
+
+float FakeOPStack::topFLT() {
+    auto e = popFLT();
+    pushB(e);
+    return e;
+}
+
+double FakeOPStack::topDBL() {
+    auto e = popDBL();
+    pushB(e);
+    return e;
+}
+
+
+
+
 void FakeOPStack::pushB(int8_t e) {
     _opStack.push_back(e);
 }

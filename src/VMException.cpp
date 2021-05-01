@@ -12,6 +12,8 @@ const char * VMException::_pNativeMessage[] = {
     "虚拟 CPU 指令含有非法的粒度",
     "非法算术运算: 尝试除以零",
     "非法的矢量句柄",
+    "非法的虚拟 CPU 指令",
+    "非法的虚拟机扩展功能名",
 };
 
 VMException::VMException(const std::string & message) {

@@ -1,6 +1,8 @@
 #include <cstring>
 #include <cmath>
 #include <cassert>
+#include <iostream>
+#include <sstream>
 #include "FakeCPU.hpp"
 #include "VMException.hpp"
 
@@ -1024,7 +1026,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             ++pc;
             auto off = _pOPStack->popDW();
             auto handler = _pOPStack->popDW();
-            ElemHandler native =_pVRAM->getElemHandlerByOffset(handler, off);
+            ElemHandler native =_pVRAM->getElemHandlerByOffsetT(handler, off);
             
             if (sizeof(ElemHandler) == 4) {
                 uint32_t dw = 0;
@@ -1172,7 +1174,9 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         case 0x33: { // LEN
             ++pc;
             VectorHandler handler = _pOPStack->popDW();
-            _pOPStack->pushDW(_pVRAM->getLen(handler));
+            _pOPStack->pushDW(
+                    _pVRAM->getTotalSizeByHandler(handler) /
+                    _pVRAM->getElemSizeByHandler(handler));
             break;
         }
 
@@ -1293,8 +1297,167 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             
             break;
         }
+
+        case 0x51: { // PUSH
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+            pc += sizeof(int32_t);
+    
+            if (g == 0B0001) { // dst: B
+                auto b = _pSRAM->getB(addr);
+                _pOPStack->pushB(b);
         
+            } else if (g == 0B0010) { // dst: W
+                auto w = _pSRAM->getW(addr);
+                _pOPStack->pushW(w);
         
+            } else if (g == 0B0100) { // dst: DW
+                auto dw = _pSRAM->getDW(addr);
+                _pOPStack->pushDW(dw);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw = _pSRAM->getQW(addr);
+                _pOPStack->pushQW(qw);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f = _pSRAM->getFLT(addr);
+                _pOPStack->pushFLT(f);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d = _pSRAM->getDBL(addr);
+                _pOPStack->pushDBL(d);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+    
+            break;
+        }
+
+        case 0x52: { // POP
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+            pc += sizeof(int32_t);
+    
+            if (g == 0B0001) { // dst: B
+                auto b = _pOPStack->popB();
+                _pSRAM->setB(addr, b);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w = _pOPStack->popW();
+                _pSRAM->setW(addr, w);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw = _pOPStack->popDW();
+                _pSRAM->setDW(addr, dw);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw = _pOPStack->popQW();
+                _pSRAM->setQW(addr, qw);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f = _pOPStack->popFLT();
+                _pSRAM->setFLT(addr, f);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d = _pOPStack->popDBL();
+                _pSRAM->setDBL(addr, d);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+    
+            break;
+        }
+
+        case 0x53: { // TOP
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+            pc += sizeof(int32_t);
+    
+            if (g == 0B0001) { // dst: B
+                auto b = _pOPStack->topB();
+                _pSRAM->setB(addr, b);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w = _pOPStack->topW();
+                _pSRAM->setW(addr, w);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw = _pOPStack->topDW();
+                _pSRAM->setDW(addr, dw);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw = _pOPStack->topQW();
+                _pSRAM->setQW(addr, qw);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f = _pOPStack->topFLT();
+                _pSRAM->setFLT(addr, f);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d = _pOPStack->topDBL();
+                _pSRAM->setDBL(addr, d);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+    
+            break;
+        }
+
+        case 0x60: { // J
+            ++pc;
+    
+            int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+            pc += sizeof(int32_t);
+            pc = addr; // 跳转
+            
+            break;
+        }
+
+        case 0x61: { // JT
+            ++pc;
+    
+            int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+            pc += sizeof(int32_t);
+            
+            bool b = _pOPStack->popB();
+            if (b)
+                pc = addr; // 跳转
+    
+            break;
+        }
+
+        case 0x62: { // JF
+            ++pc;
+    
+            int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+            pc += sizeof(int32_t);
+    
+            bool b = _pOPStack->popB();
+            if (!b)
+                pc = addr; // 跳转
+    
+            break;
+        }
+
+        default: {
+            throw VMException(VMET::E_ILLEGAL_INSTRUCTION);
+            break;
+        }
         
         }
     }
@@ -1308,6 +1471,109 @@ int32_t FakeCPU::runFuncs(bool verbose, bool step, uint32_t startAddr) {
 
 int32_t FakeCPU::runStatic(bool verbose, bool step) {
     run(verbose, step, true, 0);
+}
+
+void FakeCPU::executeVMEF(const std::string & name) {
+    if (name == "stderr_nl") {
+        std::cerr << _pOPStack->popQW();
+    } else if (name == "stderr_ni") {
+        std::cerr << _pOPStack->popDW();
+    } else if (name == "stderr_ns") {
+        std::cerr << _pOPStack->popW();
+    } else if (name == "stderr_nb") {
+        std::cerr << _pOPStack->popB();
+    } else if (name == "stderr_flt") {
+        std::cerr << _pOPStack->popFLT();
+    } else if (name == "stderr_dbl") {
+        std::cerr << _pOPStack->popDBL();
+    } else if (name == "stderr_c") {
+        std::cerr << char(_pOPStack->popB());
+    } else if (name == "stderr_s") {
+        std::stringstream ss;
+        VectorHandler handler = _pOPStack->popDW();
+        uint32_t totalSiz = _pVRAM->getTotalSizeByHandler(handler);
+        
+        char ch;
+        for (uint32_t i = 0;
+            i < totalSiz &&
+            (ch = *reinterpret_cast<char *>(_pVRAM->getElemHandlerByOffsetB(handler, i))) != 0; ++i) {
+            ss << ch;
+        }
+        std::cerr << ss.str();
+    }
+    
+    else if (name == "stdout_nl") {
+        std::cout << _pOPStack->popQW();
+    } else if (name == "stdout_ni") {
+        std::cout << _pOPStack->popDW();
+    } else if (name == "stdout_ns") {
+        std::cout << _pOPStack->popW();
+    } else if (name == "stdout_nb") {
+        std::cout << _pOPStack->popB();
+    } else if (name == "stdout_flt") {
+        std::cout << _pOPStack->popFLT();
+    } else if (name == "stdout_dbl") {
+        std::cout << _pOPStack->popDBL();
+    } else if (name == "stdout_c") {
+        std::cout << char(_pOPStack->popB());
+    } else if (name == "stdout_s") {
+        std::stringstream ss;
+        VectorHandler handler = _pOPStack->popDW();
+        uint32_t totalSiz = _pVRAM->getTotalSizeByHandler(handler);
+    
+        char ch;
+        for (uint32_t i = 0; i < totalSiz &&
+         (ch = *reinterpret_cast<char *>(_pVRAM->getElemHandlerByOffsetB(handler, i))) != 0; ++i) {
+            ss << ch;
+        }
+        std::cout << ss.str();
+    }
+
+    else if (name == "stdin_nl") {
+        int64_t qw;
+        std::cin >> qw;
+        _pOPStack->pushQW(qw);
+    } else if (name == "stdin_ni") {
+        int32_t dw;
+        std::cin >> dw;
+        _pOPStack->pushDW(dw);
+    } else if (name == "stdin_ns") {
+        int16_t w;
+        std::cin >> w;
+        _pOPStack->pushW(w);
+    } else if (name == "stdin_nb") {
+        int8_t b;
+        std::cin >> b;
+        _pOPStack->pushB(b);
+    } else if (name == "stdin_flt") {
+        float f;
+        std::cin >> f;
+        _pOPStack->pushFLT(f);
+    } else if (name == "stdin_dbl") {
+        double d;
+        std::cin >> d;
+        _pOPStack->pushDBL(d);
+    } else if (name == "stdin_c") {
+        char ch;
+        std::cin >> ch;
+        _pOPStack->pushB(ch);
+    } else if (name == "stdin_s") {
+        std::string s;
+        std::cin >> s;
+    
+        VectorHandler handler = _pVRAM->makeVectorB(1);
+        IVector *pVec = _pVRAM->getVectorByHandler(handler);
+        RealVectorEntity<int8_t> *pNativeVec =
+                static_cast<RealVectorEntity<int8_t> *>(pVec);
+        uint32_t i; uint32_t siz = s.size();
+        for (i = 0; i < siz; ++i) {
+            pNativeVec->set(i, s[i]);
+        }
+        pNativeVec->set(i, 0);
+        _pOPStack->pushDW(handler);
+    } else {
+        throw VMException(VMET::E_ILLEGAL_VMFE_NAME);
+    }
 }
 
 

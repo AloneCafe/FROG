@@ -96,7 +96,7 @@ uint32_t VectorsManager::getTotalUse() const {
 
 VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
     VectorHandler handler;
-    if (degree == 0) {
+    if (degree == 1) {
         handler = _vecman.newVectorB();
         return handler;
     } else {
@@ -111,7 +111,7 @@ VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
 
 VectorHandler FakeVectorRAM::makeVectorW(uint32_t degree) {
     VectorHandler handler;
-    if (degree == 0) {
+    if (degree == 1) {
         handler = _vecman.newVectorW();
         return handler;
     } else {
@@ -126,7 +126,7 @@ VectorHandler FakeVectorRAM::makeVectorW(uint32_t degree) {
 
 VectorHandler FakeVectorRAM::makeVectorDW(uint32_t degree) {
     VectorHandler handler;
-    if (degree == 0) {
+    if (degree == 1) {
         handler = _vecman.newVectorDW();
         return handler;
     } else {
@@ -141,7 +141,7 @@ VectorHandler FakeVectorRAM::makeVectorDW(uint32_t degree) {
 
 VectorHandler FakeVectorRAM::makeVectorQW(uint32_t degree) {
     VectorHandler handler;
-    if (degree == 0) {
+    if (degree == 1) {
         handler = _vecman.newVectorQW();
         return handler;
     } else {
@@ -156,7 +156,7 @@ VectorHandler FakeVectorRAM::makeVectorQW(uint32_t degree) {
 
 VectorHandler FakeVectorRAM::makeVectorFLT(uint32_t degree) {
     VectorHandler handler;
-    if (degree == 0) {
+    if (degree == 1) {
         handler = _vecman.newVectorFLT();
         return handler;
     } else {
@@ -171,7 +171,7 @@ VectorHandler FakeVectorRAM::makeVectorFLT(uint32_t degree) {
 
 VectorHandler FakeVectorRAM::makeVectorDBL(uint32_t degree) {
     VectorHandler handler;
-    if (degree == 0) {
+    if (degree == 1) {
         handler = _vecman.newVectorDBL();
         return handler;
     } else {
@@ -184,21 +184,41 @@ VectorHandler FakeVectorRAM::makeVectorDBL(uint32_t degree) {
     }
 }
 
-ElemHandler FakeVectorRAM::getElemHandlerByOffset(
+ElemHandler FakeVectorRAM::getElemHandlerByOffsetT(
         const VectorHandler & handler,
         uint32_t offset) const
 {
     IVector *pVec = _vecman.getVectorByHandler(handler);
     if (!pVec)
         throw VMException(VMET::E_ILLEGAL_VECTOR_HANDLER);
-    return pVec->getOffset(offset);
+    return pVec->getOffsetT(offset);
 }
 
-int32_t FakeVectorRAM::getLen(
+uint32_t FakeVectorRAM::getTotalSizeByHandler(
         const VectorHandler & handler) const
 {
     IVector *pVec = _vecman.getVectorByHandler(handler);
     if (!pVec)
         throw VMException(VMET::E_ILLEGAL_VECTOR_HANDLER);
-    return pVec->getTotalSize() / pVec->getElemSize();
+    return pVec->getTotalSize();
+}
+
+uint32_t FakeVectorRAM::getElemSizeByHandler(
+        const VectorHandler & handler) const
+{
+    IVector *pVec = _vecman.getVectorByHandler(handler);
+    if (!pVec)
+        throw VMException(VMET::E_ILLEGAL_VECTOR_HANDLER);
+    return pVec->getElemSize();
+}
+
+ElemHandler FakeVectorRAM::getElemHandlerByOffsetB(const VectorHandler & handler, uint32_t offset) const {
+    IVector *pVec = _vecman.getVectorByHandler(handler);
+    if (!pVec)
+        throw VMException(VMET::E_ILLEGAL_VECTOR_HANDLER);
+    return pVec->getOffsetB(offset);
+}
+
+IVector * FakeVectorRAM::getVectorByHandler(const VectorHandler & handler) const {
+    return _vecman.getVectorByHandler(handler);
 }

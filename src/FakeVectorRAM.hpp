@@ -31,7 +31,8 @@ public:
     
     bool getMark() const;
     
-    virtual ElemHandler getOffset(uint32_t i) const = 0;
+    virtual ElemHandler getOffsetT(uint32_t i) const = 0;
+    virtual ElemHandler getOffsetB(uint32_t i) const = 0;
     
     virtual uint32_t getElemSize() const = 0;
     virtual uint32_t getTotalSize() const = 0;
@@ -56,7 +57,8 @@ public:
     uint32_t getElemSize() const override;
     uint32_t getTotalSize() const override;
     
-    ElemHandler getOffset(uint32_t i) const override;
+    ElemHandler getOffsetT(uint32_t i) const override;
+    ElemHandler getOffsetB(uint32_t i) const override;
 };
 
 /*
@@ -78,7 +80,7 @@ public:
     
     uint32_t getElemSize() const override;
     
-    VectorHandler getOffset(uint32_t i) const override;
+    VectorHandler getOffsetT(uint32_t i) const override;
     
     VectorEntityType getVectorEntityType() const override;
 };
@@ -123,11 +125,17 @@ public:
     VectorHandler makeVectorFLT(uint32_t degree);
     VectorHandler makeVectorDBL(uint32_t degree);
     
-    ElemHandler getElemHandlerByOffset(
+    ElemHandler getElemHandlerByOffsetT(
             const VectorHandler & handler, uint32_t offset) const;
     
-    int32_t getLen(const VectorHandler & handler) const;
+    ElemHandler getElemHandlerByOffsetB(
+            const VectorHandler & handler, uint32_t offset) const;
     
+    uint32_t getTotalSizeByHandler(const VectorHandler & handler) const;
+    
+    uint32_t getElemSizeByHandler(const VectorHandler & handler) const;
+    
+    IVector * getVectorByHandler(const VectorHandler & handler) const;
 };
 
 
@@ -161,8 +169,13 @@ uint32_t RealVectorEntity<T>::getTotalSize() const {
 }
 
 template <typename T>
-ElemHandler RealVectorEntity<T>::getOffset(uint32_t i) const {
+ElemHandler RealVectorEntity<T>::getOffsetT(uint32_t i) const {
     return &_vec[i];
+}
+
+template <typename T>
+ElemHandler RealVectorEntity<T>::getOffsetB(uint32_t i) const {
+    return &(((char *)_vec.data())[i]);
 }
 
 
@@ -189,7 +202,7 @@ uint32_t FakeVectorEntity<T>::getElemSize() const {
 }
 
 template <typename T>
-VectorHandler FakeVectorEntity<T>::getOffset(uint32_t i) const {
+VectorHandler FakeVectorEntity<T>::getOffsetT(uint32_t i) const {
     // TODO
 }
 

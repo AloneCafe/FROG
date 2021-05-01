@@ -15,6 +15,8 @@ enum class VMET : int {
     E_ILLEGAL_GRANULARITY,
     E_DIVIDE_BY_ZERO,
     E_ILLEGAL_VECTOR_HANDLER,
+    E_ILLEGAL_INSTRUCTION,
+    E_ILLEGAL_VMFE_NAME,
 };
 
 class VMException {

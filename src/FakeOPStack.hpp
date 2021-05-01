@@ -19,6 +19,13 @@ public:
     float   popFLT();
     double  popDBL();
     
+    int8_t  topB();
+    int16_t topW();
+    int32_t topDW();
+    int64_t topQW();
+    float   topFLT();
+    double  topDBL();
+    
     void pushB(int8_t e);
     void pushW(int16_t e);
     void pushDW(int32_t e);

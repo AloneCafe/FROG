@@ -32,6 +32,8 @@ private:
     int32_t run(bool verbose, bool step,
              bool fromStaticByteCodes, uint32_t startAddr);
     
+    void executeVMEF(const std::string & name);
+    
 };
 
 #endif
