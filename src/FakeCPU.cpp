@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include <sstream>
+
 #include "FakeCPU.hpp"
 #include "VMException.hpp"
 
