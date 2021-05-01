@@ -3,7 +3,7 @@
 
 static int vmRandomInit = (srand(time(nullptr)), 0);
 
-std::vector<char> * FakeScalarRAM::tryResize(uint32_t addr, int32_t siz) const {
+std::vector<char> * FakeScalarRAM::tryResize(int32_t & addr, int32_t siz) const {
     std::vector<char> * pSRAM;
     if (addr < 0) {
         addr &= 0x7FFFFFFF;
@@ -21,13 +21,13 @@ std::vector<char> * FakeScalarRAM::tryResize(uint32_t addr, int32_t siz) const {
     return pSRAM;
 }
 
-int8_t FakeScalarRAM::getB(uint32_t addr) const {
+int8_t FakeScalarRAM::getB(int32_t addr) const {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int8_t));
     return (*pSRAM)[addr];
 }
 
-int16_t FakeScalarRAM::getW(uint32_t addr) const {
+int16_t FakeScalarRAM::getW(int32_t addr) const {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int16_t));
     int16_t e;
@@ -38,7 +38,7 @@ int16_t FakeScalarRAM::getW(uint32_t addr) const {
 }
 
 
-int32_t FakeScalarRAM::getDW(uint32_t addr) const {
+int32_t FakeScalarRAM::getDW(int32_t addr) const {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int32_t));
     int32_t e;
@@ -48,7 +48,7 @@ int32_t FakeScalarRAM::getDW(uint32_t addr) const {
     return e;
 }
 
-int64_t FakeScalarRAM::getQW(uint32_t addr) const {
+int64_t FakeScalarRAM::getQW(int32_t addr) const {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int64_t));
     int64_t e;
@@ -58,7 +58,7 @@ int64_t FakeScalarRAM::getQW(uint32_t addr) const {
     return e;
 }
 
-float FakeScalarRAM::getFLT(uint32_t addr) const {
+float FakeScalarRAM::getFLT(int32_t addr) const {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(float));
     float e;
@@ -68,7 +68,7 @@ float FakeScalarRAM::getFLT(uint32_t addr) const {
     return e;
 }
 
-double FakeScalarRAM::getDBL(uint32_t addr) const {
+double FakeScalarRAM::getDBL(int32_t addr) const {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(double));
     double e;
@@ -78,7 +78,7 @@ double FakeScalarRAM::getDBL(uint32_t addr) const {
     return e;
 }
 
-void FakeScalarRAM::setB(uint32_t addr, int8_t e) {
+void FakeScalarRAM::setB(int32_t addr, int8_t e) {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int8_t));
     for (uint32_t i = 0; i < sizeof(int8_t); ++i) {
@@ -86,7 +86,7 @@ void FakeScalarRAM::setB(uint32_t addr, int8_t e) {
     }
 }
 
-void FakeScalarRAM::setW(uint32_t addr, int16_t e) {
+void FakeScalarRAM::setW(int32_t addr, int16_t e) {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int16_t));
     for (uint32_t i = 0; i < sizeof(int16_t); ++i) {
@@ -94,7 +94,7 @@ void FakeScalarRAM::setW(uint32_t addr, int16_t e) {
     }
 }
 
-void FakeScalarRAM::setDW(uint32_t addr, int32_t e) {
+void FakeScalarRAM::setDW(int32_t addr, int32_t e) {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int32_t));
     for (uint32_t i = 0; i < sizeof(int32_t); ++i) {
@@ -102,7 +102,7 @@ void FakeScalarRAM::setDW(uint32_t addr, int32_t e) {
     }
 }
 
-void FakeScalarRAM::setQW(uint32_t addr, int64_t e) {
+void FakeScalarRAM::setQW(int32_t addr, int64_t e) {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(int64_t));
     for (uint32_t i = 0; i < sizeof(int64_t); ++i) {
@@ -110,7 +110,7 @@ void FakeScalarRAM::setQW(uint32_t addr, int64_t e) {
     }
 }
 
-void FakeScalarRAM::setFLT(uint32_t addr, float e) {
+void FakeScalarRAM::setFLT(int32_t addr, float e) {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(float));
     for (uint32_t i = 0; i < sizeof(float); ++i) {
@@ -118,7 +118,7 @@ void FakeScalarRAM::setFLT(uint32_t addr, float e) {
     }
 }
 
-void FakeScalarRAM::setDBL(uint32_t addr, double e) {
+void FakeScalarRAM::setDBL(int32_t addr, double e) {
     std::vector<char> * pSRAM =
             tryResize(addr, sizeof(double));
     for (uint32_t i = 0; i < sizeof(double); ++i) {

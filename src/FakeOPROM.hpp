@@ -5,6 +5,7 @@
 #include <cstdint>
 
 class FakeOPROM {
+    friend class FakeCPU;
 private:
     const std::vector<char> _staticByteCodes;
     const std::vector<char> _funcsByteCodes;
