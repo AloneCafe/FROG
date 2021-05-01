@@ -1,4 +1,5 @@
 #include <cstring>
+#include <cmath>
 #include "FakeCPU.hpp"
 #include "VMException.hpp"
 
@@ -504,6 +505,8 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 auto d1 = _pOPStack->popDBL();
                 auto d2 = _pOPStack->popDBL();
                 _pOPStack->pushB(d1 < d2);
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
             }
             break;
         }
@@ -543,6 +546,9 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 auto d1 = _pOPStack->popDBL();
                 auto d2 = _pOPStack->popDBL();
                 _pOPStack->pushB(d1 <= d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
             }
             break;
         }
@@ -582,6 +588,9 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 auto d1 = _pOPStack->popDBL();
                 auto d2 = _pOPStack->popDBL();
                 _pOPStack->pushB(d1 == d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
             }
             break;
         }
@@ -621,6 +630,9 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 auto d1 = _pOPStack->popDBL();
                 auto d2 = _pOPStack->popDBL();
                 _pOPStack->pushB(d1 != d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
             }
             break;
         }
@@ -660,6 +672,9 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 auto d1 = _pOPStack->popDBL();
                 auto d2 = _pOPStack->popDBL();
                 _pOPStack->pushB(d1 >= d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
             }
             break;
         }
@@ -699,9 +714,312 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 auto d1 = _pOPStack->popDBL();
                 auto d2 = _pOPStack->popDBL();
                 _pOPStack->pushB(d1 > d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
             }
             break;
         }
+        
+        case 0x18: { // LNOT
+            ++pc;
+            auto b1 = _pOPStack->popB();
+            _pOPStack->pushB(!b1);
+            break;
+        }
+
+        case 0x19: { // LOR
+            ++pc;
+            auto b1 = _pOPStack->popB();
+            if (b1) { // 短路
+                _pOPStack->popB();
+                _pOPStack->pushB(true);
+                break;
+            } else {
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b2);
+            }
+            break;
+        }
+
+        case 0x1A: { // LAND
+            ++pc;
+            auto b1 = _pOPStack->popB();
+            if (b1) { // 短路
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b2);
+                
+            } else {
+                _pOPStack->popB();
+                _pOPStack->pushB(false);
+                break;
+            }
+            break;
+        }
+
+        case 0x20: { // ADD
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 + b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushW(w1 + w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushDW(dw1 + dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushQW(qw1 + qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushFLT(f1 + f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushDBL(d1 + d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+
+        case 0x21: { // SUB
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 - b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushW(w1 - w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushDW(dw1 - dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushQW(qw1 - qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushFLT(f1 - f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushDBL(d1 - d2);
+                
+            }  else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+
+        case 0x22: { // MUL
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                _pOPStack->pushB(b1 * b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                _pOPStack->pushW(w1 * w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                _pOPStack->pushDW(dw1 * dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                _pOPStack->pushQW(qw1 * qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushFLT(f1 * f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushDBL(d1 * d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+
+        case 0x23: { // DIV
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                if (b2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushB(b1 / b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                if (w2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushW(w1 / w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                if (dw2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushDW(dw1 / dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                if (qw2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushQW(qw1 / qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushFLT(f1 / f2);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushDBL(d1 / d2);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+
+        case 0x24: { // MOD
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                auto b2 = _pOPStack->popB();
+                if (b2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushB(b1 % b2);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                auto w2 = _pOPStack->popW();
+                if (w2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushW(w1 % w2);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                auto dw2 = _pOPStack->popDW();
+                if (dw2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushDW(dw1 % dw2);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                auto qw2 = _pOPStack->popQW();
+                if (qw2 == 0)
+                    throw VMException(VMET::E_DIVIDE_BY_ZERO);
+                _pOPStack->pushQW(qw1 % qw2);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                auto f2 = _pOPStack->popFLT();
+                _pOPStack->pushFLT(fmod(f1, f2));
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                auto d2 = _pOPStack->popDBL();
+                _pOPStack->pushDBL(fmod(d1, d2));
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+
+        case 0x25: { // NEG
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                _pOPStack->pushB(-b1);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                _pOPStack->pushW(-w1);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                _pOPStack->pushDW(-dw1);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                _pOPStack->pushQW(-qw1);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                _pOPStack->pushFLT(-f1);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                _pOPStack->pushDBL(-d1);
+                
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            break;
+        }
+        
+        // TODO 实现
         
         }
     }

@@ -10,6 +10,7 @@ const char * VMException::_pNativeMessage[] = {
     "虚拟 CPU 未连接到 Scalar-RAM",
     "虚拟 CPU 未连接到 Vector-RAM",
     "虚拟 CPU 指令含有非法的粒度",
+    "非法算术运算: 尝试除以零",
 };
 
 VMException::VMException(const std::string & message) {

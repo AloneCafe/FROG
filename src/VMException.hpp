@@ -13,6 +13,7 @@ enum class VMET : int {
     E_NOT_ATTACH_SRAM,
     E_NOT_ATTACH_VRAM,
     E_ILLEGAL_GRANULARITY,
+    E_DIVIDE_BY_ZERO,
 };
 
 class VMException {
