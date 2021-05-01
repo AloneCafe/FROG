@@ -1020,6 +1020,11 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         }
         
         // TODO 实现
+        case 0x30: {
+            ++pc;
+            
+            
+        }
         
         }
     }
