@@ -1260,6 +1260,42 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             break;
         }
         
+        case 0x50: { // DEF
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+            
+            int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+            pc += sizeof(int32_t);
+    
+            if (g == 0B0001) { // dst: B
+                _pSRAM->setB(addr, 0);
+        
+            } else if (g == 0B0010) { // dst: W
+                _pSRAM->setW(addr, 0);
+        
+            } else if (g == 0B0100) { // dst: DW
+                _pSRAM->setDW(addr, 0);
+        
+            } else if (g == 0B1000) { // dst: QW
+                _pSRAM->setQW(addr, 0);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                _pSRAM->setFLT(addr, 0);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                _pSRAM->setDBL(addr, 0);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            
+            break;
+        }
+        
+        
+        
         }
     }
     
