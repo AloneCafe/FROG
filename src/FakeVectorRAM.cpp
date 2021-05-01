@@ -183,7 +183,10 @@ VectorHandler FakeVectorRAM::makeVectorDBL(uint32_t degree) {
     }
 }
 
-ElemHandler FakeVectorRAM::getOffsetByHandler(const VectorHandler & handler) {
-    return _vecman.getVectorByHandler(handler);
-    return 0;
+ElemHandler FakeVectorRAM::getElemHandlerByOffset(
+        const VectorHandler & handler,
+        uint32_t offset)
+{
+    IVector *pVec = _vecman.getVectorByHandler(handler);
+    return pVec->getOffset(offset);
 }

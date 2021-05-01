@@ -14,11 +14,6 @@ using ElemHandler = void *;
 
 using VectorFakeHandler = uint32_t;
 
-enum class VectorEntityType {
-    RealVector,
-    FakeVector
-};
-
 struct IVector {
 protected:
     bool _mark = false;
@@ -41,8 +36,6 @@ public:
     virtual uint32_t getElemSize() const = 0;
     virtual uint32_t getTotalSize() const = 0;
     
-    virtual VectorEntityType getVectorEntityType() const = 0;
-    
 };
 
 template <typename T>
@@ -64,8 +57,6 @@ public:
     uint32_t getTotalSize() const override;
     
     ElemHandler getOffset(uint32_t i) const override;
-    
-    VectorEntityType getVectorEntityType() const override;
 };
 
 /*
@@ -132,7 +123,8 @@ public:
     VectorHandler makeVectorFLT(uint32_t degree);
     VectorHandler makeVectorDBL(uint32_t degree);
     
-    ElemHandler getOffsetByHandler(const VectorHandler & handler);
+    ElemHandler getElemHandlerByOffset(
+            const VectorHandler & handler, uint32_t offset);
     
 };
 
@@ -169,11 +161,6 @@ uint32_t RealVectorEntity<T>::getTotalSize() const {
 template <typename T>
 ElemHandler RealVectorEntity<T>::getOffset(uint32_t i) const {
     return &_vec[i];
-}
-
-template <typename T>
-VectorEntityType RealVectorEntity<T>::getVectorEntityType() const {
-    return VectorEntityType::RealVector;
 }
 
 

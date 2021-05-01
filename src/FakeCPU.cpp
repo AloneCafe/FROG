@@ -1,5 +1,6 @@
 #include <cstring>
 #include <cmath>
+#include <cassert>
 #include "FakeCPU.hpp"
 #include "VMException.hpp"
 
@@ -1019,11 +1020,153 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             break;
         }
         
-        // TODO 实现
-        case 0x30: {
+        case 0x30: { // OFFSET
+            ++pc;
+            auto off = _pOPStack->popDW();
+            auto handler = _pOPStack->popDW();
+            ElemHandler native =_pVRAM->getElemHandlerByOffset(handler, off);
+            
+            if (sizeof(ElemHandler) == 4) {
+                uint32_t dw = 0;
+                for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
+                    reinterpret_cast<uint8_t *>(&dw)[i] =
+                    reinterpret_cast<uint8_t *>(&native)[i];
+                }
+                _pOPStack->pushDW(dw);
+                
+            } else if (sizeof(ElemHandler) == 8) {
+                uint32_t qw = 0;
+                for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
+                    reinterpret_cast<uint8_t *>(&qw)[i] =
+                    reinterpret_cast<uint8_t *>(&native)[i];
+                }
+                _pOPStack->pushQW(qw);
+                
+            } else {
+                assert(0);
+            }
+            break;
+        }
+
+        case 0x31: { // HPUSH
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+            ElemHandler native;
+            if (sizeof(ElemHandler) == 4) {
+                uint32_t dw = _pOPStack->popDW();
+                for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
+                    reinterpret_cast<uint8_t *>(&native)[i] =
+                    reinterpret_cast<uint8_t *>(&dw)[i];
+                }
+        
+            } else if (sizeof(ElemHandler) == 8) {
+                uint32_t qw = _pOPStack->popQW();
+                for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
+                    reinterpret_cast<uint8_t *>(&native)[i] =
+                    reinterpret_cast<uint8_t *>(&qw)[i];
+                }
+        
+            } else {
+                assert(0);
+            }
+    
+            if (g == 0B0001) { // dst: B
+                auto b1 = *static_cast<int8_t *>(native);
+                _pOPStack->pushB(b1);
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = *static_cast<int16_t *>(native);
+                _pOPStack->pushW(w1);
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = *static_cast<int32_t *>(native);
+                _pOPStack->pushDW(dw1);
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = *static_cast<int64_t *>(native);
+                _pOPStack->pushQW(qw1);
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = *static_cast<float *>(native);
+                _pOPStack->pushFLT(f1);
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = *static_cast<double *>(native);
+                _pOPStack->pushDBL(d1);
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            
+            break;
+        }
+
+        case 0x32: { // HPOP
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
             ++pc;
             
-            
+            auto fPopNativeAddr = [](FakeOPStack * pOPStack) {
+                ElemHandler native;
+                if (sizeof(ElemHandler) == 4) {
+                    uint32_t dw = pOPStack->popDW();
+                    for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
+                        reinterpret_cast<uint8_t *>(&native)[i] =
+                                reinterpret_cast<uint8_t *>(&dw)[i];
+                    }
+        
+                } else if (sizeof(ElemHandler) == 8) {
+                    uint32_t qw = pOPStack->popQW();
+                    for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
+                        reinterpret_cast<uint8_t *>(&native)[i] =
+                                reinterpret_cast<uint8_t *>(&qw)[i];
+                    }
+        
+                } else {
+                    assert(0);
+                }
+                return native;
+            };
+    
+            ElemHandler native;
+            if (g == 0B0001) { // dst: B
+                auto b1 = _pOPStack->popB();
+                native = fPopNativeAddr(_pOPStack);
+                *static_cast<int8_t *>(native) = b1;
+        
+            } else if (g == 0B0010) { // dst: W
+                auto w1 = _pOPStack->popW();
+                native = fPopNativeAddr(_pOPStack);
+                *static_cast<int16_t *>(native) = w1;
+        
+            } else if (g == 0B0100) { // dst: DW
+                auto dw1 = _pOPStack->popDW();
+                native = fPopNativeAddr(_pOPStack);
+                *static_cast<int32_t *>(native) = dw1;
+        
+            } else if (g == 0B1000) { // dst: QW
+                auto qw1 = _pOPStack->popQW();
+                native = fPopNativeAddr(_pOPStack);
+                *static_cast<int64_t *>(native) = qw1;
+        
+            } else if (g == 0B1011) { // dst: FLT
+                auto f1 = _pOPStack->popFLT();
+                native = fPopNativeAddr(_pOPStack);
+                *static_cast<float *>(native) = f1;
+        
+            } else if (g == 0B1111) { // dst: DBL
+                auto d1 = _pOPStack->popDBL();
+                native = fPopNativeAddr(_pOPStack);
+                *static_cast<double *>(native) = d1;
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+    
+            break;
         }
         
         }
