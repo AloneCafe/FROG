@@ -6,6 +6,7 @@
 
 class FakeOPStack {
     friend class GarbageCollector;
+    friend class FakeCPU;
 private:
     std::vector<char> _opStack;
     

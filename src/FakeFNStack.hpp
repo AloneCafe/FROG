@@ -14,6 +14,8 @@ public:
     uint32_t popRetAddr();
     
     void pushRetAddr(uint32_t e);
+    
+    bool empty() const;
 };
 
 #endif

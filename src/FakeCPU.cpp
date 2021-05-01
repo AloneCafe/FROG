@@ -84,7 +84,19 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             pc += 1;
         case 0x04:
             pc += 1;
-            pc = _pFNStack->popRetAddr();
+    
+            // 检查程序是否结束，判断函数返回栈是否为空
+            if (_pFNStack->empty()) {
+                if (_pOPStack->_opStack.size() >= 4)
+                    return _pOPStack->popDW();
+                else if (!_pOPStack->_opStack.empty())
+                    return _pOPStack->popB();
+                else
+                    return 0;
+                
+            } else {
+                pc = _pFNStack->popRetAddr();
+            }
             break;
 
         case 0x06: {

@@ -20,45 +20,25 @@ public:
     
     virtual ~AstErrorDriver() = default;
     
-    void postErr(const ErrorType & type, const Token & tk) {
-        _pErrDrv->postErr(type, _filename, tk.lineno(), tk.colno());
-    }
+    void postErr(const ErrorType & type, const Token & tk);
     
-    void fatalErr(const ErrorType & type, const Token & tk) {
-        _pErrDrv->fatalErr(type, _filename, tk.lineno(), tk.colno());
-    }
+    void fatalErr(const ErrorType & type, const Token & tk);
     
-    const Error & lastErr() const {
-        return _pErrDrv->lastErr();
-    }
+    const Error & lastErr() const;
     
-    bool hasErr() const {
-        return _pErrDrv->hasErr();
-    }
+    bool hasErr() const;
     
-    void clearLastErr() {
-        _pErrDrv->clearLastErr();
-    }
+    void clearLastErr();
     
-    void clearLastErr(uint32_t n) {
-        _pErrDrv->clearLastErr(n);
-    }
+    void clearLastErr(uint32_t n);
     
-    uint32_t getErrCount() const {
-        return _pErrDrv->getErrList().size();
-    }
+    uint32_t getErrCount() const;
     
-    const std::vector<Error> & getErrList() const {
-        return _pErrDrv->getErrList();
-    }
+    const std::vector<Error> & getErrList() const;
     
-    std::string getFileName() const {
-        return _filename;
-    }
+    std::string getFileName() const;
     
-    void setFileName(const std::string & newFileName) {
-        _filename = newFileName;
-    }
+    void setFileName(const std::string & newFileName);
 };
 
 #endif

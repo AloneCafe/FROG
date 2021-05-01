@@ -9,3 +9,7 @@ uint32_t FakeFNStack::popRetAddr() {
 void FakeFNStack::pushRetAddr(uint32_t e) {
     _fnStack.push(e);
 }
+
+bool FakeFNStack::empty() const {
+    return _fnStack.empty();
+}
