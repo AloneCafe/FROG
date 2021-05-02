@@ -61,7 +61,7 @@ ExprPtr Expr::newCallExpr(ExprPtr callerExpr, const std::vector<ExprPtr> & argEx
 
 ExprPtr Expr::newCommaExpr(const std::vector<ExprPtr> & commaExprList, long lineno, long colno) {
     ExprPtr pExpr(new Expr());
-    pExpr->_op = Operator::OPT_CALL;
+    pExpr->_op = Operator::OPT_COMMA;
     pExpr->_lineno = lineno;
     pExpr->_colno = colno;
     std::for_each(commaExprList.cbegin(), commaExprList.cend(), [=](const ExprPtr & e) {

@@ -17,10 +17,10 @@
 #   define SEM_E(x, l)      (void)(_sed.postErr((x), l))
 #   define SEM_FATAL(x, l)  (void)(_sed.fatalErr((x), l))
 #else
-#   define AST_E(x)         DBGPRINT, (x != E_UNEXPECTED_EOF ? _aed.postErr((x), *it) : _aed.fatalErr((x), *it))
-#   define AST_FATAL(x)     DBGPRINT, _aed.fatalErr((x), *it))
-#   define SEM_E(x, l)      DBGPRINT, _sed.postErr((x), l)
-#   define SEM_FATAL(x, l)  DBGPRINT, _sed.fatalErr((x), l)
+#   define AST_E(x)         DBGPRINT, (void)(x != E_UNEXPECTED_EOF ? _aed.postErr((x), *it) : _aed.fatalErr((x), *it))
+#   define AST_FATAL(x)     DBGPRINT, (void)(_aed.fatalErr((x), *it))
+#   define SEM_E(x, l)      DBGPRINT, (void)(_sed.postErr((x), l))
+#   define SEM_FATAL(x, l)  DBGPRINT, (void)(_sed.fatalErr((x), l))
 #endif
 
 #define SEM_E_COUNT_RECOND auto _rem_rec_count_ = _sed.getErrCount()

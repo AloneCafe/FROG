@@ -28,13 +28,6 @@ void printUsage(const std::string path) {
     std::cout << "+ EXAMPLE: " << path << " foo.frog -I -O"  << std::endl;
 }
 
-#if defined(_DEBUG)
-int main() {
-    FrontParser p("../test1.txt");
-    DBGPRINT;
-    return 0;
-}
-#else 
 int main(int argc, const char * argv[]) {
     enum {
         NEED_INPUT_OR_OPTION,
@@ -137,6 +130,3 @@ int main(int argc, const char * argv[]) {
     }
     return 0;
 }
-
-
-#endif
