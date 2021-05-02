@@ -27,6 +27,7 @@ public:
 };
 
 class ILParser {
+    friend class UniILParser;
 private:
     std::string _filename;
     
@@ -37,6 +38,9 @@ private:
     std::vector<char> _bytesFuncs;
     AddrLocateTable _altFuncs;
     AddrRelocateTable _artFuncs;
+    
+    bool _runnable = false;
+    uint32_t _dwEntryPoint = 0;
     
     UniVarAllocTable _uvat;
     
@@ -49,6 +53,9 @@ public:
     const std::vector<char> & getBytesFuncs() const;
     
     const std::vector<char> & getBytesStatic() const;
+    
+    bool runnable() const;
+    uint32_t getEntryPoint() const;
     
 public:
     ILParser(const std::string & filename) :

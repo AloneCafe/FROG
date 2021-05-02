@@ -11,17 +11,20 @@ UniILParser::getBytesStatic() const {
 }
 
 bool UniILParser::parse() {
-    if (!_filenames.empty()) {
-        for (const std::string & filename : _filenames) {
-            ILParser ap(filename);
-            bool result = ap.parse();
-            if (!result)
-                return false;
-            
-            for (auto b : ap.getBytesFuncs())
-                _bytesFuncs.push_back(b);
-            for (auto b : ap.getBytesStatic())
-                _bytesStatic.push_back(b);
+    if (!_filename.empty()) {
+        ILParser ap(_filename);
+        bool result = ap.parse();
+        if (!result)
+            return false;
+        
+        for (auto b : ap.getBytesFuncs())
+            _bytesFuncs.push_back(b);
+        for (auto b : ap.getBytesStatic())
+            _bytesStatic.push_back(b);
+        
+        if (ap.runnable()) {
+            _runnable = true;
+            _dwEntryPoint = ap._dwEntryPoint;
         }
         
     } else {
@@ -34,6 +37,11 @@ bool UniILParser::parse() {
             _bytesFuncs.push_back(b);
         for (auto b : ap.getBytesStatic())
             _bytesStatic.push_back(b);
+    
+        if (ap.runnable()) {
+            _runnable = true;
+            _dwEntryPoint = ap._dwEntryPoint;
+        }
     }
     
     return true;

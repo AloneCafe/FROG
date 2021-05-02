@@ -4,13 +4,20 @@
 
 #include "ByteCodeGenerator.hpp"
 
-std::vector<char> ByteCodeGenerator::make(const std::vector<char> & bytesStatic, const std::vector<char> & bytesFuncs) {
+std::vector<char> ByteCodeGenerator::make(const std::vector<char> & bytesStatic,
+                                          const std::vector<char> & bytesFuncs,
+                                          bool runnable,
+                                          uint32_t raEntryPoint)
+{
     std::vector<char> bytecodes;
     ByteCodeHeader bch;
     bch._offsetStatic = sizeof(bch);
     bch._sizeStatic = bytesStatic.size();
     bch._offsetFuncs = bch._offsetStatic + bch._sizeStatic;
     bch._sizeFuncs = bytesFuncs.size();
+    bch._raEntryPoint = raEntryPoint;
+    bch._magics[3] = runnable;
+    
     for (uint32_t i = 0; i < sizeof(bch); ++i)
         bytecodes.push_back(((char *)&bch)[i]);
     for (uint32_t i = 0; i < bch._sizeStatic; ++i)

@@ -18,7 +18,7 @@ void printUsage(const std::string & path) {
     std::cout << std::endl;
     std::cout << "- USAGE: " << path << " [OPTIONS]" << std::endl;
     std::cout << "- OPTIONS: " << std::endl;
-    std::cout << "    infile1 infile2 ... infileN : 编译汇编文件列表" << std::endl;
+    std::cout << "    infile                      : 汇编代码文件" << std::endl;
     std::cout << "    (-o | --output) outfile     : 生成字节码" << std::endl;
     std::cout << "    (-I | --stdin)              : 从标准输入读取汇编代码" << std::endl;
     std::cout << "    (-O | --stdout)             : 将结果打印至标准输出 (十六进制文本序列)" << std::endl;
@@ -49,6 +49,10 @@ int main(int argc, const char * argv[]) {
                 if (stat == NEED_INPUT_OR_OPTION) {
                     if (!flagStdin)
                         inFileNames.push_back(s);
+                    if (inFileNames.size() > 1) {
+                        std::cerr << "~ 汇编器只能接受一个汇编代码文件" << std::endl;
+                        return 1;
+                    }
                     
                 } else if (stat == NEED_OUTPUT) {
                     if (!flagStdout)
@@ -62,7 +66,7 @@ int main(int argc, const char * argv[]) {
                 } else if (s == "-I" || s == "--stdin") {
                     flagStdin = true;
                     if (!inFileNames.empty()) {
-                        std::cerr << "~ 显式指定标准输入, 已忽略汇编文件列表" << std::endl;
+                        std::cerr << "~ 显式指定标准输入, 已忽略汇编代码文件" << std::endl;
                     }
                     
                 } else if (s == "-O" || s == "--stdout") {
@@ -89,10 +93,10 @@ int main(int argc, const char * argv[]) {
             
         } else {
             if (inFileNames.empty()) {
-                std::cerr << "~ 输入文件列表为空" << std::endl;
+                std::cerr << "~ 输入文件为空" << std::endl;
                 return 1;
             }
-            UniILParser up(inFileNames);
+            UniILParser up(inFileNames[0]);
             if (up.parse())
                 outputByteCode = std::move(ByteCodeGenerator::make(up.getBytesStatic(), up.getBytesFuncs()));
         }

@@ -7,7 +7,8 @@
 #pragma pack(push)
 #pragma pack(1)
 struct ByteCodeHeader {
-    uint8_t  _magics[8] = { 'F', 'R', 'O', 'G', 'V', 'M', 0, 0 };
+    uint8_t  _magics[4] = { 'F', 'V', 'M', 0 };
+    uint32_t _raEntryPoint;
     uint32_t _offsetStatic;
     uint32_t _sizeStatic;
     uint32_t _offsetFuncs;
@@ -18,7 +19,9 @@ struct ByteCodeHeader {
 class ByteCodeGenerator {
 public:
     static std::vector<char> make(const std::vector<char> & bytesStatic,
-                                  const std::vector<char> & bytesFuncs);
+                                  const std::vector<char> & bytesFuncs,
+                                  bool runnable = false,
+                                  uint32_t _raEntryPoint = 0);
 };
 
 class ByteCodeHexPrinter {

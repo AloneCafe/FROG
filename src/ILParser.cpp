@@ -65,6 +65,10 @@ bool ILParser::parse() {
                 if (stat == INITIAL) {
                     if (tks[i].isId()) {
                         const std::string & funcName = tks[i].getId();
+                        if (funcName == "main") { // 设置虚拟机运行入口点
+                            _runnable = true;
+                            _dwEntryPoint = _bytesFuncs.size();
+                        }
                         _altFuncs.setOffset(funcName, _bytesFuncs.size());
                         ++i;
                         
@@ -1191,4 +1195,12 @@ bool ILParser::parse() {
         return false;
     
     return true;
+}
+
+bool ILParser::runnable() const {
+    return _runnable;
+}
+
+uint32_t ILParser::getEntryPoint() const {
+    return _dwEntryPoint;
 }

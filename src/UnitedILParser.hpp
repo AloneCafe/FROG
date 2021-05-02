@@ -6,9 +6,12 @@
 
 class UniILParser {
 private:
-    std::vector<std::string> _filenames;
+    std::string _filename;
     std::vector<char> _bytesFuncs;
     std::vector<char> _bytesStatic;
+    
+    bool _runnable = false;
+    uint32_t _dwEntryPoint = 0;
 
 public:
     const std::vector<char> & getBytesFuncs() const;
@@ -16,8 +19,8 @@ public:
     const std::vector<char> & getBytesStatic() const;
 
 public:
-    UniILParser(const std::vector<std::string> & filenames)
-            : _filenames(filenames) { }
+    UniILParser(const std::string & filename)
+            : _filename(filename) { }
             
     UniILParser() = default;
     
