@@ -1006,7 +1006,7 @@ void SemParser::gen4Function(const Function & fun) {
         } else if (varType == "double") {
             _asmk.append_POP_VAR_DBL(realNameStr);
         } else if (varType.getDegree() > 0) {
-            _asmk.append_PUSH_VAR_DW(realNameStr);
+            _asmk.append_POP_VAR_DW(realNameStr);
         } else {
             assert(0);
         }

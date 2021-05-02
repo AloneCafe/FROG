@@ -1479,11 +1479,11 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
 }
 
 int32_t FakeCPU::runFuncs(bool verbose, bool step, uint32_t startAddr) {
-    run(verbose, step, false, startAddr);
+    return run(verbose, step, false, startAddr);
 }
 
 int32_t FakeCPU::runStatic(bool verbose, bool step) {
-    run(verbose, step, true, 0);
+    return run(verbose, step, true, 0);
 }
 
 void FakeCPU::executeVMEF(const std::string & name) {

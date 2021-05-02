@@ -18,7 +18,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CXX_FLAGS -Wall -Wextra -O2)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(CXX_FLAGS /Wall /O2)
+    set(CXX_FLAGS /utf-8)
 else ()
     message(FATAL_ERROR "Unsupported C++ compiler")
 endif ()
@@ -27,7 +27,7 @@ set(EN_FROG_COMPILER fc)
 set(EN_FROG_ASSEMBLER fas)
 set(EN_FROG_VM fvm)
 
-#add_compile_options(${CXX_FLAGS})
+add_compile_options(${CXX_FLAGS})
 
 set(SRCDIR src)
 
