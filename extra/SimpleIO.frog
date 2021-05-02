@@ -165,7 +165,7 @@ func char ScanChar() {
      }
 }
 
-func char[] ScanChar() {
+func char[] ScanString() {
     asm {
         "EFCALL \"stdin_s\";"
         "RET DW;"
