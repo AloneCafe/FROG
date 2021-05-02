@@ -119,17 +119,15 @@ int main(int argc, const char * argv[]) {
         
         if (!staticBytes.empty()) {
             int32_t retStatic = cpu.runStatic(flagVerbose, flagStep);
-            if (!retStatic) {
+            if (retStatic) {
                 std::cerr << "~ 该字节码文件静态初始化失败" << std::endl;
                 return retStatic;
             }
         }
         
         if (!funcsBytes.empty()) {
-            bool retFuncs = cpu.runFuncs(flagVerbose, flagStep, startAddr);
-            if (!retFuncs) {
-                return retFuncs;
-            }
+            int32_t retFuncs = cpu.runFuncs(flagVerbose, flagStep, startAddr);
+            return retFuncs;
         }
         
         return 0;
