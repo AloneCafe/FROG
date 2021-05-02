@@ -13,7 +13,7 @@ static const char * pLogoVM =
         "                |___/\n"
 ;
 
-void printUsage(const std::string & path) {
+void printUsage(const std::string path) {
     std::cout << pLogoVM << std::endl;
     std::cout << "========== 欢迎使用 FROG 虚拟机 (FROG VM) ==========" << std::endl;
     std::cout << std::endl;

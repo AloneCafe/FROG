@@ -11,7 +11,7 @@ static const char * pLogoC =
 "                    |___/                          |_|                      \n"
 ;
 
-void printUsage(const std::string & path) {
+void printUsage(const std::string path) {
 	std::cout << pLogoC << std::endl;
     std::cout << "========== 欢迎使用 FROG 编译器 (FROG Compiler) ==========" << std::endl;
     std::cout << std::endl;

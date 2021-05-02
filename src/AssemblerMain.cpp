@@ -12,7 +12,7 @@ static const char * pLogoAS =
         "                |___/                                                     \n"
 ;
 
-void printUsage(const std::string & path) {
+void printUsage(const std::string path) {
     std::cout << pLogoAS << std::endl;
     std::cout << "========== 欢迎使用 FROG 汇编器 (FROG Assembler) ==========" << std::endl;
     std::cout << std::endl;
