@@ -46,3 +46,12 @@ bool UniILParser::parse() {
     
     return true;
 }
+
+uint32_t UniILParser::getEntryPoint() const {
+    return _dwEntryPoint;
+}
+
+bool UniILParser::runnable() const {
+    return _runnable;
+}
+

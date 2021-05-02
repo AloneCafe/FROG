@@ -54,7 +54,7 @@ void ByteCodeHexPrinter::b2hex(uint8_t b, char hex[2], bool upcase) {
 void ByteCodeHexPrinter::print(const std::vector<char> & bytes, uint32_t coln) {
     uint32_t sizeBytes = bytes.size();
     for (uint32_t i = 0; i < sizeBytes; ++i) {
-        char h[2];
+        char h[3] = { 0 };
         b2hex(bytes[i], h);
         std::cout << h << ((i + 1) % 8 == 0 ? "\n" : " ");
     }

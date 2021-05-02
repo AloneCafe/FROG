@@ -17,6 +17,10 @@ public:
     const std::vector<char> & getBytesFuncs() const;
     
     const std::vector<char> & getBytesStatic() const;
+    
+    bool runnable() const;
+    
+    uint32_t getEntryPoint() const;
 
 public:
     UniILParser(const std::string & filename)

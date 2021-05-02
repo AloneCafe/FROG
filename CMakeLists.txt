@@ -23,11 +23,11 @@ else ()
     message(FATAL_ERROR "Unsupported C++ compiler")
 endif ()
 
-add_compile_options(${CXX_FLAGS})
-
 set(EN_FROG_COMPILER fc)
 set(EN_FROG_ASSEMBLER fas)
 set(EN_FROG_VM fvm)
+
+#add_compile_options(${CXX_FLAGS})
 
 set(SRCDIR src)
 
@@ -145,5 +145,9 @@ set(SRCS_FROG_VM
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
 add_executable(${EN_FROG_VM} ${SRCS_FROG_VM})
+
+target_compile_options(${EN_FROG_COMPILER} INTERFACE ${CXX_FLAGS})
+target_compile_options(${EN_FROG_ASSEMBLER} INTERFACE ${CXX_FLAGS})
+target_compile_options(${EN_FROG_VM} INTERFACE ${CXX_FLAGS})
 
 file(COPY extra/SimpleIO.frog DESTINATION ${CMAKE_BINARY_DIR}/extra)

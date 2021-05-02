@@ -89,7 +89,11 @@ int main(int argc, const char * argv[]) {
         if (flagStdin) {
             UniILParser up;
             if (up.parse())
-                outputByteCode = std::move(ByteCodeGenerator::make(up.getBytesStatic(), up.getBytesFuncs()));
+                outputByteCode = std::move(ByteCodeGenerator::make(
+                        up.getBytesStatic(),
+                        up.getBytesFuncs(),
+                        up.runnable(),
+                        up.getEntryPoint()));
             
         } else {
             if (inFileNames.empty()) {
@@ -98,7 +102,11 @@ int main(int argc, const char * argv[]) {
             }
             UniILParser up(inFileNames[0]);
             if (up.parse())
-                outputByteCode = std::move(ByteCodeGenerator::make(up.getBytesStatic(), up.getBytesFuncs()));
+                outputByteCode = std::move(ByteCodeGenerator::make(
+                        up.getBytesStatic(),
+                        up.getBytesFuncs(),
+                        up.runnable(),
+                        up.getEntryPoint()));
         }
         
         if (flagStdout) {

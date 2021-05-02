@@ -286,6 +286,10 @@ bool FileSystem::fileExist(const std::string & filename) {
     return (i ? (i.close(), true) : false);
 }
 
+bool FileSystem::fileExist(const char * filename) {
+    return fileExist(std::string(filename));
+}
+
 std::string FileSystem::path2FileName(const std::string & filename) {
     std::stack<char> path;
     uint32_t len = filename.size();
@@ -301,4 +305,8 @@ std::string FileSystem::path2FileName(const std::string & filename) {
         path.pop();
     }
     return ss.str();
+}
+
+std::string FileSystem::path2FileName(const char * filename) {
+    return path2FileName(std::string(filename));
 }

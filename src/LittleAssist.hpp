@@ -83,6 +83,8 @@ public:
     static std::string getCWD();
     static bool fileExist(const std::string & filename);
     static std::string path2FileName(const std::string & filename);
+    static bool fileExist(const char * filename);
+    static std::string path2FileName(const char * filename);
 };
 
 #endif
