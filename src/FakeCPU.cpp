@@ -1475,7 +1475,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         }
     }
     
-    
+    return 0;
 }
 
 int32_t FakeCPU::runFuncs(bool verbose, bool step, uint32_t startAddr) {

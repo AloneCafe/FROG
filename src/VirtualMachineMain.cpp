@@ -117,9 +117,22 @@ int main(int argc, const char * argv[]) {
         cpu.attachScalarRAM(&sRAM);
         cpu.attachVectorRAM(&vRAM);
         
-        cpu.runStatic(flagVerbose, flagStep);
-        cpu.runFuncs(flagVerbose, flagStep, startAddr);
+        if (!staticBytes.empty()) {
+            int32_t retStatic = cpu.runStatic(flagVerbose, flagStep);
+            if (!retStatic) {
+                std::cerr << "~ 该字节码文件静态初始化失败" << std::endl;
+                return retStatic;
+            }
+        }
         
+        if (!funcsBytes.empty()) {
+            bool retFuncs = cpu.runFuncs(flagVerbose, flagStep, startAddr);
+            if (!retFuncs) {
+                return retFuncs;
+            }
+        }
+        
+        return 0;
         
     } else {
         printUsage(FileSystem::path2FileName(argv[0]));

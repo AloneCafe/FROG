@@ -1,3 +1,5 @@
+#include <ctime>
+
 #include "FakeScalarRAM.hpp"
 #include "VMException.hpp"
 
