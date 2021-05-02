@@ -1,5 +1,6 @@
 #include "TokenScanner.hpp"
 #include "UnitedILParser.hpp"
+#include "FakeCPU.hpp"
 
 static const char * pLogoVM =
         " ______                __      ____  __\n"
@@ -69,13 +70,55 @@ int main(int argc, const char * argv[]) {
         }
     
         std::ifstream ifs(inFileName, std::ios::in | std::ios::binary);
-        if (flagStep) {
         
-        } else if (flagVerbose) {
-        
-        } else {
-        
+        ByteCodeHeader bch;
+        char ch;
+        for (uint32_t i = 0; i < sizeof(bch); ++i) {
+            ch = ifs.get();
+            if (ch == EOF) {
+                std::cerr << "~ 错误的字节码文件格式" << std::endl;
+                return 1;
+            }
+            reinterpret_cast<char *>(&bch)[i] = ch;
         }
+        
+        if (!bch._magics[3]) {
+            std::cerr << "~ 该字节码文件不可运行 (无入口点)" << std::endl;
+            return 1;
+        }
+        uint32_t startAddr = bch._raEntryPoint;
+        
+        std::vector<char> staticBytes;
+        std::vector<char> funcsBytes;
+        
+        ifs.seekg(bch._offsetStatic, std::ios::beg);
+        for (uint32_t i = 0; i < bch._sizeStatic; ++i) {
+            ch = ifs.get();
+            staticBytes.push_back(ch);
+        }
+    
+        ifs.seekg(bch._offsetFuncs, std::ios::beg);
+        for (uint32_t i = 0; i < bch._sizeFuncs; ++i) {
+            ch = ifs.get();
+            funcsBytes.push_back(ch);
+        }
+        
+        
+        FakeFNStack fnStack;
+        FakeOPStack opStack;
+        FakeOPROM opROM(staticBytes, funcsBytes);
+        FakeScalarRAM sRAM;
+        FakeVectorRAM vRAM;
+        
+        FakeCPU cpu;
+        cpu.attachFNStack(&fnStack);
+        cpu.attachOPStack(&opStack);
+        cpu.attachOPROM(&opROM);
+        cpu.attachScalarRAM(&sRAM);
+        cpu.attachVectorRAM(&vRAM);
+        
+        cpu.runStatic(flagVerbose, flagStep);
+        cpu.runFuncs(flagVerbose, flagStep, startAddr);
         
         
     } else {
