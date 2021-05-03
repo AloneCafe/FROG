@@ -6,6 +6,7 @@
 
 #include "FakeCPU.hpp"
 #include "VMException.hpp"
+#include "GarbageCollector.hpp"
 
 void FakeCPU::attachOPROM(FakeOPROM * pOPROM) {
     _pOPROM = pOPROM;
@@ -46,6 +47,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
     
     char voidhole[8] = { 0 };
     while (pc < siz) {
+        GCLockGuard lck(GarbageCollector::getGCLock());
         std::string buf;
         uint32_t hardAddr = 0;
         switch (oprom[pc]) {

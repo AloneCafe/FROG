@@ -10,11 +10,17 @@
 #include "FakeScalarRAM.hpp"
 #include "FakeOPStack.hpp"
 
+
+using GCLock = std::mutex;
+using GCLockGuard = std::lock_guard<GCLock>;
+
 class GarbageCollector {
 private:
     const FakeOPStack & _ops;
     const FakeScalarRAM & _sram;
     FakeVectorRAM & _vram;
+    
+    static GCLock _gclocker;
     
 public:
     GarbageCollector(const FakeOPStack & opStack,
@@ -30,6 +36,8 @@ public:
     void mark_SRAM();
     
     void sweep();
+    
+    static inline std::mutex & getGCLock();
 };
 
 

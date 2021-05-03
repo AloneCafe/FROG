@@ -2,6 +2,8 @@
 
 #include "GarbageCollector.hpp"
 
+std::mutex GarbageCollector::_gclocker;
+
 static void procMark(GarbageCollector * pGC) {
     pGC->mark_OPSTACK();
     pGC->mark_SRAM();
@@ -27,6 +29,7 @@ void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
     _sche.ms = ms;
     while (1) {
         std::this_thread::sleep_for(std::chrono::milliseconds(_sche.ms));
+        GCLockGuard lck(GarbageCollector::getGCLock());
         procMarkSweep(&_gc);
     }
 }
@@ -73,6 +76,10 @@ void GarbageCollector::sweep() {
             ++it;
         }
     }
+}
+
+inline std::mutex & GarbageCollector::getGCLock() {
+    return _gclocker;
 }
 
 void doGCScheduler(GCScheduler * pGCS, uint32_t ms) {
