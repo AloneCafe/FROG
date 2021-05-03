@@ -1205,23 +1205,30 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
     
             ++pc;
     
+            VectorHandler handler;
             if (g == 0B0001) { // dst: B
-                _pVRAM->makeVectorB(d);
+                handler = _pVRAM->makeVectorB(d);
+                _pOPStack->pushDW(handler);
         
             } else if (g == 0B0010) { // dst: W
-                _pVRAM->makeVectorW(d);
+                handler = _pVRAM->makeVectorW(d);
+                _pOPStack->pushDW(handler);
         
             } else if (g == 0B0100) { // dst: DW
-                _pVRAM->makeVectorDW(d);
+                handler = _pVRAM->makeVectorDW(d);
+                _pOPStack->pushDW(handler);
         
             } else if (g == 0B1000) { // dst: QW
-                _pVRAM->makeVectorQW(d);
+                handler = _pVRAM->makeVectorQW(d);
+                _pOPStack->pushDW(handler);
         
             } else if (g == 0B1011) { // dst: FLT
-                _pVRAM->makeVectorFLT(d);
+                handler = _pVRAM->makeVectorFLT(d);
+                _pOPStack->pushDW(handler);
         
             } else if (g == 0B1111) { // dst: DBL
-                _pVRAM->makeVectorDBL(d);
+                handler = _pVRAM->makeVectorDBL(d);
+                _pOPStack->pushDW(handler);
         
             } else {
                 throw VMException(VMET::E_ILLEGAL_GRANULARITY);

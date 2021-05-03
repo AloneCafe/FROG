@@ -129,7 +129,7 @@ int main(int argc, const char * argv[]) {
     
         if (!staticBytes.empty()) {
             int32_t retStatic = cpu.runStatic(flagVerbose, flagStep);
-            if (retStatic) {
+            if (retStatic) { // not 0
                 std::cerr << "~ 该字节码文件静态初始化失败" << std::endl;
                 
                 gcs._flagVMExited.store(true);

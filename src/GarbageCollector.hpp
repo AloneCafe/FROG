@@ -2,7 +2,6 @@
 #define __GARBAGE_COLLECTOR_TS_HEADER__
 
 #define GC_DEFAULT_ARG_TIME 1000
-#define GC_DEFAULT_ARG_USE  10000000
 
 #include <mutex>
 
