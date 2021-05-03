@@ -7,6 +7,7 @@
 #include "FakeScalarRAM.hpp"
 #include "FakeVectorRAM.hpp"
 
+
 class FakeCPU {
 private:
     FakeOPROM     * _pOPROM   = nullptr;

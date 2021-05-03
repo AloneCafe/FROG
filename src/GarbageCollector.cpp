@@ -1,8 +1,9 @@
 #include <thread>
 
 #include "GarbageCollector.hpp"
+#include "FakeCPU.hpp"
 
-std::mutex GarbageCollector::_gclocker;
+std::mutex GCScheduler::_gcLock;
 
 static void procMark(GarbageCollector * pGC) {
     pGC->mark_OPSTACK();
@@ -23,14 +24,19 @@ GCScheduler::GCScheduler(
         const FakeOPStack & opStack,
         const FakeScalarRAM & sram,
         FakeVectorRAM & vram) :
-        _gc(opStack, sram, vram) {}
+    _gc(opStack, sram, vram),
+    _flagVMExited(false) {}
         
 void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
     _sche.ms = ms;
     while (1) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(_sche.ms));
-        GCLockGuard lck(GarbageCollector::getGCLock());
-        procMarkSweep(&_gc);
+        std::this_thread::sleep_for(
+                std::chrono::milliseconds(_sche.ms));
+        GCLockGuard lck(getGCLock());
+        if (_flagVMExited.load())
+            return;
+        else
+            procMarkSweep(&_gc);
     }
 }
 
@@ -78,8 +84,8 @@ void GarbageCollector::sweep() {
     }
 }
 
-inline std::mutex & GarbageCollector::getGCLock() {
-    return _gclocker;
+inline std::mutex & GCScheduler::getGCLock() {
+    return _gcLock;
 }
 
 void doGCScheduler(GCScheduler * pGCS, uint32_t ms) {

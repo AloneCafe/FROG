@@ -20,8 +20,6 @@ private:
     const FakeScalarRAM & _sram;
     FakeVectorRAM & _vram;
     
-    static GCLock _gclocker;
-    
 public:
     GarbageCollector(const FakeOPStack & opStack,
                      const FakeScalarRAM & sram,
@@ -36,27 +34,34 @@ public:
     void mark_SRAM();
     
     void sweep();
-    
-    static inline std::mutex & getGCLock();
 };
 
 
 class GCScheduler {
 private:
     GarbageCollector _gc;
+    
+public:
+    std::atomic<bool> _flagVMExited;
+
+private:
     struct {
         uint32_t ms;
     } _sche;
+    
+    static GCLock _gcLock;
 
-private:
+public:
     GCScheduler(GarbageCollector &gc)
-        : _gc(gc) {}
+        : _gc(gc), _flagVMExited(false) {}
     
     GCScheduler(const FakeOPStack & opStack,
                 const FakeScalarRAM & sram,
                 FakeVectorRAM & vram);
         
     GCScheduler(const GCScheduler &) = delete;
+    
+    static inline std::mutex & getGCLock();
 
 public:
     // do GC per ms

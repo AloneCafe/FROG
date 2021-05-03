@@ -47,7 +47,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
     
     char voidhole[8] = { 0 };
     while (pc < siz) {
-        GCLockGuard lck(GarbageCollector::getGCLock());
+        GCLockGuard lck(GCScheduler::getGCLock());
         std::string buf;
         uint32_t hardAddr = 0;
         switch (oprom[pc]) {
@@ -1512,11 +1512,13 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
 }
 
 int32_t FakeCPU::runFuncs(bool verbose, bool step, uint32_t startAddr) {
-    return run(verbose, step, false, startAddr);
+    int32_t ret = run(verbose, step, false, startAddr);
+    return ret;
 }
 
 int32_t FakeCPU::runStatic(bool verbose, bool step) {
-    return run(verbose, step, true, 0);
+    int32_t ret = run(verbose, step, true, 0);
+    return ret;
 }
 
 void FakeCPU::executeVMEF(const std::string & name) {
@@ -1621,6 +1623,5 @@ void FakeCPU::executeVMEF(const std::string & name) {
         throw VMException(VMET::E_ILLEGAL_VMFE_NAME);
     }
 }
-
 
 

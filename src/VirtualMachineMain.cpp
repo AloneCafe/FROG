@@ -1,6 +1,7 @@
 #include "TokenScanner.hpp"
 #include "UnitedILParser.hpp"
 #include "FakeCPU.hpp"
+#include "GarbageCollector.hpp"
 
 static const char * pLogoVM =
         " ______                __      ____  __\n"
@@ -121,21 +122,34 @@ int main(int argc, const char * argv[]) {
         cpu.attachOPROM(&opROM);
         cpu.attachScalarRAM(&sRAM);
         cpu.attachVectorRAM(&vRAM);
+    
         
+        GCScheduler gcs(opStack, sRAM, vRAM);
+        std::thread threadGC(doGCScheduler, &gcs, 500); // 500ms
+    
         if (!staticBytes.empty()) {
             int32_t retStatic = cpu.runStatic(flagVerbose, flagStep);
             if (retStatic) {
                 std::cerr << "~ 该字节码文件静态初始化失败" << std::endl;
+                
+                gcs._flagVMExited.store(true);
+                if (threadGC.joinable())
+                    threadGC.join();
+                
                 return retStatic;
             }
         }
-        
+    
+        int32_t retFuncs = 0;
         if (!funcsBytes.empty()) {
-            int32_t retFuncs = cpu.runFuncs(flagVerbose, flagStep, startAddr);
-            return retFuncs;
+            retFuncs = cpu.runFuncs(flagVerbose, flagStep, startAddr);
         }
         
-        return 0;
+        gcs._flagVMExited.store(true);
+        if (threadGC.joinable())
+            threadGC.join();
+        
+        return retFuncs;
         
     } else {
         printUsage(FileSystem::path2FileName(argv[0]));
