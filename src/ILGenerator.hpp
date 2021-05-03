@@ -61,6 +61,18 @@ public:
     
     void append_IPUSH_DBL(double dbl);
     
+    void append_DUP_QW();
+    
+    void append_DUP_DW();
+    
+    void append_DUP_W();
+    
+    void append_DUP_B();
+    
+    void append_DUP_FLT();
+    
+    void append_DUP_DBL();
+    
     void append_PUSH_VAR_QW(const std::string & varName);
     
     void append_PUSH_VAR_DW(const std::string & varName);

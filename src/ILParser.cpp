@@ -1131,6 +1131,27 @@ bool ILParser::parse() {
                     IL_PARSER_E("非法的标签标记");
                 }
                 
+            } else if (tks[i].isId("DUP", false)) {
+                ++i;
+                if (tks[i].isId("B", false)) {
+                    gh = 0B00010000;
+                } else if (tks[i].isId("W", false)) {
+                    gh = 0B00100000;
+                } else if (tks[i].isId("DW", false)) {
+                    gh = 0B01000000;
+                } else if (tks[i].isId("QW", false)) {
+                    gh = 0B10000000;
+                } else if (tks[i].isId("FLT", false)) {
+                    gh = 0B10110000;
+                } else if (tks[i].isId("DBL", false)) {
+                    gh = 0B11110000;
+                } else {
+                    IL_PARSER_E("非法的粒度");
+                }
+                ++i;
+    
+                pBytes->push_back(0x41);
+                pBytes->push_back(gh);
             }
             
             if (tks[i].isPunc<';'>()) {

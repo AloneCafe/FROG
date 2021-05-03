@@ -72,6 +72,30 @@ void ILGenerator::append_IPUSH_DBL(double dbl) {
     _context << TAB << "IPUSH DBL" << SPACE << dbl << STMT_SUFFIX << std::endl;
 }
 
+void ILGenerator::append_DUP_QW() {
+    _context << TAB << "DUP QW" << STMT_SUFFIX << std::endl;
+}
+
+void ILGenerator::append_DUP_DW() {
+    _context << TAB << "DUP DW" << STMT_SUFFIX << std::endl;
+}
+
+void ILGenerator::append_DUP_W() {
+    _context << TAB << "DUP W" << STMT_SUFFIX << std::endl;
+}
+
+void ILGenerator::append_DUP_B() {
+    _context << TAB << "DUP B" << STMT_SUFFIX << std::endl;
+}
+
+void ILGenerator::append_DUP_FLT() {
+    _context << TAB << "DUP FLT" << STMT_SUFFIX << std::endl;
+}
+
+void ILGenerator::append_DUP_DBL() {
+    _context << TAB << "DUP DBL" << STMT_SUFFIX << std::endl;
+}
+
 void ILGenerator::append_PUSH_VAR_QW(const std::string & varName) {
     _context << TAB << "PUSH QW" << SPACE << varName << STMT_SUFFIX << std::endl;
 }

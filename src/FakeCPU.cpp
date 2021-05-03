@@ -1277,6 +1277,37 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             break;
         }
         
+        case 0x41: { // DUP
+            ++pc;
+            uint8_t g = oprom[pc];
+            g >>= 4;
+            ++pc;
+    
+            if (g == 0B0001) { // dst: B
+                _pOPStack->pushB(_pOPStack->topB());
+        
+            } else if (g == 0B0010) { // dst: W
+                _pOPStack->pushW(_pOPStack->topW());
+        
+            } else if (g == 0B0100) { // dst: DW
+                _pOPStack->pushDW(_pOPStack->topDW());
+        
+            } else if (g == 0B1000) { // dst: QW
+                _pOPStack->pushQW(_pOPStack->topQW());
+        
+            } else if (g == 0B1011) { // dst: FLT
+                _pOPStack->pushFLT(_pOPStack->topFLT());
+        
+            } else if (g == 0B1111) { // dst: DBL
+                _pOPStack->pushDBL(_pOPStack->topDBL());
+        
+            } else {
+                throw VMException(VMET::E_ILLEGAL_GRANULARITY);
+            }
+            
+            break;
+        }
+        
         case 0x50: { // DEF
             ++pc;
             uint8_t g = oprom[pc];
