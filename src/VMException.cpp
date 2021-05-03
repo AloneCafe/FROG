@@ -2,6 +2,7 @@
 
 const char * VMException::_pNativeMessage[] = {
     "OPROM 时下标访问越界",
+    "FNSTACK 发生栈溢出",
     "OPSTACK 发生栈溢出",
     "Scalar-RAM 伸展发生异常",
     "虚拟 CPU 未连接到 OPROM",

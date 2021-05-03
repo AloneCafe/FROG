@@ -78,36 +78,54 @@ double FakeOPStack::popDBL() {
 
 
 int8_t FakeOPStack::topB() {
+    if (_opStack.size() < sizeof(int8_t)) {
+        throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
+    }
     auto e = popB();
     pushB(e);
     return e;
 }
 
 int16_t FakeOPStack::topW() {
+    if (_opStack.size() < sizeof(int16_t)) {
+        throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
+    }
     auto e = popW();
     pushW(e);
     return e;
 }
 
 int32_t FakeOPStack::topDW() {
+    if (_opStack.size() < sizeof(int32_t)) {
+        throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
+    }
     auto e = popDW();
     pushDW(e);
     return e;
 }
 
 int64_t FakeOPStack::topQW() {
+    if (_opStack.size() < sizeof(int64_t)) {
+        throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
+    }
     auto e = popQW();
     pushQW(e);
     return e;
 }
 
 float FakeOPStack::topFLT() {
+    if (_opStack.size() < sizeof(float)) {
+        throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
+    }
     auto e = popFLT();
     pushFLT(e);
     return e;
 }
 
 double FakeOPStack::topDBL() {
+    if (_opStack.size() < sizeof(double)) {
+        throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
+    }
     auto e = popDBL();
     pushDBL(e);
     return e;
