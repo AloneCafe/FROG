@@ -82,6 +82,11 @@ int main(int argc, const char * argv[]) {
             reinterpret_cast<char *>(&bch)[i] = ch;
         }
         
+        if (bch._magics[0] != 'F' || bch._magics[1] != 'V' || bch._magics[2] != 'M') {
+            std::cerr << "~ 错误的字节码文件格式" << std::endl;
+            return 1;
+        }
+        
         if (!bch._magics[3]) {
             std::cerr << "~ 该字节码文件不可运行 (无入口点)" << std::endl;
             return 1;

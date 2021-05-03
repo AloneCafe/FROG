@@ -24,7 +24,7 @@ std::vector<char> ByteCodeGenerator::make(const std::vector<char> & bytesStatic,
         bytecodes.push_back(bytesStatic[i]);
     for (uint32_t i = 0; i < bch._sizeFuncs; ++i)
         bytecodes.push_back(bytesFuncs[i]);
-    return std::move(bytecodes);
+    return bytecodes;
 }
 
 void ByteCodeHexPrinter::b2hex(uint8_t b, char hex[2], bool upcase) {

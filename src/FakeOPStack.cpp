@@ -85,31 +85,31 @@ int8_t FakeOPStack::topB() {
 
 int16_t FakeOPStack::topW() {
     auto e = popW();
-    pushB(e);
+    pushW(e);
     return e;
 }
 
 int32_t FakeOPStack::topDW() {
     auto e = popDW();
-    pushB(e);
+    pushDW(e);
     return e;
 }
 
 int64_t FakeOPStack::topQW() {
     auto e = popQW();
-    pushB(e);
+    pushQW(e);
     return e;
 }
 
 float FakeOPStack::topFLT() {
     auto e = popFLT();
-    pushB(e);
+    pushFLT(e);
     return e;
 }
 
 double FakeOPStack::topDBL() {
     auto e = popDBL();
-    pushB(e);
+    pushDBL(e);
     return e;
 }
 

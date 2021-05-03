@@ -117,7 +117,7 @@ public:
     UtfString toUtfString() const {
         auto & old = *static_cast<const UtfString *>(this);
         UtfString s(old);
-        return std::move(s);
+        return s;
     }
     long lineno() const { return _lineno; }
     long colno() const { return _colno; }

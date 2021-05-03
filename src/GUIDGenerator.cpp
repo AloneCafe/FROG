@@ -50,7 +50,7 @@ LabelGroup::CondExpr AdvGuidGen::applyLabelGroup4CondExpr() {
     ce._lbl_condexpr_true = ss1.str();
     ce._lbl_condexpr_false = ss2.str();
     ce._lbl_condexpr_end = ss3.str();
-    return std::move(ce);
+    return ce;
 }
 
 LabelGroup::For AdvGuidGen::applyLabelGroup4For() {
@@ -65,7 +65,7 @@ LabelGroup::For AdvGuidGen::applyLabelGroup4For() {
     f._lbl_for_judge = ss2.str();
     f._lbl_for_continue = ss3.str();
     f._lbl_for_end_break = ss4.str();
-    return std::move(f);
+    return f;
 }
 
 LabelGroup::While AdvGuidGen::applyLabelGroup4While() {
@@ -76,7 +76,7 @@ LabelGroup::While AdvGuidGen::applyLabelGroup4While() {
     ss2 << "while_" << s << "_end_break";
     w._lbl_while_begin_judge_continue = ss1.str();
     w._lbl_while_end_break = ss2.str();
-    return std::move(w);
+    return w;
 }
 
 LabelGroup::DoWhile AdvGuidGen::applyLabelGroup4DoWhile() {
@@ -89,7 +89,7 @@ LabelGroup::DoWhile AdvGuidGen::applyLabelGroup4DoWhile() {
     dw._lbl_do_while_begin = ss1.str();
     dw._lbl_do_while_judge_continue = ss2.str();
     dw._lbl_do_while_end_break = ss3.str();
-    return std::move(dw);
+    return dw;
 }
 
 LabelGroup::If AdvGuidGen::applyLabelGroup4If(const std::vector<IfCondEntry> & condEntries) {
@@ -110,7 +110,7 @@ LabelGroup::If AdvGuidGen::applyLabelGroup4If(const std::vector<IfCondEntry> & c
     ss2 << "if_" << s << "_end";
     lgIf._lbl_if_end = ss2.str();
     
-    return std::move(lgIf);
+    return lgIf;
 }
 
 
@@ -132,7 +132,7 @@ LabelGroup::Switch AdvGuidGen::applyLabelGroup4Switch(const std::vector<SwitchIn
     ss2 << "switch_" << s << "_end_break";
     lgSwitch._lbl_switch_end_break = ss2.str();
     
-    return std::move(lgSwitch);
+    return lgSwitch;
 }
 const std::string * LabelGroup::For::getBreak() const {
     return &_lbl_for_end_break;

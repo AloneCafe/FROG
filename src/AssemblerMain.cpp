@@ -89,11 +89,11 @@ int main(int argc, const char * argv[]) {
         if (flagStdin) {
             UniILParser up;
             if (up.parse())
-                outputByteCode = std::move(ByteCodeGenerator::make(
+                outputByteCode = ByteCodeGenerator::make(
                         up.getBytesStatic(),
                         up.getBytesFuncs(),
                         up.runnable(),
-                        up.getEntryPoint()));
+                        up.getEntryPoint());
             
         } else {
             if (inFileNames.empty()) {
@@ -102,11 +102,11 @@ int main(int argc, const char * argv[]) {
             }
             UniILParser up(inFileNames[0]);
             if (up.parse())
-                outputByteCode = std::move(ByteCodeGenerator::make(
+                outputByteCode = ByteCodeGenerator::make(
                         up.getBytesStatic(),
                         up.getBytesFuncs(),
                         up.runnable(),
-                        up.getEntryPoint()));
+                        up.getEntryPoint());
         }
         
         if (flagStdout) {
@@ -116,7 +116,7 @@ int main(int argc, const char * argv[]) {
                 std::cerr << "~ 未指定输出文件" << std::endl;
                 return 1;
             }
-            std::ofstream ofs(outFileName, std::ios::out);
+            std::ofstream ofs(outFileName, std::ios::out | std::ios::binary);
             for (const char & b : outputByteCode)
                 ofs << b;
         }
