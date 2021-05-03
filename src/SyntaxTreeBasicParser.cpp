@@ -1821,9 +1821,11 @@ StmtPtr AstBasicParser::buildStmt(TokenIter & it) {
                     
                 } else if (it->isEnd()) {
                     AST_E(E_UNEXPECTED_EOF);
+                    break;
                     
                 } else {
                     AST_E(E_ILLEGAL_TOKEN);
+                    break;
                 }
             }
             
