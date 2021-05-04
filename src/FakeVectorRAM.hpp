@@ -186,38 +186,4 @@ ElemHandler RealVectorEntity<T>::getOffsetB(uint32_t i) const {
     return &(((char *)_vec.data())[i]);
 }
 
-
-/*
-template <typename T>
-const T & FakeVectorEntity<T>::get(uint32_t i) const {
-    if (i >= _vec.size()) {
-        _vec.resize(i + 1, 0);
-    }
-    return _vec[i];
-}
-
-template <typename T>
-void FakeVectorEntity<T>::set(uint32_t i, const T & e) {
-    if (i >= _vec.size()) {
-        _vec.resize(i + 1, 0);
-    }
-    _vec[i] = e;
-}
-
-template <typename T>
-uint32_t FakeVectorEntity<T>::getElemSize() const {
-    return sizeof(T);
-}
-
-template <typename T>
-VectorHandler FakeVectorEntity<T>::getOffsetT(uint32_t i) const {
-    // TODO
-}
-
-template <typename T>
-VectorEntityType FakeVectorEntity<T>::getVectorEntityType() const {
-    return VectorEntityType::FakeVector;
-}
-*/
-
 #endif
