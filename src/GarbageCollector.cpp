@@ -36,7 +36,7 @@ void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
         if (_flagVMExited.load())
             return;
         else
-            procMarkSweep(&_gc);
+            ;//procMarkSweep(&_gc);
     }
 }
 

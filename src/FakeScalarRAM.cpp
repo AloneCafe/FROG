@@ -3,6 +3,8 @@
 #include "FakeScalarRAM.hpp"
 #include "VMException.hpp"
 
+#define MAKE_RESIZ(x) ((x) * 2 + 8)
+
 static int vmRandomInit = (srand(time(nullptr)), 0);
 
 std::vector<char> * FakeScalarRAM::tryResize(int32_t & addr, int32_t siz) const {
@@ -13,9 +15,9 @@ std::vector<char> * FakeScalarRAM::tryResize(int32_t & addr, int32_t siz) const 
     } else {
         pSRAM = &_funcsSRAM;
     }
-    if (addr + siz > pSRAM->size()) {
+    if (addr + siz >= pSRAM->size()) {
         try {
-            pSRAM->resize(addr + siz, 0);
+            pSRAM->resize(MAKE_RESIZ(addr + siz), 0);
         } catch (std::exception &) {
             throw VMException(VMET::E_SRAM_REISZE_ERROR);
         }

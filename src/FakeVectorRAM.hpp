@@ -9,6 +9,8 @@
 
 #include "TSMapWarpper.hpp"
 
+#define MAKE_RESIZ(x) ((x) * 2 + 8)
+
 using VectorHandler = uint32_t;
 using ElemHandler = void *;
 
@@ -145,7 +147,7 @@ public:
 template <typename T>
 const T & RealVectorEntity<T>::get(uint32_t i) const {
     if (i >= _vec.size()) {
-        _vec.resize(i + 1, 0);
+        _vec.resize(MAKE_RESIZ(i), 0);
     }
     return _vec[i];
 }
@@ -153,7 +155,7 @@ const T & RealVectorEntity<T>::get(uint32_t i) const {
 template <typename T>
 void RealVectorEntity<T>::set(uint32_t i, const T & e) {
     if (i >= _vec.size()) {
-        _vec.resize(i + 1, 0);
+        _vec.resize(MAKE_RESIZ(i), 0);
     }
     _vec[i] = e;
 }
@@ -170,11 +172,17 @@ uint32_t RealVectorEntity<T>::getTotalSize() const {
 
 template <typename T>
 ElemHandler RealVectorEntity<T>::getOffsetT(uint32_t i) const {
+    if (i >= _vec.size()) {
+        _vec.resize(MAKE_RESIZ(i), 0);
+    }
     return &_vec[i];
 }
 
 template <typename T>
 ElemHandler RealVectorEntity<T>::getOffsetB(uint32_t i) const {
+    if (i >= _vec.size()) {
+        _vec.resize(MAKE_RESIZ(i), 0);
+    }
     return &(((char *)_vec.data())[i]);
 }
 

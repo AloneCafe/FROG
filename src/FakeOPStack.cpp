@@ -15,10 +15,9 @@ int16_t FakeOPStack::popW() {
     if (_opStack.size() < sizeof(int16_t)) {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
-    int16_t e = 0;
+    uint32_t pos = _opStack.size() - sizeof(int16_t);
+    int16_t e = *reinterpret_cast<int16_t *>(&_opStack[pos]);
     for (uint32_t i = 0; i < sizeof(int16_t); ++i) {
-        e <<= 8;
-        e |= _opStack.back();
         _opStack.pop_back();
     }
     return e;
@@ -28,10 +27,9 @@ int32_t FakeOPStack::popDW() {
     if (_opStack.size() < sizeof(int32_t)) {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
-    int32_t e = 0;
+    uint32_t pos = _opStack.size() - sizeof(int32_t);
+    int32_t e = *reinterpret_cast<int32_t *>(&_opStack[pos]);
     for (uint32_t i = 0; i < sizeof(int32_t); ++i) {
-        e <<= 8;
-        e |= _opStack.back();
         _opStack.pop_back();
     }
     return e;
@@ -41,10 +39,9 @@ int64_t FakeOPStack::popQW() {
     if (_opStack.size() < sizeof(int64_t)) {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
-    int64_t e = 0;
+    uint32_t pos = _opStack.size() - sizeof(int64_t);
+    int64_t e = *reinterpret_cast<int64_t *>(&_opStack[pos]);
     for (uint32_t i = 0; i < sizeof(int64_t); ++i) {
-        e <<= 8;
-        e |= _opStack.back();
         _opStack.pop_back();
     }
     return e;
@@ -54,26 +51,24 @@ float FakeOPStack::popFLT() {
     if (_opStack.size() < sizeof(float)) {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
-    int32_t e = 0;
-    for (uint32_t i = 0; i < sizeof(int32_t); ++i) {
-        e <<= 8;
-        e |= _opStack.back();
+    uint32_t pos = _opStack.size() - sizeof(float);
+    float e = *reinterpret_cast<float *>(&_opStack[pos]);
+    for (uint32_t i = 0; i < sizeof(float); ++i) {
         _opStack.pop_back();
     }
-    return *reinterpret_cast<float *>(&e);
+    return e;
 }
 
 double FakeOPStack::popDBL() {
     if (_opStack.size() < sizeof(double)) {
         throw VMException(VMET::E_OPSTACK_ACCESS_OVERFLOW);
     }
-    int64_t e = 0;
-    for (uint32_t i = 0; i < sizeof(int64_t); ++i) {
-        e <<= 8;
-        e |= _opStack.back();
+    uint32_t pos = _opStack.size() - sizeof(double);
+    double e = *reinterpret_cast<double *>(&_opStack[pos]);
+    for (uint32_t i = 0; i < sizeof(double); ++i) {
         _opStack.pop_back();
     }
-    return *reinterpret_cast<double *>(&e);
+    return e;
 }
 
 
