@@ -14,9 +14,8 @@ static void procSweep(GarbageCollector * pGC) {
     pGC->sweep();
 }
 
-static void procMarkSweep(GarbageCollector * pGC, uint32_t ms = 0) {
+static void procMarkSweep(GarbageCollector * pGC) {
     procMark(pGC);
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
     procSweep(pGC);
 }
 
@@ -36,7 +35,7 @@ void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
         if (_flagVMExited.load())
             return;
         else
-            ;//procMarkSweep(&_gc);
+            procMarkSweep(&_gc);
     }
 }
 

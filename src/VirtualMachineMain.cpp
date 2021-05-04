@@ -125,7 +125,7 @@ int main(int argc, const char * argv[]) {
     
         
         GCScheduler gcs(opStack, sRAM, vRAM);
-        std::thread threadGC(doGCScheduler, &gcs, 500); // 500ms
+        std::thread threadGC(doGCScheduler, &gcs, 50); // 500ms
     
         if (!staticBytes.empty()) {
             int32_t retStatic = cpu.runStatic(flagVerbose, flagStep);
