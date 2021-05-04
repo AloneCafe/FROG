@@ -9,7 +9,7 @@
 
 #include "TSMapWarpper.hpp"
 
-#define MAKE_RESIZ(x) ((x) * 2 + 8)
+#define MAKE_RESIZ(x) ((x) + 1)
 
 using VectorHandler = uint32_t;
 using ElemHandler = void *;

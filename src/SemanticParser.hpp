@@ -350,16 +350,36 @@ private:
 			TYPE_PRODUCT2DEMAND("char");
 			return VarType::buildFromStr("char");
 
-		case ExprOp::LEAF_STRING_LITERAL:
-		    assert(0); // 不应该执行至此处
-			// string push 从 \0 开始倒序压栈
-			//pASM->append_VIPUSH(pExpr->getLeafScalar()._str);
-			
-			
-			
-			//TYPE_PRODUCT2DEMAND("char1");
-			return VarType::buildFromStr("char1");
-
+		case ExprOp::LEAF_STRING_LITERAL: {
+		    
+            const std::string & s = pExpr->getLeafScalar()._str;
+            
+            pASM->append_MKVEC_N_B(1);
+            for (auto ch : s) {
+                pASM->append_DUP_DW(); // dup 句柄
+            }
+            pASM->append_DUP_DW(); // dup 句柄
+            
+            uint32_t i = 0;
+            for (auto ch : s) {
+                pASM->append_IPUSH_DW(i);
+                pASM->append_OFFSET();
+                pASM->append_IPUSH_B(ch);
+                pASM->append_HPOP_B();
+                ++i;
+            }
+            // handle '\0'
+            pASM->append_IPUSH_DW(i);
+            pASM->append_OFFSET();
+            pASM->append_IPUSH_B(0);
+            pASM->append_HPOP_B();
+            
+            VarType vt;
+            vt.setDegree(1);
+            vt.setLowLvType(LocatedUtfString("char", -1, -1));
+            return vt;
+        }
+        
 		case ExprOp::LEAF_TRUE_LITERAL:
 			pASM->append_IPUSH_B(1);
 			TYPE_PRODUCT2DEMAND("boolean");
@@ -1453,9 +1473,10 @@ private:
 			bool result = checkMultiTypeMatching(pExpr->getSubExprPtr(i),
 				{ "boolean", "byte", "char", "short", "int", "long", "float", "double" },
 				choice);
+			
 			if (result) {
 				// 若需要检查，那么检查最后一个子表达式的类型是必须的
-				gen4expr<_CHK>(pExpr->getSubExprPtr(i), demand);
+				choice = gen4expr<_CHK>(pExpr->getSubExprPtr(i), demand);
 
 			} else {
 				SEM_E(E_INCMP_TYPE, pExpr);
