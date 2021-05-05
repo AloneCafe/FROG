@@ -53,7 +53,9 @@ void fillNewVector(const RealVectorEntity<VectorHandler> *pVectorEntity, uint32_
 }
 
 
-// 对于矢量的特化，当二维以上的矢量 (即元素为矢量类型) 空间不足时，不仅需要扩充空间，还需要新建向量
+
+
+// 模板对于类型为矢量句柄的特化，当二维以上的矢量 (即元素为矢量类型) 空间不足时，不仅需要扩充空间，还需要新建向量
 template <>
 const VectorHandler & RealVectorEntity<VectorHandler>::get(uint32_t i) const {
     if (i >= _vec.size()) {
@@ -147,7 +149,8 @@ ElemHandler RealVectorEntity<VectorHandler>::getOffsetB(uint32_t i) const {
     }
     return &(((char *)_vec.data())[i]);
 }
-// 对于矢量的特化，特化结束
+
+
 
 const VectorHandler & IVector::getHandler() {
     return _handler;
@@ -180,7 +183,7 @@ VectorHandler VectorsManager::applyUniqueHandler() const {
 
 VectorHandler VectorsManager::newVectorVEC(const VectorLowLvElemType & lowLvElemType, uint32_t degree) {
     VectorHandler handler = applyUniqueHandler();
-    std::cerr << "apply VECTOR: " << handler << ", elemType: VEC" << std::endl;
+    //std::cerr << "apply VECTOR: " << handler << ", elemType: VEC" << std::endl;
     IVector * pVec = new RealVectorEntity<VectorHandler>(handler, this, lowLvElemType, degree);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
@@ -188,7 +191,7 @@ VectorHandler VectorsManager::newVectorVEC(const VectorLowLvElemType & lowLvElem
 
 VectorHandler VectorsManager::newVectorB() {
     VectorHandler handler = applyUniqueHandler();
-    std::cerr << "apply VECTOR: " << handler << ", elemType: B" << std::endl;
+    //std::cerr << "apply VECTOR: " << handler << ", elemType: B" << std::endl;
     IVector * pVec = new RealVectorEntity<int8_t>(handler, this, VectorLowLvElemType::B, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
@@ -196,7 +199,7 @@ VectorHandler VectorsManager::newVectorB() {
 
 VectorHandler VectorsManager::newVectorW() {
     VectorHandler handler = applyUniqueHandler();
-    std::cerr << "apply VECTOR: " << handler << ", elemType: W" << std::endl;
+    //std::cerr << "apply VECTOR: " << handler << ", elemType: W" << std::endl;
     IVector * pVec = new RealVectorEntity<int16_t>(handler, this, VectorLowLvElemType::W, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
@@ -204,7 +207,7 @@ VectorHandler VectorsManager::newVectorW() {
 
 VectorHandler VectorsManager::newVectorDW() {
     VectorHandler handler = applyUniqueHandler();
-    std::cerr << "apply VECTOR: " << handler << ", elemType: DW" << std::endl;
+    //std::cerr << "apply VECTOR: " << handler << ", elemType: DW" << std::endl;
     IVector * pVec = new RealVectorEntity<int32_t>(handler, this, VectorLowLvElemType::DW, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
@@ -212,7 +215,7 @@ VectorHandler VectorsManager::newVectorDW() {
 
 VectorHandler VectorsManager::newVectorQW() {
     VectorHandler handler = applyUniqueHandler();
-    std::cerr << "apply VECTOR: " << handler << ", elemType: QW" << std::endl;
+    //std::cerr << "apply VECTOR: " << handler << ", elemType: QW" << std::endl;
     IVector * pVec = new RealVectorEntity<int64_t>(handler, this, VectorLowLvElemType::QW, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
@@ -220,7 +223,7 @@ VectorHandler VectorsManager::newVectorQW() {
 
 VectorHandler VectorsManager::newVectorFLT() {
     VectorHandler handler = applyUniqueHandler();
-    std::cerr << "apply VECTOR: " << handler << ", elemType: FLT" << std::endl;
+    //std::cerr << "apply VECTOR: " << handler << ", elemType: FLT" << std::endl;
     IVector * pVec = new RealVectorEntity<float>(handler, this, VectorLowLvElemType::FLT, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
@@ -228,7 +231,7 @@ VectorHandler VectorsManager::newVectorFLT() {
 
 VectorHandler VectorsManager::newVectorDBL() {
     VectorHandler handler = applyUniqueHandler();
-    std::cerr << "apply VECTOR: " << handler << ", elemType: DBL" << std::endl;
+    //std::cerr << "apply VECTOR: " << handler << ", elemType: DBL" << std::endl;
     IVector * pVec = new RealVectorEntity<double>(handler, this, VectorLowLvElemType::DBL, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;

@@ -8,9 +8,9 @@ std::mutex GCScheduler::_gcLock;
 
 static void procMark(GarbageCollector * pGC) {
     pGC->mark_OPSTACK();
-    pGC->mark_VRAM();
     pGC->mark_SRAM();
     pGC->mark_VOIDHOLE();
+    pGC->mark_VRAM();
 }
 
 static void procSweep(GarbageCollector * pGC) {
@@ -73,6 +73,9 @@ void GarbageCollector::mark_SRAM() {
     }
 }
 
+
+// 先在其他存储器中试图标记矢量，如果顶层矢量状态为 false，那么就用 false 标记 (即不操作) 其下层所有矢量
+// 如果顶层矢量被标为 true，那么就将其下层所有矢量标记为 true
 static void markRecur_VEC(
         VectorsManager & vecman,
         RealVectorEntity<VectorHandler> * pNativeVec,
@@ -82,20 +85,18 @@ static void markRecur_VEC(
     IVector *pSrcVec = vecman.getVectorByHandler(srcHandler);
     for (uint32_t i = 0; i < siz; ++i) {
         VectorHandler subHandler = pNativeVec->get(i);
+        
         IVector *pDstVec = vecman.getVectorByHandler(subHandler);
         if (!pDstVec)
             continue;
+    
+        pDstVec->setMark(true);
         
         if (pDstVec->getElemType() == VectorElemType::VectorHandlerDW) {
             // 往下递归
             RealVectorEntity<VectorHandler> * pNativeDstVec =
                 static_cast<RealVectorEntity<VectorHandler> *>(pDstVec);
             markRecur_VEC(vecman, pNativeDstVec, srcHandler);
-            
-        } else if (subHandler == srcHandler) {
-            pSrcVec->setMark(true);
-            return;
-    
         }
     }
 }
@@ -114,12 +115,12 @@ void GarbageCollector::mark_VRAM() {
             if (pSrcVec->getElemType() == VectorElemType::VectorHandlerDW) {
                 RealVectorEntity<VectorHandler> * pNativeDstVec =
                         static_cast<RealVectorEntity<VectorHandler> *>(pDstVec);
-                markRecur_VEC(vecman, pNativeDstVec, srcHandler);
-        
+                if (pSrcVec->getMark()) {
+                    markRecur_VEC(vecman, pNativeDstVec, srcHandler);
+                }
             }
             ++jt;
         }
-        
         ++it;
     }
 }
@@ -138,7 +139,7 @@ void GarbageCollector::sweep() {
     auto it = vecman._map.begin();
     while (it != vecman._map.end()) {
         if (!it->second->getMark()) {
-            std::cerr << "sweep VECTOR: " << it->first << std::endl;
+            //std::cerr << "sweep VECTOR: " << it->first << std::endl;
             delete it->second;
             it = vecman._map.erase(it);
         } else {

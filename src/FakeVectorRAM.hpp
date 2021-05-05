@@ -183,15 +183,14 @@ public:
 };
 
 
-// member function templates implementation
-/*
+// 模板泛化实现
 template <typename T>
 const T & RealVectorEntity<T>::get(uint32_t i) const {
     if (i >= _vec.size()) {
         _vec.resize(MAKE_RESIZ(i), 0);
     }
     return _vec[i];
-}*/
+}
 
 template <typename T>
 void RealVectorEntity<T>::set(uint32_t i, const T & e) {
@@ -262,6 +261,28 @@ template <typename T>
 const std::vector<T> & RealVectorEntity<T>::getVec() const {
     return _vec;
 }
+
+
+
+// 模板对于类型为矢量句柄的特化，当二维以上的矢量 (即元素为矢量类型) 空间不足时，不仅需要扩充空间，还需要新建向量
+template <>
+const VectorHandler & RealVectorEntity<VectorHandler>::get(uint32_t i) const;
+
+template <>
+void RealVectorEntity<VectorHandler>::set(uint32_t i, const VectorHandler & e);
+
+template <>
+uint32_t RealVectorEntity<VectorHandler>::getElemSize() const;
+
+template <>
+uint32_t RealVectorEntity<VectorHandler>::getTotalSize() const;
+
+template <>
+ElemHandler RealVectorEntity<VectorHandler>::getOffsetT(uint32_t i) const;
+
+template <>
+ElemHandler RealVectorEntity<VectorHandler>::getOffsetB(uint32_t i) const;
+
 
 
 #endif

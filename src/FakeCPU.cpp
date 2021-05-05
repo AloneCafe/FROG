@@ -51,9 +51,9 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             
             GarbageCollector gc(*_pOPStack, *_pSRAM, *_pVRAM, voidhole);
             gc.mark_OPSTACK();
-            gc.mark_VRAM();
             gc.mark_SRAM();
             gc.mark_VOIDHOLE();
+            gc.mark_VRAM();
             gc.sweep();
             
             
