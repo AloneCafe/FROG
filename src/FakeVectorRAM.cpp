@@ -1,6 +1,151 @@
 #include "FakeVectorRAM.hpp"
 #include "VMException.hpp"
 
+void fillNewVector(const RealVectorEntity<VectorHandler> *pVectorEntity, uint32_t beg, uint32_t end) {
+    uint32_t degree = pVectorEntity->getDegree();
+    if (degree > 2) { // 填充向量
+        for (; beg < end; ++beg)
+            pVectorEntity->_vec[beg] =
+                pVectorEntity->_pVecMan->newVectorVEC(
+                        pVectorEntity->getLowLvElemType(), degree - 1
+                );
+    } else {
+        switch (pVectorEntity->getLowLvElemType()) {
+        case VectorLowLvElemType::B:
+            for (; beg < end; ++beg)
+                pVectorEntity->_vec[beg] =
+                    pVectorEntity->_pVecMan->newVectorB();
+            break;
+        
+        case VectorLowLvElemType::W:
+            for (; beg < end; ++beg)
+                pVectorEntity->_vec[beg] =
+                    pVectorEntity->_pVecMan->newVectorW();
+            break;
+        
+        case VectorLowLvElemType::DW:
+            for (; beg < end; ++beg)
+                pVectorEntity->_vec[beg] =
+                    pVectorEntity->_pVecMan->newVectorDW();
+            break;
+        
+        case VectorLowLvElemType::QW:
+            for (; beg < end; ++beg)
+                pVectorEntity->_vec[beg] =
+                    pVectorEntity->_pVecMan->newVectorQW();
+            break;
+        
+        case VectorLowLvElemType::FLT:
+            for (; beg < end; ++beg)
+                pVectorEntity->_vec[beg] =
+                    pVectorEntity->_pVecMan->newVectorFLT();
+            break;
+        
+        case VectorLowLvElemType::DBL:
+            for (; beg < end; ++beg)
+                pVectorEntity->_vec[beg] =
+                    pVectorEntity->_pVecMan->newVectorDBL();
+            break;
+        }
+    }
+}
+
+// 对于矢量的特化，当二维以上的矢量 (即元素为矢量类型) 空间不足时，不仅需要扩充空间，还需要新建向量
+template <>
+const VectorHandler & RealVectorEntity<VectorHandler>::get(uint32_t i) const {
+    if (i >= _vec.size()) {
+        uint32_t j = _vec.size();
+        _vec.resize(MAKE_RESIZ(i), 0);
+        // 填充新向量
+        fillNewVector(this, j, _vec.size());
+        
+        /*
+        uint32_t degree = getDegree();
+        if (degree > 2) { // 填充向量
+            for (; j < _vec.size(); ++j)
+                _vec[j] = _pVecMan->newVectorVEC(getLowLvElemType(), degree - 1);
+        } else {
+            switch (getLowLvElemType()) {
+            case VectorLowLvElemType::B:
+                for (; j < _vec.size(); ++j)
+                    _vec[j] = _pVecMan->newVectorB();
+                break;
+
+            case VectorLowLvElemType::W:
+                for (; j < _vec.size(); ++j)
+                    _vec[j] = _pVecMan->newVectorW();
+                break;
+                
+            case VectorLowLvElemType::DW:
+                for (; j < _vec.size(); ++j)
+                    _vec[j] = _pVecMan->newVectorDW();
+                break;
+            
+            case VectorLowLvElemType::QW:
+                for (; j < _vec.size(); ++j)
+                    _vec[j] = _pVecMan->newVectorQW();
+                break;
+            
+            case VectorLowLvElemType::FLT:
+                for (; j < _vec.size(); ++j)
+                    _vec[j] = _pVecMan->newVectorFLT();
+                break;
+            
+            case VectorLowLvElemType::DBL:
+                for (; j < _vec.size(); ++j)
+                    _vec[j] = _pVecMan->newVectorDBL();
+                break;
+            }
+        }
+         */
+    }
+    return _vec[i];
+}
+
+template <>
+void RealVectorEntity<VectorHandler>::set(uint32_t i, const VectorHandler & e) {
+    if (i >= _vec.size()) {
+        uint32_t j = _vec.size();
+        _vec.resize(MAKE_RESIZ(i), 0);
+        // 填充新向量
+        fillNewVector(this, j, _vec.size());
+    }
+    _vec[i] = e;
+}
+
+template <>
+uint32_t RealVectorEntity<VectorHandler>::getElemSize() const {
+    return sizeof(VectorHandler);
+}
+
+template <>
+uint32_t RealVectorEntity<VectorHandler>::getTotalSize() const {
+    return _vec.size() * sizeof(VectorHandler);
+}
+
+template <>
+ElemHandler RealVectorEntity<VectorHandler>::getOffsetT(uint32_t i) const {
+    if (i >= _vec.size()) {
+        uint32_t j = _vec.size();
+        _vec.resize(MAKE_RESIZ(i), 0);
+        // 填充新向量
+        fillNewVector(this, j, _vec.size());
+    }
+    return &_vec[i];
+}
+
+template <>
+ElemHandler RealVectorEntity<VectorHandler>::getOffsetB(uint32_t i) const {
+    if (i >= _vec.size()) {
+        uint32_t j = _vec.size();
+        _vec.resize(MAKE_RESIZ(i), 0);
+        // 填充新向量
+        fillNewVector(this, j, _vec.size());
+    }
+    return &(((char *)_vec.data())[i]);
+}
+// 对于矢量的特化，特化结束
+
 const VectorHandler & IVector::getHandler() {
     return _handler;
 }
@@ -30,51 +175,51 @@ VectorHandler VectorsManager::applyUniqueHandler() const {
     return handler;
 }
 
-VectorHandler VectorsManager::newVectorVEC() {
+VectorHandler VectorsManager::newVectorVEC(const VectorLowLvElemType & lowLvElemType, uint32_t degree) {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new RealVectorEntity<VectorHandler>(handler);
+    IVector * pVec = new RealVectorEntity<VectorHandler>(handler, this, lowLvElemType, degree);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorB() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new RealVectorEntity<int8_t>(handler);
+    IVector * pVec = new RealVectorEntity<int8_t>(handler, this, VectorLowLvElemType::B, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorW() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new RealVectorEntity<int16_t>(handler);
+    IVector * pVec = new RealVectorEntity<int16_t>(handler, this, VectorLowLvElemType::W, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorDW() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new RealVectorEntity<int32_t>(handler);
+    IVector * pVec = new RealVectorEntity<int32_t>(handler, this, VectorLowLvElemType::DW, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorQW() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new RealVectorEntity<int64_t>(handler);
+    IVector * pVec = new RealVectorEntity<int64_t>(handler, this, VectorLowLvElemType::QW, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorFLT() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new RealVectorEntity<float>(handler);
+    IVector * pVec = new RealVectorEntity<float>(handler, this, VectorLowLvElemType::FLT, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
 
 VectorHandler VectorsManager::newVectorDBL() {
     VectorHandler handler = applyUniqueHandler();
-    IVector * pVec = new RealVectorEntity<double>(handler);
+    IVector * pVec = new RealVectorEntity<double>(handler, this, VectorLowLvElemType::DBL, 1);
     _map.insert(std::make_pair(handler, pVec));
     return handler;
 }
@@ -100,7 +245,7 @@ VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
         handler = _vecman.newVectorB();
         return handler;
     } else {
-        handler = _vecman.newVectorVEC();
+        handler = _vecman.newVectorVEC(VectorLowLvElemType::B, degree);
         IVector *pVec = _vecman.getVectorByHandler(handler);
         RealVectorEntity<VectorHandler> *pNativeVec =
                 static_cast<RealVectorEntity<VectorHandler> *>(pVec);
@@ -115,7 +260,7 @@ VectorHandler FakeVectorRAM::makeVectorW(uint32_t degree) {
         handler = _vecman.newVectorW();
         return handler;
     } else {
-        handler = _vecman.newVectorVEC();
+        handler = _vecman.newVectorVEC(VectorLowLvElemType::W, degree);
         IVector *pVec = _vecman.getVectorByHandler(handler);
         RealVectorEntity<VectorHandler> *pNativeVec =
                 static_cast<RealVectorEntity<VectorHandler> *>(pVec);
@@ -130,7 +275,7 @@ VectorHandler FakeVectorRAM::makeVectorDW(uint32_t degree) {
         handler = _vecman.newVectorDW();
         return handler;
     } else {
-        handler = _vecman.newVectorVEC();
+        handler = _vecman.newVectorVEC(VectorLowLvElemType::DW, degree);
         IVector *pVec = _vecman.getVectorByHandler(handler);
         RealVectorEntity<VectorHandler> *pNativeVec =
                 static_cast<RealVectorEntity<VectorHandler> *>(pVec);
@@ -145,7 +290,7 @@ VectorHandler FakeVectorRAM::makeVectorQW(uint32_t degree) {
         handler = _vecman.newVectorQW();
         return handler;
     } else {
-        handler = _vecman.newVectorVEC();
+        handler = _vecman.newVectorVEC(VectorLowLvElemType::QW, degree);
         IVector *pVec = _vecman.getVectorByHandler(handler);
         RealVectorEntity<VectorHandler> *pNativeVec =
                 static_cast<RealVectorEntity<VectorHandler> *>(pVec);
@@ -160,7 +305,7 @@ VectorHandler FakeVectorRAM::makeVectorFLT(uint32_t degree) {
         handler = _vecman.newVectorFLT();
         return handler;
     } else {
-        handler = _vecman.newVectorVEC();
+        handler = _vecman.newVectorVEC(VectorLowLvElemType::FLT, degree);
         IVector *pVec = _vecman.getVectorByHandler(handler);
         RealVectorEntity<VectorHandler> *pNativeVec =
                 static_cast<RealVectorEntity<VectorHandler> *>(pVec);
@@ -175,7 +320,7 @@ VectorHandler FakeVectorRAM::makeVectorDBL(uint32_t degree) {
         handler = _vecman.newVectorDBL();
         return handler;
     } else {
-        handler = _vecman.newVectorVEC();
+        handler = _vecman.newVectorVEC(VectorLowLvElemType::DBL, degree);
         IVector *pVec = _vecman.getVectorByHandler(handler);
         RealVectorEntity<VectorHandler> *pNativeVec =
                 static_cast<RealVectorEntity<VectorHandler> *>(pVec);
