@@ -40,3 +40,11 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 本语言源程序结构简单、语法清晰明了，易于上手使用。
 * ~~FROG 语法简明手册~~
 * [FROG 汇编 & 虚拟机简明手册](https://github.com/AloneCafe/frog/wiki/FROG-%E6%B1%87%E7%BC%96-&-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C)
+
+## 附加功能 TODO / DONE
+- ✅ 原生字符串
+- ✅ 原生矢量 (变长数组)
+- ✅ Mark-Sweep 垃圾回收器
+- ☑️ 小型基础库
+- ☑️ 原生函数接口
+- ......
