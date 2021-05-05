@@ -182,14 +182,14 @@ public:
 
 
 // member function templates implementation
-
+/*
 template <typename T>
 const T & RealVectorEntity<T>::get(uint32_t i) const {
     if (i >= _vec.size()) {
         _vec.resize(MAKE_RESIZ(i), 0);
     }
     return _vec[i];
-}
+}*/
 
 template <typename T>
 void RealVectorEntity<T>::set(uint32_t i, const T & e) {
@@ -255,5 +255,8 @@ template <typename T>
 uint32_t RealVectorEntity<T>::getDegree() const {
     return _degree;
 }
+
+
+
 
 #endif

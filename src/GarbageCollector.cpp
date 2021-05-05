@@ -1,4 +1,5 @@
 #include <thread>
+#include <iostream>
 
 #include "GarbageCollector.hpp"
 #include "FakeCPU.hpp"
@@ -7,6 +8,7 @@ std::mutex GCScheduler::_gcLock;
 
 static void procMark(GarbageCollector * pGC) {
     pGC->mark_OPSTACK();
+    pGC->mark_VRAM();
     pGC->mark_SRAM();
     pGC->mark_VOIDHOLE();
 }
@@ -33,11 +35,11 @@ void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
     while (1) {
         std::this_thread::sleep_for(
                 std::chrono::milliseconds(_sche.ms));
-        GCLockGuard lck(getGCLock());
+        //GCLockGuard lck(getGCLock());
         if (_flagVMExited.load())
             return;
         else
-            procMarkSweep(&_gc);
+            ;//procMarkSweep(&_gc);
     }
 }
 
@@ -71,6 +73,57 @@ void GarbageCollector::mark_SRAM() {
     }
 }
 
+static void markRecur_VEC(
+        VectorsManager & vecman,
+        RealVectorEntity<VectorHandler> * pNativeVec,
+        VectorHandler srcHandler)
+{
+    uint32_t siz = pNativeVec->getTotalSize() / pNativeVec->getElemSize();
+    IVector *pSrcVec = vecman.getVectorByHandler(srcHandler);
+    for (uint32_t i = 0; i < siz; ++i) {
+        VectorHandler subHandler = pNativeVec->get(i);
+        IVector *pDstVec = vecman.getVectorByHandler(subHandler);
+        if (!pDstVec)
+            continue;
+        
+        if (pDstVec->getElemType() == VectorElemType::VectorHandlerDW) {
+            // 往下递归
+            RealVectorEntity<VectorHandler> * pNativeDstVec =
+                static_cast<RealVectorEntity<VectorHandler> *>(pDstVec);
+            markRecur_VEC(vecman, pNativeDstVec, srcHandler);
+            
+        } else if (subHandler == srcHandler) {
+            pSrcVec->setMark(true);
+            return;
+    
+        }
+    }
+}
+
+void GarbageCollector::mark_VRAM() {
+    VectorsManager & vecman = _vram._vecman;
+    auto it = vecman._map.begin();
+    while (it != vecman._map.end()) {
+        VectorHandler srcHandler = it->first;
+        IVector * pSrcVec = it->second;
+    
+        auto jt = vecman._map.begin();
+        while (jt != vecman._map.end()) {
+            IVector * pDstVec = jt->second;
+            
+            if (pSrcVec->getElemType() == VectorElemType::VectorHandlerDW) {
+                RealVectorEntity<VectorHandler> * pNativeDstVec =
+                        static_cast<RealVectorEntity<VectorHandler> *>(pDstVec);
+                markRecur_VEC(vecman, pNativeDstVec, srcHandler);
+        
+            }
+            ++jt;
+        }
+        
+        ++it;
+    }
+}
+
 void GarbageCollector::mark_VOIDHOLE() {
     VectorsManager & vecman = _vram._vecman;
     VectorHandler probaVH = *reinterpret_cast<const VectorHandler *>(&_voidhole[0]);
@@ -85,6 +138,7 @@ void GarbageCollector::sweep() {
     auto it = vecman._map.begin();
     while (it != vecman._map.end()) {
         if (!it->second->getMark()) {
+            std::cerr << "sweep VECTOR: " << it->first << std::endl;
             delete it->second;
             it = vecman._map.erase(it);
         } else {

@@ -15,6 +15,12 @@
 
 #include "UTFSequence.hpp"
 
+#if defined(_DEBUG)
+#define DBGOUT(x) std::cerr << (x) << std::endl;
+#else
+#define DBGOUT(x)
+#endif
+
 template <class T>
 class StateIndicator {
 private:

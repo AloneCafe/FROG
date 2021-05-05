@@ -36,6 +36,8 @@ public:
     
     void mark_SRAM();
     
+    void mark_VRAM();
+    
     void mark_VOIDHOLE();
     
     void sweep();
