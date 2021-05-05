@@ -47,15 +47,15 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
     
     try {
         while (pc < siz) {
-            //GCLockGuard lck(GCScheduler::getGCLock());
-            
+            GCLockGuard lck(GCScheduler::getGCLock());
+            /*
             GarbageCollector gc(*_pOPStack, *_pSRAM, *_pVRAM, voidhole);
             gc.mark_OPSTACK();
             gc.mark_SRAM();
             gc.mark_VOIDHOLE();
             gc.mark_VRAM();
             gc.sweep();
-            
+            */
             
             std::string buf;
             uint32_t hardAddr = 0;
@@ -1597,6 +1597,7 @@ void FakeCPU::executeVMEF(const std::string & name) {
             ss << ch;
         }
         std::cout << ss.str();
+        std::cout.flush();
     }
 
     else if (name == "stdin_nl") {

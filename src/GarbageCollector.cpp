@@ -39,7 +39,7 @@ void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
         if (_flagVMExited.load())
             return;
         else
-            ;//procMarkSweep(&_gc);
+            procMarkSweep(&_gc);
     }
 }
 
@@ -149,7 +149,7 @@ void GarbageCollector::sweep() {
     }
 }
 
-inline std::mutex & GCScheduler::getGCLock() {
+std::mutex & GCScheduler::getGCLock() {
     return _gcLock;
 }
 

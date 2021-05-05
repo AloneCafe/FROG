@@ -69,7 +69,7 @@ public:
         
     GCScheduler(const GCScheduler &) = delete;
     
-    static inline std::mutex & getGCLock();
+    static std::mutex & getGCLock();
 
 public:
     // do GC per ms
