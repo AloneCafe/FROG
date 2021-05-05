@@ -78,7 +78,7 @@ static void markRecur_VEC(
         RealVectorEntity<VectorHandler> * pNativeVec,
         VectorHandler srcHandler)
 {
-    uint32_t siz = pNativeVec->getTotalSize() / pNativeVec->getElemSize();
+    uint32_t siz = pNativeVec->getVec().size();
     IVector *pSrcVec = vecman.getVectorByHandler(srcHandler);
     for (uint32_t i = 0; i < siz; ++i) {
         VectorHandler subHandler = pNativeVec->get(i);

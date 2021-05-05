@@ -101,6 +101,8 @@ public:
     
     ElemHandler getOffsetT(uint32_t i) const override;
     ElemHandler getOffsetB(uint32_t i) const override;
+    
+    const std::vector<T> & getVec() const;
 };
 
 /*
@@ -256,7 +258,10 @@ uint32_t RealVectorEntity<T>::getDegree() const {
     return _degree;
 }
 
-
+template <typename T>
+const std::vector<T> & RealVectorEntity<T>::getVec() const {
+    return _vec;
+}
 
 
 #endif
