@@ -124,7 +124,7 @@ int main(int argc, const char * argv[]) {
         cpu.attachVectorRAM(&vRAM);
     
         
-        GCScheduler gcs(opStack, sRAM, vRAM);
+        GCScheduler gcs(opStack, sRAM, vRAM, cpu.voidhole);
         std::thread threadGC(doGCScheduler, &gcs, 50); // 500ms
     
         if (!staticBytes.empty()) {

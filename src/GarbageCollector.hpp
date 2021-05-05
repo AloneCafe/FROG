@@ -19,18 +19,24 @@ private:
     const FakeScalarRAM & _sram;
     FakeVectorRAM & _vram;
     
+    char * _voidhole;
+    
 public:
     GarbageCollector(const FakeOPStack & opStack,
                      const FakeScalarRAM & sram,
-                     FakeVectorRAM & vram) :
+                     FakeVectorRAM & vram,
+                     char * voidhole) :
         _ops(opStack),
         _sram(sram),
-        _vram(vram) {}
+        _vram(vram),
+        _voidhole(voidhole) {}
         
     
     void mark_OPSTACK();
     
     void mark_SRAM();
+    
+    void mark_VOIDHOLE();
     
     void sweep();
 };
@@ -56,7 +62,8 @@ public:
     
     GCScheduler(const FakeOPStack & opStack,
                 const FakeScalarRAM & sram,
-                FakeVectorRAM & vram);
+                FakeVectorRAM & vram,
+                char * voidhole);
         
     GCScheduler(const GCScheduler &) = delete;
     

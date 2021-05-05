@@ -8,6 +8,7 @@ std::mutex GCScheduler::_gcLock;
 static void procMark(GarbageCollector * pGC) {
     pGC->mark_OPSTACK();
     pGC->mark_SRAM();
+    pGC->mark_VOIDHOLE();
 }
 
 static void procSweep(GarbageCollector * pGC) {
@@ -22,8 +23,9 @@ static void procMarkSweep(GarbageCollector * pGC) {
 GCScheduler::GCScheduler(
         const FakeOPStack & opStack,
         const FakeScalarRAM & sram,
-        FakeVectorRAM & vram) :
-    _gc(opStack, sram, vram),
+        FakeVectorRAM & vram,
+        char * voidhole) :
+    _gc(opStack, sram, vram, voidhole),
     _flagVMExited(false) {}
         
 void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
@@ -69,13 +71,22 @@ void GarbageCollector::mark_SRAM() {
     }
 }
 
+void GarbageCollector::mark_VOIDHOLE() {
+    VectorsManager & vecman = _vram._vecman;
+    VectorHandler probaVH = *reinterpret_cast<const VectorHandler *>(&_voidhole[0]);
+    IVector *pVec = vecman.getVectorByHandler(probaVH);
+    if (!pVec)
+        return;
+    pVec->setMark(true);
+}
+
 void GarbageCollector::sweep() {
     VectorsManager & vecman = _vram._vecman;
     auto it = vecman._map.begin();
     while (it != vecman._map.end()) {
         if (!it->second->getMark()) {
             delete it->second;
-            vecman._map.erase(it);
+            it = vecman._map.erase(it);
         } else {
             it->second->setMark(false);
             ++it;

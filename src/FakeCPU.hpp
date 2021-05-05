@@ -17,6 +17,9 @@ private:
     FakeVectorRAM * _pVRAM    = nullptr;
     
 public:
+    char voidhole[8] = {0};
+    
+public:
     FakeCPU() = default;
     FakeCPU(const FakeCPU &) = delete;
     

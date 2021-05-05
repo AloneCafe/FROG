@@ -46,7 +46,6 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
     uint32_t pc = startAddr;
     
     try {
-        char voidhole[8] = {0};
         while (pc < siz) {
             GCLockGuard lck(GCScheduler::getGCLock());
             std::string buf;
