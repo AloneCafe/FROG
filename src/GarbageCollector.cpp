@@ -35,7 +35,7 @@ void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
     while (1) {
         std::this_thread::sleep_for(
                 std::chrono::milliseconds(_sche.ms));
-        //GCLockGuard lck(getGCLock());
+        GCLockGuard lck(getGCLock());
         if (_flagVMExited.load())
             return;
         else
