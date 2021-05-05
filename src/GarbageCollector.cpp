@@ -35,7 +35,7 @@ void GCScheduler::runBlockStaticSchedule(uint32_t ms) {
         if (_flagVMExited.load())
             return;
         else
-            ;//procMarkSweep(&_gc);
+            procMarkSweep(&_gc);
     }
 }
 
@@ -71,8 +71,8 @@ void GarbageCollector::mark_SRAM() {
 
 void GarbageCollector::sweep() {
     VectorsManager & vecman = _vram._vecman;
-    auto it = vecman._map.cbegin();
-    while (it != vecman._map.cend()) {
+    auto it = vecman._map.begin();
+    while (it != vecman._map.end()) {
         if (!it->second->getMark()) {
             delete it->second;
             vecman._map.erase(it);

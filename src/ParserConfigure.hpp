@@ -19,7 +19,7 @@
 #else
 #   define AST_E(x)         DBGPRINT, (void)(x != E_UNEXPECTED_EOF ? _aed.postErr((x), *it) : _aed.fatalErr((x), *it))
 #   define AST_FATAL(x)     DBGPRINT, (void)(_aed.fatalErr((x), *it))
-#   define SEM_E(x, l)      DBGPRINT, (void)(_sed.postErr((x), l))
+#   define SEM_E(x, l)      DBGPRINT, (void)(x != E_ID_UNDEFINED ? _sed.postErr((x), l) : _sed.fatalErr((x), l))
 #   define SEM_FATAL(x, l)  DBGPRINT, (void)(_sed.fatalErr((x), l))
 #endif
 

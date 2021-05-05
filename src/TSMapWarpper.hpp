@@ -4,6 +4,13 @@
 #include <mutex>
 #include <unordered_map>
 
+#if 1
+
+template <typename K, typename T, typename H = std::hash<K>>
+using TSMapWrapper = std::unordered_map<K, T, H>;
+
+#else
+
 template <typename K, typename T, typename H = std::hash<K>>
 class TSMapWrapper {
 private:
@@ -133,5 +140,7 @@ TSMapWrapper<K, T, H>::erase(typename std::unordered_map<K, T, H>::const_iterato
 
 template <typename K, typename T, typename H>
 std::mutex TSMapWrapper<K, T, H>::_mtx;
+
+#endif
 
 #endif

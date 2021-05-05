@@ -165,7 +165,6 @@ private:
 		if (!std::get<0>(tuple)) {
 			// ID 未定义 (至少在上文中)
 			SEM_E(E_ID_UNDEFINED, pExpr);
-			// 再判定是不是 this 成员变量 (TODO 先不实现)
 			return "void";
 
 		} else {
@@ -377,6 +376,7 @@ private:
             VarType vt;
             vt.setDegree(1);
             vt.setLowLvType(LocatedUtfString("char", -1, -1));
+            TYPE_PRODUCT2DEMAND(vt);
             return vt;
         }
         
