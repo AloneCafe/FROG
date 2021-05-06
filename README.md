@@ -37,7 +37,7 @@ And begins to croak.*
 ![LGPL-Logo](https://www.gnu.org/graphics/lgplv3-147x51.png)&nbsp;&nbsp;
 ![BY-NC-SA-Logo](https://mirrors.creativecommons.org/presskit/buttons/80x15/png/by-nc-sa.png)
 
-本项目所包含的程序源代码均是在 [LGPL 3.0 许可协议](https://www.gnu.org/licenses/lgpl-3.0.txt) 下授权的自由软件。本文的原有内容 (不包含链接指向的内容和外部图片的部分) 是在 [知识共享署名-非商业性使用-相同方式共享4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.zh-Hans) (英文简写 BY-NC-SA 4.0) 下授权的文档创作。
+本项目所包含的程序源代码均是在 [GNU LGPL 3.0 许可协议](https://www.gnu.org/licenses/lgpl-3.0.txt) 下授权的自由软件。本文的原有内容 (不包含链接指向的内容和外部图片的部分) 是在 [知识共享署名-非商业性使用-相同方式共享4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.zh-Hans) (英文简写 BY-NC-SA 4.0) 下授权的文档创作。
 
 ## 🏷 目录
 * [FROG 编程语言](#-frog-编程语言)
