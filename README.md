@@ -32,11 +32,13 @@ And begins to croak.*
 ![GitHub last commit](https://img.shields.io/github/last-commit/AloneCafe/frog?color=%2322dd66)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AloneCafe/frog?color=%23cd00dd)
 
-
+## 目录
 * [FROG 编程语言](#frog-编程语言)
   * [项目概述](#项目概述)
   * [关于 FROG](#关于-frog)
   * [附加计划 TODO / DONE](#附加计划-todo--done)
+  * [构建项目](#构建项目)
+  * [使用说明](#使用说明)
   * [FROG 语言特性](#frog-语言特性)
     * [基本数据类型:](#基本数据类型)
     * [隐式类型转换](#隐式类型转换)
@@ -69,9 +71,9 @@ And begins to croak.*
 FROG 是一种简单的、结构化的、面向过程的、静态类型 & 强类型的编程语言。
 
 本项目亦包含三个主要的组成部分，分别是
-* 编译器: FC (Compiler)
-* 汇编器: FAS (Assembler)
-* 虚拟机: FVM (Virtual Machine)
+* 编译器: FC  (Frog Compiler)
+* 汇编器: FAS (Frog Assembler)
+* 虚拟机: FVM (Frog Virtual Machine)
 
 如果在无错的情况下，编写 & 运行 FROG 程序的生命周期大致是这样的：
 1. 先将写好源程序交由编译器编译处理，编译器将生成一种中间语言 (Intermediate Language)，形式上类似一种汇编语言
@@ -89,6 +91,76 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 - ❌ 小型基础库
 - ❌ 原生函数接口
 - ......
+
+## 构建项目
+本项目全部程序的构建只依赖 C++ 11 及其配套的 C++ 标准库，不含任何第三方依赖。为了构建 FROG 编译系统，需要使用 CMake 构建工具来进行本操作。同时，本项目是跨平台的，构建的前提条件是需要系统中正确安装了所需版本的 C++ 编译器和基础构建工具，比如 GNU/Linux 上面的 ```make```、```g++``` 和 Windows 上面的 ```Visual Studio```。
+
+- 克隆源代码仓库、进入源代码目录
+
+  ``` git clone https://github.com/AloneCafe/frog.git ```
+
+  ``` cd frog ```
+
+- 建立并进入构建输出目录
+
+  ``` mkdir build ```
+
+  ``` cd build ```
+
+- 使用 CMake 生成 Makefile 脚本
+
+  ``` cmake . ```
+
+- 构建项目
+
+  使用 make (Linux) 或者 nmake (Windows) 构建出整个项目
+
+  - Linux  : ``` make ```
+  
+  - Windows: ``` nmake ```
+  
+如果生成没有错误，将在 build 目录下生成三个可执行文件 ```fc```、```fas```、```fvm```，分别是编译器程序、汇编器程序与虚拟机程序三件套。
+
+## 使用说明
+本项目的所有程序都对文件名和扩展名不敏感，只专注于内容处理，所以输入与输出文件的扩展名均可以任意指定，但为了解释方便，一般是做特殊处理以便区分。
+
+* 编译器
+
+  编译器可以有一个或多个输入文件作为源代码，编译时将做合并处理，如果需要引入库函数或者库变量，那么需要附加 ```-e name``` 参数指定引入 ```name``` 库，多个库需要用多个 ```-e``` 参数来引入。如果附加 ```-I``` 参数，编译器将从标准输入获取源代码。指定 ```-o path``` 将编译器生成的中间汇编代码输出至 ```path``` 路径指定的文件，特别地，如果指定了 ```-O``` 参数，编译器将会把生成的中间汇编代码输出至标准输出。
+
+* 汇编器
+
+  汇编器至多可接受一个输入文件作为中间汇编代码，如果附加 ```-I``` 参数，汇编器将从标准输入获取中间汇编代码。指定 ```-o path``` 将汇编器生成的字节码输出至 ```path``` 路径指定的文件，特别地，如果指定了 ```-O``` 参数，编译器将会把生成的字节码以十六进制 (文本串) 的形式输出至标准输出。
+
+* 虚拟机
+
+  虚拟机至多可接受一个输入文件作为字节码，虚拟机将按顺序执行该字节码，直到退出。虚拟机接受 ```-v``` 参数和 ```-s``` 参数分别是使得虚拟机运行在输出调试信息 (verbose) 模式和单步 (step) 模式下。
+
+* 简单示例
+
+  以编译源程序 ```test.frog``` 为例，首先需要将 ```test.frog``` 编译成 ```test.fas``` 中间汇编代码文件: 
+
+  ``` fc test.frog -o test.fas ```
+
+  再将中间汇编代码文件作为汇编器的输入，生成 ```test.fvm``` 字节码文件:
+
+  ``` fas test.fas -o test.fvm ```
+
+  使用虚拟机加载字节码文件并且执行:
+
+  ``` fvm test.fvm ```
+  
+* 联合编译
+  
+  通过命令行的管道特性皮一下的话，编译的过程是可以一步到位的:
+  
+  ``` fc test.frog -O | fas -I -o test.fvm ```
+  
+  然后运行
+  
+  ``` fvm test.fvm ```
+
+> 若需另外的参数用法信息，可以指定 ```-h``` 参数来获得提示。
 
 ## FROG 语言特性
 
