@@ -122,11 +122,11 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 
 - 构建项目
 
-  使用 make (Linux) 或者 nmake (Windows) 构建出整个项目
+  使用 make 或者 nmake 构建出整个项目
 
-  - Linux  : \> ``` make ```
+  - Linux / MinGW: \> ``` make ```
   
-  - Windows: \> ``` nmake ```
+  - Visual Studio: \> ``` nmake ```
   
 如果生成没有错误，将在 build 目录下生成三个可执行文件 ```fc```、```fas```、```fvm```，分别是编译器程序、汇编器程序与虚拟机程序三件套。
 
