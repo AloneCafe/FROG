@@ -77,10 +77,12 @@ And begins to croak.*
 ## 📜 关于 FROG
 FROG 是一种简单的、结构化的、面向过程的、静态类型 & 强类型的编程语言。
 
+吃我大秘笈：⬆⬆⬇⬇⬅➡⬅➡🅱🅰🅱🅰
+
 本项目亦包含三个主要的组成部分，分别是
-* 编译器: FC  (Frog Compiler)
-* 汇编器: FAS (Frog Assembler)
-* 虚拟机: FVM (Frog Virtual Machine)
+* 编译器：FC  (Frog Compiler)
+* 汇编器：FAS (Frog Assembler)
+* 虚拟机：FVM (Frog Virtual Machine)
 
 如果在无错的情况下，编写 & 运行 FROG 程序的生命周期大致是这样的：
 1. 先将写好源程序交由编译器编译处理，编译器将生成一种中间语言 (Intermediate Language)，形式上类似一种汇编语言
