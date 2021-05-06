@@ -32,8 +32,11 @@ And begins to croak.*
 ![GitHub last commit](https://img.shields.io/github/last-commit/AloneCafe/frog?color=%2322dd66)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AloneCafe/frog?color=%23cd00dd)
 
-![Logo](https://www.gnu.org/graphics/lgplv3-147x51.png)
-🌸💮🌹🌺🌻🌼🌷
+🌸💮🌹🌺🌻🌼🌷🌸💮🌹🌺🌻🌼🌷🌸💮🌹🌺🌻🌼🌷
+
+![LGPL-Logo](https://www.gnu.org/graphics/lgplv3-147x51.png)&nbsp;&nbsp;
+![BY-NC-SA-Logo](https://mirrors.creativecommons.org/presskit/buttons/80x15/png/by-nc-sa.png)
+
 
 ## 目录
 * [FROG 编程语言](#frog-编程语言)
