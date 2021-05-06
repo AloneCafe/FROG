@@ -124,11 +124,11 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 
 - 构建项目
 
-  依据编译环境的不同，选择并使用 make 或者 nmake 完整地编译、构建出项目程序。若需要一些高级配置，请自行查阅 CMake 与编译环境的一些相关资料。
+  依据编译环境的不同，选择并使用 make 或者 msbuild 完整地编译、构建出项目程序。若需要一些高级配置，请自行查阅 CMake 与编译环境的一些相关资料。
 
   - GNU/Linux 或 MinGW: \> ``` make ```
   
-  - Microsoft Visual Studio 控制台: \> ``` nmake && msbuild frog.sln```
+  - Microsoft Visual Studio 控制台: \> ``` msbuild frog.sln```
   
 如果生成没有错误，将在生成目录下或者某个子目录中生成三个可执行文件 ```fc```、```fas```、```fvm```，分别是编译器程序、汇编器程序与虚拟机程序三件套。
 
