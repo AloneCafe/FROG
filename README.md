@@ -120,7 +120,7 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 
 - 使用 CMake 完成前期环境检查，并且生成 Makefile 脚本
 
-  \> ``` cmake . ```
+  \> ``` cmake .. ```
 
 - 构建项目
 
