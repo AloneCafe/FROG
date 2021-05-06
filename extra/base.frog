@@ -175,7 +175,7 @@ func char[] scanString() {
 // string length
 func int strlen(char[] s) {
     int l = 0;
-    for (int i = 0; i < sizeof(s); i += 1) {
+    for (int i = 0; i < len(s); i += 1) {
         if (s[i] != 0) {
             l += 1;
         }
