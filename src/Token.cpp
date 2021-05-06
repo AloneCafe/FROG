@@ -432,6 +432,10 @@ bool Token::isKwThis() const {
     return _type == TOKEN_KW_THIS;
 }
 
+bool Token::isKwSizeof() const {
+    return _type == TOKEN_KW_LEN;
+}
+
 bool Token::isKwAsm() const {
     return _type == TOKEN_KW_ASM;
 }
@@ -447,5 +451,7 @@ bool Token::isKwGoto() const {
 bool Token::isKwConst() const {
     return _type == TOKEN_RW_CONST;
 }
+
+
 
 

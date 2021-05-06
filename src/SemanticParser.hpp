@@ -31,7 +31,8 @@ if (_CHK == OnlyGen) {              \
 	if (vtChoice.getDegree() == 0 || demand == "void") this->gen4ITC<OnlyGen>(vtChoice, vtDemand);    \
 	else if (vtChoice.getDegree() != vtDemand.getDegree() && demand.getLowLvType() != "void") SEM_E((E_INCMP_TYPE_REF), pExpr); \
 } else { \
-		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, vtDemand, vtChoice, allowIC); \
+		ExprTypeConstraint::ChkResult _cr_ = ExprTypeConstraint::check<_CHK>(this, vtDemand, vtChoice, allowIC);                   \
+                                    \
 		if (ExprTypeConstraint::ChkResult::CHK_INCMP == _cr_) { \
 				if (vtChoice == "byte")\
 				{ SEM_E((E_INCMP_TYPE_BYTE), pExpr); }\
@@ -392,6 +393,17 @@ private:
 
 		case ExprOp::LEAF_TYPE: // 此处无需处理，类型转换应该交由上层处理
 			break;
+        
+        case ExprOp::OPT_LEN: {
+            VarType choice = gen4expr<_CHK>(pExpr->getSubExprPtr(0), "void");
+            if (choice.getDegree() < 1) {
+                SEM_E(E_INCMP_TYPE, pExpr);
+            }
+            gen4ITC<_CHK>("void", "int");
+            pASM->append_LEN();
+            TYPE_PRODUCT2DEMAND("int");
+            return VarType::buildFromStr("int");
+        }
 
 		case ExprOp::OPT_INDEX:
 		{

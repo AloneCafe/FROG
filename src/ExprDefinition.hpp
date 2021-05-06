@@ -24,6 +24,7 @@ public:
         
         OPT_DOT,                  // E0 . E1
         OPT_INDEX,                // E0 [ E1 ]
+        OPT_LEN,               // sizeof ( E0 )
         
         OPT_LT,                   // E0 < E1
         OPT_LE,                   // E0 <= E1

@@ -150,4 +150,4 @@ target_compile_options(${EN_FROG_COMPILER} INTERFACE ${CXX_FLAGS})
 target_compile_options(${EN_FROG_ASSEMBLER} INTERFACE ${CXX_FLAGS})
 target_compile_options(${EN_FROG_VM} INTERFACE ${CXX_FLAGS})
 
-file(COPY extra/SimpleIO.frog DESTINATION ${CMAKE_BINARY_DIR}/extra)
+file(COPY extra/base.frog DESTINATION ${CMAKE_BINARY_DIR}/extra)

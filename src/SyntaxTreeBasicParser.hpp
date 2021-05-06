@@ -79,6 +79,7 @@ private:
      *             | any-literal
      *             | true
      *             | false
+     *             | sizeof ( Expr )
      * ///// 注意: 函数调用的参数表达式是由逗号分隔开的一组参数列表，
      * ///// 列表中每一项是比逗号运算符优先级更低 (即赋值及以下) 的表达式组成，
      * ///// 也就是以 " ( ExprAssign, ExprAssign, ... , ExprAssign ) " 的形式组成

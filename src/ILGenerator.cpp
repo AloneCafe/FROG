@@ -662,6 +662,10 @@ void ILGenerator::append_HALT() {
     _context << TAB << "HALT" << STMT_SUFFIX << std::endl;
 }
 
+void ILGenerator::append_LEN() {
+    _context << TAB << "LEN" << STMT_SUFFIX << std::endl;
+}
+
 void ILGenerator::append_J(const std::string & label) {
     _context << TAB << "J" << SPACE << LABEL_PREFIX << label << STMT_SUFFIX << std::endl;
 }

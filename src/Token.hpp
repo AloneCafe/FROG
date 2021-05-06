@@ -162,6 +162,8 @@ public:
     
     bool isKwThis() const;
     
+    bool isKwSizeof() const;
+    
     bool isKwAsm() const;
     
     bool isKwVoid() const;

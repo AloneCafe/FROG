@@ -1,56 +1,56 @@
 // SimpleIO library
 
 // stdout functions
-func void Print(double d) {
+func void print(double d) {
     asm {
          "PUSH DBL @d;"
          "EFCALL \"stdout_dbl\";"
     }
 }
 
-func void Print(float f) {
+func void print(float f) {
     asm {
          "PUSH FLT @f;"
          "EFCALL \"stdout_flt\";"
     }
 }
 
-func void Print(long l) {
+func void print(long l) {
     asm {
          "PUSH QW @l;"
          "EFCALL \"stdout_nl\";"
     }
 }
 
-func void Print(int a) {
+func void print(int a) {
     asm {
         "PUSH DW @a;"
         "EFCALL \"stdout_ni\";"
     }
 }
 
-func void Print(short a) {
+func void print(short a) {
     asm {
         "PUSH DW @a;"
         "EFCALL \"stdout_ns\";"
     }
 }
 
-func void Print(byte b) {
+func void print(byte b) {
      asm {
          "PUSH B @b;"
          "EFCALL \"stdout_nb\";"
      }
 }
 
-func void Print(char c) {
+func void print(char c) {
      asm {
          "PUSH B @c;"
          "EFCALL \"stdout_c\";"
      }
 }
 
-func void Print(char[] s) {
+func void print(char[] s) {
      asm {
          "PUSH DW @s;"
          "EFCALL \"stdout_s\";"
@@ -59,56 +59,56 @@ func void Print(char[] s) {
 
 
 // stderr functions
-func void PrintError(double d) {
+func void printError(double d) {
     asm {
          "PUSH DBL @d;"
          "EFCALL \"stderr_dbl\";"
     }
 }
 
-func void PrintError(float f) {
+func void printError(float f) {
     asm {
          "PUSH FLT @f;"
          "EFCALL \"stderr_flt\";"
     }
 }
 
-func void PrintError(long l) {
+func void printError(long l) {
     asm {
          "PUSH QW @l;"
          "EFCALL \"stderr_nl\";"
     }
 }
 
-func void PrintError(int a) {
+func void printError(int a) {
     asm {
         "PUSH DW @a;"
         "EFCALL \"stderr_ni\";"
     }
 }
 
-func void PrintError(short a) {
+func void printError(short a) {
     asm {
         "PUSH DW @a;"
         "EFCALL \"stderr_ns\";"
     }
 }
 
-func void PrintError(byte b) {
+func void printError(byte b) {
      asm {
          "PUSH B @b;"
          "EFCALL \"stderr_nb\";"
      }
 }
 
-func void PrintError(char c) {
+func void printError(char c) {
      asm {
          "PUSH B @c;"
          "EFCALL \"stderr_c\";"
      }
 }
 
-func void PrintError(char[] s) {
+func void printError(char[] s) {
      asm {
          "PUSH DW @s;"
          "EFCALL \"stderr_s\";"
@@ -116,58 +116,69 @@ func void PrintError(char[] s) {
 }
 
 // stdin functions
-func double ScanDouble() {
+func double scanDouble() {
     asm {
          "EFCALL \"stdin_dbl\";"
          "RET DBL;"
     }
 }
 
-func float ScanFloat() {
+func float scanFloat() {
     asm {
          "EFCALL \"stdin_flt\";"
          "RET FLT;"
     }
 }
 
-func long ScanLong() {
+func long scanLong() {
     asm {
          "EFCALL \"stdin_nl\";"
          "RET QW;"
     }
 }
 
-func int ScanInt() {
+func int scanInt() {
     asm {
         "EFCALL \"stdin_ni\";"
         "RET DW;"
     }
 }
 
-func short ScanShort() {
+func short scanShort() {
     asm {
         "EFCALL \"stdin_ns\";"
         "RET W;"
     }
 }
 
-func byte ScanByte() {
+func byte scanByte() {
      asm {
          "EFCALL \"stdin_nb\";"
          "RET B;"
      }
 }
 
-func char ScanChar() {
+func char scanChar() {
      asm {
          "EFCALL \"stdin_c\";"
          "RET B;"
      }
 }
 
-func char[] ScanString() {
+func char[] scanString() {
     asm {
         "EFCALL \"stdin_s\";"
         "RET DW;"
     }
+}
+
+// string length
+func int strlen(char[] s) {
+    int l = 0;
+    for (int i = 0; i < sizeof(s); i += 1) {
+        if (s[i] != 0) {
+            l += 1;
+        }
+    }
+    return l;
 }

@@ -355,6 +355,8 @@ public:
     
     void append_HALT();
     
+    void append_LEN();
+    
     void append_J(const std::string & label);
     
     void append_JT(const std::string & label);

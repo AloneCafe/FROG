@@ -8,7 +8,7 @@ SemParser::ExprTypeConstraint::_check(const VarType & demand, const VarType & ch
     } else {
         if (demand == "void") { // accept multi-degree
             if (choice == "double" || choice == "float" || choice == "long" || choice == "int" ||
-                    choice == "short" || choice == "char" || choice == "byte") {
+                    choice == "short" || choice == "char" || choice == "byte" || choice.getDegree() > 0) {
                 return ChkResult::CHK_NEED_IC;
             }
             

@@ -332,6 +332,7 @@ ExprPtr AstBasicParser::_buildExprIndexList(TokenIter & it, ExprPtr pLeft) {
  *             | any-literal
  *             | true
  *             | false
+ *             | sizeof ( Expr )
  * ///// 注意: 函数调用的参数表达式是由逗号分隔开的一组参数列表，
  * ///// 列表中每一项是比逗号运算符优先级更低 (即赋值及以下) 的表达式组成，
  * ///// 也就是以 " ( ExprAssign, ExprAssign, ... , ExprAssign ) " 的形式组成
@@ -388,6 +389,27 @@ ExprPtr AstBasicParser::_buildExprSuffix(TokenIter & it) {
         } else {
             AST_E(E_LOSE_RP);
             return pInner; // 报错，暂且返回
+        }
+        
+    } else if (it->isKwSizeof()) {
+        ++it;
+    
+        if (it->isPunc<'('>()) {
+            ++it;
+            ExprPtr pInner = buildExpression(it);
+            ExprPtr pExprSizeof = Expr::newExpr(ExprOp::OPT_LEN, {pInner }, AST_ARG_LOCATION1);
+            if (it->isPunc<')'>()) {
+                ++it;
+                return pExprSizeof;
+            
+            } else if (it->isEnd()) {
+                AST_E(E_UNEXPECTED_EOF);
+                return pExprSizeof;
+            
+            } else {
+                AST_E(E_LOSE_RP);
+                return pExprSizeof; // 报错，暂且返回
+            }
         }
         
     } else if (it->isId()) {
