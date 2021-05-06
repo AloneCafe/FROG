@@ -178,6 +178,8 @@ func int strlen(char[] s) {
     for (int i = 0; i < len(s); i += 1) {
         if (s[i] != 0) {
             l += 1;
+        } else {
+            break;
         }
     }
     return l;
