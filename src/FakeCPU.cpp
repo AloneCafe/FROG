@@ -151,7 +151,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                         memset(voidhole, 0, sizeof(voidhole));
                         *reinterpret_cast<int8_t *>(voidhole) = b;
                     } else if (hb[1] == 0B0001) { // dst: B
-                        ;
+                        _pOPStack->pushB(b);
                     } else if (hb[1] == 0B0010) { // dst: W
                         _pOPStack->pushW(b);
                     } else if (hb[1] == 0B0100) { // dst: DW
@@ -174,7 +174,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                     } else if (hb[1] == 0B0001) { // dst: B
                         _pOPStack->pushB(w);
                     } else if (hb[1] == 0B0010) { // dst: W
-                        ;
+                        _pOPStack->pushW(w);
                     } else if (hb[1] == 0B0100) { // dst: DW
                         _pOPStack->pushDW(w);
                     } else if (hb[1] == 0B1000) { // dst: QW
@@ -197,7 +197,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                     } else if (hb[1] == 0B0010) { // dst: W
                         _pOPStack->pushW(dw);
                     } else if (hb[1] == 0B0100) { // dst: DW
-                        ;
+                        _pOPStack->pushDW(dw);
                     } else if (hb[1] == 0B1000) { // dst: QW
                         _pOPStack->pushQW(dw);
                     } else if (hb[1] == 0B1011) { // dst: FLT
@@ -220,7 +220,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                     } else if (hb[1] == 0B0100) { // dst: DW
                         _pOPStack->pushDW(qw);
                     } else if (hb[1] == 0B1000) { // dst: QW
-                        ;
+                        _pOPStack->pushQW(qw);
                     } else if (hb[1] == 0B1011) { // dst: FLT
                         _pOPStack->pushFLT(qw);
                     } else if (hb[1] == 0B1111) { // dst: DBL
@@ -243,7 +243,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                     } else if (hb[1] == 0B1000) { // dst: QW
                         _pOPStack->pushQW(f);
                     } else if (hb[1] == 0B1011) { // dst: FLT
-                        ;
+                        _pOPStack->pushFLT(f);
                     } else if (hb[1] == 0B1111) { // dst: DBL
                         _pOPStack->pushDBL(f);
                     } else {
@@ -266,7 +266,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                     } else if (hb[1] == 0B1011) { // dst: FLT
                         _pOPStack->pushFLT(d);
                     } else if (hb[1] == 0B1111) { // dst: DBL
-                        ;
+                        _pOPStack->pushDBL(d);
                     } else {
                         throw VMException(VMET::E_ILLEGAL_GRANULARITY);
                     }
