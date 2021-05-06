@@ -175,8 +175,6 @@ if (a < 0) {
 ```
 
 ## 汇编器 / 虚拟机相关
- 
-独立版本的手册: [FROG 汇编 & 虚拟机简明手册](https://github.com/AloneCafe/frog/wiki/FROG-%E6%B1%87%E7%BC%96-%26-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/)
 
 * [FROG 汇编 &amp; 虚拟机简明手册](#frog-汇编--虚拟机简明手册)
     * [FROG 虚拟机](#frog-虚拟机)
