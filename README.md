@@ -1,6 +1,6 @@
 # FROG 编程语言
 
-*The little green frog,
+🐸 *The little green frog,
 Jumps on a log,
 Takes off his cloak,
 And begins to croak.*
@@ -17,7 +17,7 @@ And begins to croak.*
 [![Logo](https://i.loli.net/2021/04/22/TEozG6QHwLqZiP1.png)](https://github.com/AloneCafe/frog/)
 -->
 
-![Logo](https://www.gnu.org/graphics/lgplv3-147x51.png)
+
 
 <!--
 <span style="color:blue;">项目吉祥物：开心快乐的青蛙国王 FROG 桑，由 GIMP 手工绘制（渣绘轻喷）</span>
@@ -31,6 +31,9 @@ And begins to croak.*
 ![GitHub branch checks state](https://img.shields.io/github/checks-status/AloneCafe/frog/master?color=%23bb1c00)
 ![GitHub last commit](https://img.shields.io/github/last-commit/AloneCafe/frog?color=%2322dd66)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AloneCafe/frog?color=%23cd00dd)
+
+![Logo](https://www.gnu.org/graphics/lgplv3-147x51.png)
+🌸💮🌹🌺🌻🌼🌷
 
 ## 目录
 * [FROG 编程语言](#frog-编程语言)
