@@ -99,27 +99,27 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 
 - 克隆源代码仓库、进入源代码目录
 
-  ``` git clone https://github.com/AloneCafe/frog.git ```
+  \> ``` git clone https://github.com/AloneCafe/frog.git ```
 
-  ``` cd frog ```
+  \> ``` cd frog ```
 
 - 建立并进入构建输出目录
 
-  ``` mkdir build ```
+  \> ``` mkdir build ```
 
-  ``` cd build ```
+  \> ``` cd build ```
 
 - 使用 CMake 生成 Makefile 脚本
 
-  ``` cmake . ```
+  \> ``` cmake . ```
 
 - 构建项目
 
   使用 make (Linux) 或者 nmake (Windows) 构建出整个项目
 
-  - Linux  : ``` make ```
+  - Linux  : \> ``` make ```
   
-  - Windows: ``` nmake ```
+  - Windows: \> ``` nmake ```
   
 如果生成没有错误，将在 build 目录下生成三个可执行文件 ```fc```、```fas```、```fvm```，分别是编译器程序、汇编器程序与虚拟机程序三件套。
 
@@ -142,25 +142,25 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 
   以编译源程序 ```test.frog``` 为例，首先需要将 ```test.frog``` 编译成 ```test.fas``` 中间汇编代码文件: 
 
-  ``` fc test.frog -o test.fas ```
+  \> ``` fc test.frog -o test.fas ```
 
   再将中间汇编代码文件作为汇编器的输入，生成 ```test.fvm``` 字节码文件:
 
-  ``` fas test.fas -o test.fvm ```
+  \> ``` fas test.fas -o test.fvm ```
 
   使用虚拟机加载字节码文件并且执行:
 
-  ``` fvm test.fvm ```
+  \> ``` fvm test.fvm ```
   
 * 联合编译
   
   通过命令行的管道特性皮一下的话，编译的过程是可以一步到位的:
   
-  ``` fc test.frog -O | fas -I -o test.fvm ```
+  \> ``` fc test.frog -O | fas -I -o test.fvm ```
   
   然后运行
   
-  ``` fvm test.fvm ```
+  \> ``` fvm test.fvm ```
 
 > 若需另外的参数用法信息，可以指定 ```-h``` 参数来获得提示。
 
