@@ -116,17 +116,17 @@ FROG 编程语言采用类 C (C-like) 的语法，与 C、C++、C#、Java 等语
 
   \> ``` cd build ```
 
-- 使用 CMake 生成 Makefile 脚本
+- 使用 CMake 完成前期环境检查，并且生成 Makefile 脚本
 
   \> ``` cmake . ```
 
 - 构建项目
 
-  使用 make 或者 nmake 构建出整个项目
+  依据编译环境的不同，选择并使用 make 或者 nmake 完整地编译、构建出项目程序
 
-  - Linux / MinGW: \> ``` make ```
+  - GNU/Linux 或 MinGW: \> ``` make ```
   
-  - Visual Studio: \> ``` nmake ```
+  - Microsoft Visual Studio: \> ``` nmake ```
   
 如果生成没有错误，将在 build 目录下生成三个可执行文件 ```fc```、```fas```、```fvm```，分别是编译器程序、汇编器程序与虚拟机程序三件套。
 
