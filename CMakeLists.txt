@@ -144,9 +144,21 @@ set(SRCS_FROG_VM
         ${SRCDIR}/TSMapWarpper.cpp
         ${SRCDIR}/TSMapWarpper.hpp)
 
+
+
 add_executable(${EN_FROG_COMPILER} ${SRCS_FROG_COMPILER})
 add_executable(${EN_FROG_ASSEMBLER} ${SRCS_FROG_ASSEMBLER})
 add_executable(${EN_FROG_VM} ${SRCS_FROG_VM})
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    target_link_libraries(${EN_FROG_VM} pthread)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_link_libraries(${EN_FROG_VM} pthread)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+
+else ()
+    message(FATAL_ERROR "Unsupported C++ compiler")
+endif ()
 
 target_compile_options(${EN_FROG_COMPILER} INTERFACE ${CXX_FLAGS})
 target_compile_options(${EN_FROG_ASSEMBLER} INTERFACE ${CXX_FLAGS})
