@@ -14,6 +14,17 @@
 #include "LocalCodeBinder.hpp"
 #include "GlobalFuncMap.hpp"
 
+class LateGenExprs {
+    static std::vector<ExprPtr> _exprs;
+    
+public:
+    static void add(const ExprPtr & pExpr);
+    
+    static void clear();
+    
+    static const std::vector<ExprPtr> & getLateGenExprs();
+};
+
 #define ASMMAKER_ENABLE(x) \
 ILGenerator * x, temp; \
 if (_CHK == OnlyChk) { \
@@ -506,6 +517,24 @@ private:
 
 		case ExprOp::OPT_FRONT_PLUSPLUS:
 		{
+		    TokenValue tv;
+		    tv.u._d = 1;
+		    ExprPtr pExprPureNum = Expr::newLeafScalar(
+                ExprOp::LEAF_INT_LITERAL, tv,
+                pExpr->lineno(),
+                pExpr->colno()
+            );
+            
+            ExprPtr pInnerExpr = pExpr->getSubExprPtr(0);
+            ExprPtr pNewExpr = Expr::newExpr(
+                    ExprOp::OPT_ASSIGN_WITH_SUB,
+                    { pInnerExpr, pExprPureNum },
+                    pInnerExpr->lineno(),
+                    pInnerExpr->colno()
+            );
+		    
+            return gen4expr<_CHK>(pNewExpr, demand);
+		    /*
 			VarType choice;
 			bool result = checkMultiTypeMatching(pExpr->getSubExprPtr(0),
 				{ "byte", "char", "short", "int", "long", "float", "double" },
@@ -550,10 +579,55 @@ private:
 
 			TYPE_PRODUCT2DEMAND(choice);
 			return choice;
+			*/
 		}
+        
+        case ExprOp::OPT_BACK_PLUSPLUS:
+        {
+            TokenValue tv;
+            tv.u._d = 1;
+            ExprPtr pExprPureNum = Expr::newLeafScalar(
+                    ExprOp::LEAF_INT_LITERAL, tv,
+                    pExpr->lineno(),
+                    pExpr->colno()
+            );
+    
+            ExprPtr pInnerExpr = pExpr->getSubExprPtr(0);
+            ExprPtr pNewExpr = Expr::newExpr(
+                    ExprOp::OPT_ASSIGN_WITH_ADD,
+                    { pInnerExpr, pExprPureNum },
+                    pInnerExpr->lineno(),
+                    pInnerExpr->colno()
+            );
+            
+            if (_CHK != OnlyChk)
+                LateGenExprs::add(pNewExpr);
+            
+            return gen4expr<_CHK>(pInnerExpr, demand);
+        }
 
 		case ExprOp::OPT_FRONT_MINUSMINUS:
 		{
+            TokenValue tv;
+            tv.u._d = 1;
+            
+            ExprPtr pExprPureNum = Expr::newLeafScalar(
+                    ExprOp::LEAF_INT_LITERAL, tv,
+                    pExpr->lineno(),
+                    pExpr->colno()
+            );
+            
+            ExprPtr pInnerExpr = pExpr->getSubExprPtr(0);
+            ExprPtr pNewExpr = Expr::newExpr(
+                    ExprOp::OPT_ASSIGN_WITH_SUB,
+                    { pInnerExpr, pExprPureNum },
+                    pInnerExpr->lineno(),
+                    pInnerExpr->colno()
+            );
+            
+            return gen4expr<_CHK>(pNewExpr, demand);
+            
+		    /*
 			VarType choice;
 			bool result = checkMultiTypeMatching(pExpr->getSubExprPtr(0),
 				{ "byte", "char", "short", "int", "long", "float", "double" },
@@ -598,7 +672,32 @@ private:
 
 			TYPE_PRODUCT2DEMAND(choice);
 			return choice;
+		     */
 		}
+        
+        case ExprOp::OPT_BACK_MINUSMINUS:
+        {
+            TokenValue tv;
+            tv.u._d = 1;
+            ExprPtr pExprPureNum = Expr::newLeafScalar(
+                    ExprOp::LEAF_INT_LITERAL, tv,
+                    pExpr->lineno(),
+                    pExpr->colno()
+            );
+            
+            ExprPtr pInnerExpr = pExpr->getSubExprPtr(0);
+            ExprPtr pNewExpr = Expr::newExpr(
+                    ExprOp::OPT_ASSIGN_WITH_SUB,
+                    { pInnerExpr, pExprPureNum },
+                    pInnerExpr->lineno(),
+                    pInnerExpr->colno()
+            );
+    
+            if (_CHK != OnlyChk)
+                LateGenExprs::add(pNewExpr);
+            
+            return gen4expr<_CHK>(pInnerExpr, demand);
+        }
 
 		case ExprOp::OPT_LT:
 		case ExprOp::OPT_LE:

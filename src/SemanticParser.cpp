@@ -577,6 +577,11 @@ void SemParser::gen4VarDefine(const GlobalVar & gvar) {
     
 }
 
+#define HANDLE_LATE_EXPR \
+for (const ExprPtr & pLateExpr : LateGenExprs::getLateGenExprs()) \
+    gen4expr<OnlyGen>(pLateExpr, "void");                             \
+LateGenExprs::clear()
+
 void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
     for (const auto & pStmt : stmts) {
         // 分发、解析每个语句(块)
@@ -585,6 +590,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
             PureExprStmt * pNativePureExprStmt =
                     static_cast<PureExprStmt *>(pStmt.get());
             gen4expr<OnlyGen>(pNativePureExprStmt->_pExpr, "void");
+            HANDLE_LATE_EXPR;
             break;
         }
         
@@ -631,6 +637,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
                 PureExprStmt * pNativeSecondStmt =
                         static_cast<PureExprStmt *>(pSecondStmt.get());
                 gen4expr<OnlyGen>(pNativeSecondStmt->_pExpr, "boolean");
+                HANDLE_LATE_EXPR;
             } else {
                 assert(0);
             }
@@ -678,6 +685,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
                 } else {
                     
                     gen4expr<OnlyGen>(pNativeReturnStmt->_pRetExpr, retType);
+                    HANDLE_LATE_EXPR;
                     if (retType == "long") {
                         _asmk.append_RET_QW();
                     } else if (retType == "int") {
@@ -709,6 +717,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
             
             _asmk.append_LABEL(lgWhile._lbl_while_begin_judge_continue);
             gen4expr<OnlyGen>(pNativeWhileStmt->_pCondExpr, "boolean");
+            HANDLE_LATE_EXPR;
             _asmk.append_JF(lgWhile._lbl_while_end_break);
             
             StmtsPtr pBodyStmts = pNativeWhileStmt->_pStmts;
@@ -751,6 +760,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
             
             _asmk.append_LABEL(lgDoWhile._lbl_do_while_judge_continue);
             gen4expr<OnlyGen>(pNativeDoWhileStmt->_pCondExpr, "boolean");
+            HANDLE_LATE_EXPR;
             _asmk.append_JF(lgDoWhile._lbl_do_while_end_break);
             
             _asmk.append_J(lgDoWhile._lbl_do_while_begin);
@@ -772,6 +782,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
                 _asmk.append_LABEL(lgIf._lbl_if_casenodes[i]);
                 
                 gen4expr<OnlyGen>(ice._pCondExpr, "boolean");
+                HANDLE_LATE_EXPR;
                 if (i + 1 < sz)
                     _asmk.append_JF(lgIf._lbl_if_casenodes[i + 1]);
                 else
@@ -817,6 +828,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
                 const SwitchIndexEntry & sie = idxEntries[i];
                 if (sie._type == SwitchIndexEntry::MarkType::Case) {
                     gen4expr<OnlyGen>(sie._pCondExpr, "boolean");
+                    HANDLE_LATE_EXPR;
                     _asmk.append_JT(lgSwitch._lbl_switch_casenodes[i]);
                 } else {
                     // save
@@ -1084,3 +1096,18 @@ SemParser::getErrList() {
 bool SemParser::hasErr() const {
     return _sed.hasErr();
 }
+
+std::vector<ExprPtr> LateGenExprs::_exprs;
+
+void LateGenExprs::add(const ExprPtr & pExpr) {
+    _exprs.push_back(pExpr);
+}
+
+void LateGenExprs::clear() {
+    _exprs.clear();
+}
+
+const std::vector<ExprPtr> & LateGenExprs::getLateGenExprs() {
+    return _exprs;
+}
+
