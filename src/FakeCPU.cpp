@@ -43,9 +43,8 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
     
     const std::vector<char> & opROM = fromStaticByteCodes ?
                                       _pOPROM->_staticByteCodes : _pOPROM->_funcsByteCodes;
-    const std::vector<char> & opStack = _pOPStack->_opStack;
     uint32_t opROMSiz = opROM.size();
-    uint32_t opStackSiz = opStack.size();
+    
     uint32_t pc = startAddr;
     
     try {
@@ -61,8 +60,8 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             */
             
             if (verbose || step) {
-                std::clog << "========== VERBOSE MODE ==========" << std::endl;
-                std::clog << "PC = " << pc << std::endl;
+                std::clog << std::endl << "========== VERBOSE MODE ==========" << std::endl;
+                std::clog << "PC = " << pc << " (0x" << std::hex << pc << ")" << std::endl;
                 std::clog << "OPROM> ";
                 uint32_t i;
                 for (i = pc; i < pc + 16 && i < opROMSiz; ++i) {
@@ -74,9 +73,10 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 
                 std::clog << "OPSTACK TOP> ";
                 int32_t j;
-                for (j = opStackSiz - 1; j >= 0 && j >= opStackSiz - 16; --j) {
+                uint32_t opStackSiz = _pOPStack->_opStack.size();
+                for (j = opStackSiz - 1; j >= 0 && j >= int32_t(opStackSiz) - 16; --j) {
                     char s[3] = {0};
-                    ByteCodeHexPrinter::b2hex(opStack[j], s);
+                    ByteCodeHexPrinter::b2hex(_pOPStack->_opStack[j], s);
                     std::clog << s << " ";
                 }
                 std::clog << (j == -1 ? "BTM" : "...") << std::endl;
