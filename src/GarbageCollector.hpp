@@ -4,6 +4,7 @@
 #define GC_DEFAULT_ARG_TIME 1000
 
 #include <mutex>
+#include <atomic>
 
 #include "FakeVectorRAM.hpp"
 #include "FakeScalarRAM.hpp"
