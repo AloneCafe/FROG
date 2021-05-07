@@ -244,12 +244,16 @@ VectorsManager::~VectorsManager() {
     _map.clear();
 }
 
-uint32_t VectorsManager::getTotalUse() const {
+uint32_t VectorsManager::getTotalUsage() const {
     uint32_t total = 0;
     for (const auto & e : _map) {
         total += e.second->getTotalSize();
     }
     return total;
+}
+
+uint32_t VectorsManager::getHandlerCount() const {
+    return _map._map.size();
 }
 
 VectorHandler FakeVectorRAM::makeVectorB(uint32_t degree) {
@@ -379,4 +383,12 @@ ElemHandler FakeVectorRAM::getElemHandlerByOffsetB(const VectorHandler & handler
 
 IVector * FakeVectorRAM::getVectorByHandler(const VectorHandler & handler) const {
     return _vecman.getVectorByHandler(handler);
+}
+
+uint32_t FakeVectorRAM::getHandlerCount() const {
+    return _vecman.getHandlerCount();
+}
+
+uint32_t FakeVectorRAM::getTotalUsage() const {
+    return _vecman.getTotalUsage();
 }

@@ -13,6 +13,7 @@ using TSMapWrapper = std::unordered_map<K, T, H>;
 
 template <typename K, typename T, typename H = std::hash<K>>
 class TSMapWrapper {
+    friend class VectorsManager;
 private:
     static std::mutex _mtx;
     std::unordered_map<K, T, H> _map;

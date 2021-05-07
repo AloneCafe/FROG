@@ -137,6 +137,8 @@ set(SRCS_FROG_VM
         ${SRCDIR}/FakeScalarRAM.hpp
         ${SRCDIR}/FakeVectorRAM.cpp
         ${SRCDIR}/FakeVectorRAM.hpp
+        ${SRCDIR}/ByteCodeGenerator.cpp
+        ${SRCDIR}/ByteCodeGenerator.hpp
         ${SRCDIR}/GarbageCollector.cpp
         ${SRCDIR}/GarbageCollector.hpp
         ${SRCDIR}/TSMapWarpper.cpp

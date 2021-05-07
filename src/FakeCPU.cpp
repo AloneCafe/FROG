@@ -7,6 +7,7 @@
 #include "FakeCPU.hpp"
 #include "VMException.hpp"
 #include "GarbageCollector.hpp"
+#include "ByteCodeGenerator.hpp"
 
 void FakeCPU::attachOPROM(FakeOPROM * pOPROM) {
     _pOPROM = pOPROM;
@@ -40,13 +41,15 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
     if (!_pVRAM)
         throw VMException(VMET::E_NOT_ATTACH_VRAM);
     
-    const std::vector<char> & oprom = fromStaticByteCodes ?
-            _pOPROM->_staticByteCodes : _pOPROM->_funcsByteCodes;
-    uint32_t siz = oprom.size();
+    const std::vector<char> & opROM = fromStaticByteCodes ?
+                                      _pOPROM->_staticByteCodes : _pOPROM->_funcsByteCodes;
+    const std::vector<char> & opStack = _pOPStack->_opStack;
+    uint32_t opROMSiz = opROM.size();
+    uint32_t opStackSiz = opStack.size();
     uint32_t pc = startAddr;
     
     try {
-        while (pc < siz) {
+        while (pc < opROMSiz) {
             GCLockGuard lck(GCScheduler::getGCLock());
             /*
             GarbageCollector gc(*_pOPStack, *_pSRAM, *_pVRAM, voidhole);
@@ -57,9 +60,42 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             gc.sweep();
             */
             
+            if (verbose || step) {
+                std::clog << "========== VERBOSE MODE ==========" << std::endl;
+                std::clog << "PC = " << pc << std::endl;
+                std::clog << "OPROM> ";
+                uint32_t i;
+                for (i = pc; i < pc + 16 && i < opROMSiz; ++i) {
+                    char s[3] = {0};
+                    ByteCodeHexPrinter::b2hex(opROM[i], s);
+                    std::clog << s << " ";
+                }
+                std::clog << (i == opROMSiz ? "EOF" : "...") << std::endl;
+                
+                std::clog << "OPSTACK TOP> ";
+                int32_t j;
+                for (j = opStackSiz - 1; j >= 0 && j >= opStackSiz - 16; --j) {
+                    char s[3] = {0};
+                    ByteCodeHexPrinter::b2hex(opStack[j], s);
+                    std::clog << s << " ";
+                }
+                std::clog << (j == -1 ? "BTM" : "...") << std::endl;
+                
+                std::clog << "VECTOR HDLs = " << _pVRAM->getHandlerCount() << std::endl;
+                std::clog << "VRAM USAGE  = " << _pVRAM->getTotalUsage() << "B" << std::endl;
+                
+                
+                while (step) {
+                    std::clog << "STEP MODE> Press enter to execute" << std::endl;
+                    if (getchar() == '\n') {
+                        break;
+                    }
+                }
+            }
+            
             std::string buf;
             uint32_t hardAddr = 0;
-            switch (oprom[pc]) {
+            switch (opROM[pc]) {
             case 0x00: {
                 ++pc;
                 break;
@@ -73,8 +109,8 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x02: {
                 ++pc;
-                while (oprom[pc] != 0x00)
-                    buf.push_back(oprom[pc++]);
+                while (opROM[pc] != 0x00)
+                    buf.push_back(opROM[pc++]);
                 ++pc;
                 executeVMEF(buf);
                 break;
@@ -84,7 +120,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 ++pc;
                 uint32_t j;
                 for (j = 0; j < sizeof(uint32_t); ++j)
-                    reinterpret_cast<char *>(&hardAddr)[j] = oprom[pc + j];
+                    reinterpret_cast<char *>(&hardAddr)[j] = opROM[pc + j];
                 pc += j;
                 _pFNStack->pushRetAddr(pc);
                 pc = hardAddr;  // 设置程序计数器
@@ -113,7 +149,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             case 0x06: {
                 ++pc;
                 uint8_t gh = *reinterpret_cast
-                        <const uint8_t *>(&oprom[pc]);
+                        <const uint8_t *>(&opROM[pc]);
                 uint8_t hb[2];
                 hb[0] = (gh >> 4);
                 hb[1] = (gh & 0x0F);
@@ -279,7 +315,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x08: { // BAND
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -311,7 +347,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x09: { // BOR
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -343,7 +379,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x0A: { // BXOR
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -375,7 +411,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x0B: { // BNOT
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -403,7 +439,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x0C: { // SHL
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -435,7 +471,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x0D: { // SHR
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -467,7 +503,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x0E: { // SHRZ
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -499,7 +535,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x10: { // LT
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -540,7 +576,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x11: { // LE
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -582,7 +618,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x12: { // EQ
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -624,7 +660,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x13: { // NE
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -666,7 +702,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x14: { // GE
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -708,7 +744,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x15: { // GT
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -786,7 +822,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x20: { // ADD
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -828,7 +864,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x21: { // SUB
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -870,7 +906,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x22: { // MUL
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -912,7 +948,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x23: { // DIV
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -962,7 +998,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x24: { // MOD
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -1012,7 +1048,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x25: { // NEG
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -1076,7 +1112,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x31: { // HPUSH
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
                 ElemHandler native;
@@ -1131,7 +1167,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x32: { // HPOP
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -1207,7 +1243,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             case 0x34: { // MKVEC
                 ++pc;
                 uint8_t gd = *reinterpret_cast
-                        <const uint8_t *>(&oprom[pc]);
+                        <const uint8_t *>(&opROM[pc]);
                 uint8_t g, d;
                 g = (gd >> 4);
                 d = (gd & 0x0F);
@@ -1248,44 +1284,44 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x40: { // IPUSH
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
                 if (g == 0B0001) { // dst: B
                     int8_t b;
                     for (uint32_t j = 0; j < sizeof(b); ++j)
-                        reinterpret_cast<char *>(&b)[j] = oprom[pc++];
+                        reinterpret_cast<char *>(&b)[j] = opROM[pc++];
                     _pOPStack->pushB(b);
                 
                 } else if (g == 0B0010) { // dst: W
                     int16_t w;
                     for (uint32_t j = 0; j < sizeof(w); ++j)
-                        reinterpret_cast<char *>(&w)[j] = oprom[pc++];
+                        reinterpret_cast<char *>(&w)[j] = opROM[pc++];
                     _pOPStack->pushW(w);
                 
                 } else if (g == 0B0100) { // dst: DW
                     int32_t dw;
                     for (uint32_t j = 0; j < sizeof(dw); ++j)
-                        reinterpret_cast<char *>(&dw)[j] = oprom[pc++];
+                        reinterpret_cast<char *>(&dw)[j] = opROM[pc++];
                     _pOPStack->pushDW(dw);
                 
                 } else if (g == 0B1000) { // dst: QW
                     int64_t qw;
                     for (uint32_t j = 0; j < sizeof(qw); ++j)
-                        reinterpret_cast<char *>(&qw)[j] = oprom[pc++];
+                        reinterpret_cast<char *>(&qw)[j] = opROM[pc++];
                     _pOPStack->pushQW(qw);
                 
                 } else if (g == 0B1011) { // dst: FLT
                     float f;
                     for (uint32_t j = 0; j < sizeof(f); ++j)
-                        reinterpret_cast<char *>(&f)[j] = oprom[pc++];
+                        reinterpret_cast<char *>(&f)[j] = opROM[pc++];
                     _pOPStack->pushFLT(f);
                 
                 } else if (g == 0B1111) { // dst: DBL
                     double d;
                     for (uint32_t j = 0; j < sizeof(d); ++j)
-                        reinterpret_cast<char *>(&d)[j] = oprom[pc++];
+                        reinterpret_cast<char *>(&d)[j] = opROM[pc++];
                     _pOPStack->pushDBL(d);
                 
                 } else {
@@ -1297,7 +1333,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x41: { // DUP
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
@@ -1328,11 +1364,11 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x50: { // DEF
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
-                int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+                int32_t addr = *reinterpret_cast<const int32_t *>(&opROM[pc]);
                 pc += sizeof(int32_t);
             
                 if (g == 0B0001) { // dst: B
@@ -1362,11 +1398,11 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x51: { // PUSH
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
-                int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+                int32_t addr = *reinterpret_cast<const int32_t *>(&opROM[pc]);
                 pc += sizeof(int32_t);
             
                 if (g == 0B0001) { // dst: B
@@ -1402,11 +1438,11 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x52: { // POP
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
-                int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+                int32_t addr = *reinterpret_cast<const int32_t *>(&opROM[pc]);
                 pc += sizeof(int32_t);
             
                 if (g == 0B0001) { // dst: B
@@ -1442,11 +1478,11 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
         
             case 0x53: { // TOP
                 ++pc;
-                uint8_t g = oprom[pc];
+                uint8_t g = opROM[pc];
                 g >>= 4;
                 ++pc;
             
-                int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+                int32_t addr = *reinterpret_cast<const int32_t *>(&opROM[pc]);
                 pc += sizeof(int32_t);
             
                 if (g == 0B0001) { // dst: B
@@ -1483,7 +1519,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             case 0x60: { // J
                 ++pc;
             
-                int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+                int32_t addr = *reinterpret_cast<const int32_t *>(&opROM[pc]);
                 pc += sizeof(int32_t);
                 pc = addr; // 跳转
             
@@ -1493,7 +1529,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             case 0x61: { // JT
                 ++pc;
             
-                int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+                int32_t addr = *reinterpret_cast<const int32_t *>(&opROM[pc]);
                 pc += sizeof(int32_t);
             
                 bool b = _pOPStack->popB();
@@ -1506,7 +1542,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             case 0x62: { // JF
                 ++pc;
             
-                int32_t addr = *reinterpret_cast<const int32_t *>(&oprom[pc]);
+                int32_t addr = *reinterpret_cast<const int32_t *>(&opROM[pc]);
                 pc += sizeof(int32_t);
             
                 bool b = _pOPStack->popB();

@@ -2,6 +2,7 @@
 #define __VMEXCEPTION_HEADER__
 
 #include <string>
+#include "FakeCPU.hpp"
 
 enum class VMET : int {
     E_OPROM_ACCESS_OVERFLOW,

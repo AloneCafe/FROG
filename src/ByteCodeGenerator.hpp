@@ -25,6 +25,7 @@ public:
 };
 
 class ByteCodeHexPrinter {
+public:
     static void b2hex(uint8_t b, char hex[2], bool upcase = true);
     
 public:

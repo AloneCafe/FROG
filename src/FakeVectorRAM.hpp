@@ -139,6 +139,8 @@ public:
     VectorsManager() = default;
     virtual ~VectorsManager();
     
+    uint32_t getHandlerCount() const;
+    
     VectorHandler newVectorVEC(const VectorLowLvElemType & lowLvElemType, uint32_t degree);
     VectorHandler newVectorB();
     VectorHandler newVectorW();
@@ -149,7 +151,7 @@ public:
     
     IVector * getVectorByHandler(const VectorHandler & handler) const;
     
-    uint32_t getTotalUse() const;
+    uint32_t getTotalUsage() const;
 
 private:
     VectorHandler applyUniqueHandler() const;
@@ -168,6 +170,10 @@ public:
     VectorHandler makeVectorQW(uint32_t degree);
     VectorHandler makeVectorFLT(uint32_t degree);
     VectorHandler makeVectorDBL(uint32_t degree);
+    
+    uint32_t getHandlerCount() const;
+    
+    uint32_t getTotalUsage() const;
     
     ElemHandler getElemHandlerByOffsetT(
             const VectorHandler & handler, uint32_t offset) const;
