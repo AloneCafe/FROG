@@ -1,6 +1,7 @@
 #ifndef __FAKE_SCALAR_RAM_HEADER__
 #define __FAKE_SCALAR_RAM_HEADER__
 
+#include <stack>
 #include <vector>
 #include <cstdint>
 
@@ -8,7 +9,7 @@ class FakeScalarRAM {
     friend class GarbageCollector;
 private:
     mutable std::vector<char> _staticSRAM;
-    mutable std::vector<char> _funcsSRAM;
+    mutable std::vector<std::vector<char>> _funcsSRAM;
     
 public:
     int8_t  getB(int32_t addr) const;
@@ -25,7 +26,10 @@ public:
     void setFLT(int32_t addr, float e);
     void setDBL(int32_t addr, double e);
     
+    void newNonStaticSRAM();
     void clearNonStaticSRAM();
+    
+    FakeScalarRAM();
     
 private:
     std::vector<char> *

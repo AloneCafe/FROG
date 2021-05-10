@@ -65,11 +65,13 @@ void GarbageCollector::mark_SRAM() {
     }
     uint32_t end = _sram._funcsSRAM.size() - sizeof(VectorHandler);
     for (uint32_t i = 0; i <= end; ++i) {
-        VectorHandler probaVH = *reinterpret_cast<const VectorHandler *>(&_sram._funcsSRAM[i]);
-        IVector *pVec = vecman.getVectorByHandler(probaVH);
-        if (!pVec)
-            continue;
-        pVec->setMark(true);
+        for (uint32_t j = 0; j < _sram._funcsSRAM[i].size(); ++j) {
+            VectorHandler probaVH = *reinterpret_cast<const VectorHandler *>(&_sram._funcsSRAM[i][j]);
+            IVector * pVec = vecman.getVectorByHandler(probaVH);
+            if (!pVec)
+                continue;
+            pVec->setMark(true);
+        }
     }
 }
 

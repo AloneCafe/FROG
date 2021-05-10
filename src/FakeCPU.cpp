@@ -96,18 +96,18 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             std::string buf;
             uint32_t hardAddr = 0;
             switch (opROM[pc]) {
-            case 0x00: {
+            case 0x00: { // NOP
                 ++pc;
                 break;
             }
         
-            case 0x01: {
+            case 0x01: { // HALT
                 ++pc;
                 return _pOPStack->popDW();
                 break;
             }
         
-            case 0x02: {
+            case 0x02: { // EFCALL
                 ++pc;
                 while (opROM[pc] != 0x00)
                     buf.push_back(opROM[pc++]);
@@ -116,8 +116,12 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                 break;
             }
         
-            case 0x03: {
+            case 0x03: { // CALL
                 ++pc;
+    
+                // 创建局部变量域
+                _pSRAM->newNonStaticSRAM();
+                
                 uint32_t j;
                 for (j = 0; j < sizeof(uint32_t); ++j)
                     reinterpret_cast<char *>(&hardAddr)[j] = opROM[pc + j];
@@ -132,6 +136,9 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
             case 0x04:
                 pc += 1;
             
+                // 清空局部变量
+                _pSRAM->clearNonStaticSRAM();
+                
                 // 检查程序是否结束，判断函数返回栈是否为空
                 if (_pFNStack->empty()) {
                     if (_pOPStack->_opStack.size() >= 4)
