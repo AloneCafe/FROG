@@ -527,7 +527,7 @@ private:
             
             ExprPtr pInnerExpr = pExpr->getSubExprPtr(0);
             ExprPtr pNewExpr = Expr::newExpr(
-                    ExprOp::OPT_ASSIGN_WITH_SUB,
+                    ExprOp::OPT_ASSIGN_WITH_ADD,
                     { pInnerExpr, pExprPureNum },
                     pInnerExpr->lineno(),
                     pInnerExpr->colno()
