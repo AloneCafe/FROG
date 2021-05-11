@@ -1363,7 +1363,8 @@ StmtPtr AstBasicParser::buildStmt(TokenIter & it) {
             StmtPtr pDefStmtOrInitExpr = nullptr;
             if (it->isPunc<';'>()) { // 空语句
                 ++it;
-                
+                pDefStmtOrInitExpr = IStmt::newEmptyStmt();
+    
             } else if (it->isEnd()) {
                 AST_E(E_UNEXPECTED_EOF);
                 
@@ -1383,8 +1384,10 @@ StmtPtr AstBasicParser::buildStmt(TokenIter & it) {
             // 接着解析第二个语句
             StmtPtr pCondStmt = nullptr;
             if (it->isPunc<';'>()) {
+                AST_REC_LOCATION1
                 ++it;
-                pCondStmt = IStmt::newEmptyStmt();
+                ExprPtr pCondExpr = Expr::newLeafScalar(ExprOp::LEAF_TRUE_LITERAL, TokenValue{}, AST_ARG_LOCATION1);
+                pCondStmt = IStmt::newPureExprStmt(pCondExpr);
             } else {
                 ExprPtr pCondExpr = buildExpression(it);
                 if (it->isPunc<';'>()) {

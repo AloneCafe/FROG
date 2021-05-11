@@ -624,7 +624,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
             
             // init
             _asmk.append_LABEL(lgFor._lbl_for_begin);
-            if (firstStmtType == StmtType::Define || firstStmtType == StmtType::PureExpr) {
+            if (firstStmtType == StmtType::Define || firstStmtType == StmtType::PureExpr || firstStmtType == StmtType::Empty) {
                 std::vector<StmtPtr> fakeStmts = { pFirstStmt };
                 gen4Stmts(fun, fakeStmts);
             } else {
@@ -654,7 +654,7 @@ void SemParser::gen4Stmts(const Function & fun, std::vector<StmtPtr> & stmts) {
             
             // continue
             _asmk.append_LABEL(lgFor._lbl_for_continue);
-            if (thirdStmtType == StmtType::PureExpr) {
+            if (thirdStmtType == StmtType::PureExpr || thirdStmtType == StmtType::Empty) {
                 std::vector<StmtPtr> fakeStmts = { pThirdStmt };
                 gen4Stmts(fun, fakeStmts);
             } else {
