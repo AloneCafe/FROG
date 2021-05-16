@@ -1104,7 +1104,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                     _pOPStack->pushDW(dw);
                 
                 } else if (sizeof(ElemHandler) == 8) {
-                    uint32_t qw = 0;
+                    uint64_t qw = 0;
                     for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
                         reinterpret_cast<uint8_t *>(&qw)[i] =
                                 reinterpret_cast<uint8_t *>(&native)[i];
@@ -1131,12 +1131,11 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                     }
                 
                 } else if (sizeof(ElemHandler) == 8) {
-                    uint32_t qw = _pOPStack->popQW();
-                    for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
+                    uint64_t qw = _pOPStack->popQW();
+                    for (uint64_t i = 0; i < sizeof(ElemHandler); ++i) {
                         reinterpret_cast<uint8_t *>(&native)[i] =
                                 reinterpret_cast<uint8_t *>(&qw)[i];
                     }
-                
                 } else {
                     assert(0);
                 }
@@ -1188,7 +1187,7 @@ int32_t FakeCPU::run(bool verbose, bool step, bool fromStaticByteCodes, uint32_t
                         }
                     
                     } else if (sizeof(ElemHandler) == 8) {
-                        uint32_t qw = pOPStack->popQW();
+                        uint64_t qw = pOPStack->popQW();
                         for (uint32_t i = 0; i < sizeof(ElemHandler); ++i) {
                             reinterpret_cast<uint8_t *>(&native)[i] =
                                     reinterpret_cast<uint8_t *>(&qw)[i];
