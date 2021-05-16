@@ -728,8 +728,9 @@ Token & TokenScanner::realNextToken() {
                 if (s.size() >= __CHARSEQ_MAXSIZE) {
                     _ed.POST_PT_E(E_CHARSEQ_TOO_LONG);
                 }
-                _token_seq.emplace_back(TOKEN_LITERAL_CHARSEQ, lineno, colno,
-                        SeqConverter::toNative(s));
+                TokenValue char_tv;
+                char_tv.u._c = SeqConverter::toNative(s)[0];
+                _token_seq.emplace_back(TOKEN_LITERAL_CHARSEQ, lineno, colno, char_tv);
                 return _token_seq.back();
             } else if (uci.isEof()) {
                 // 字符尚未闭合, 文件就到末尾了

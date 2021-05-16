@@ -17,5 +17,12 @@ const std::vector<Token> & UniTokenizer::tokenize() {
             _errs.push_back(err);
     }
     _tks.push_back(tkEof);
+
+#if 0
+    for (const auto & e : _tks) {
+        std::cerr << e.toDebugString() << std::endl;
+    }
+#endif
+    
     return _tks;
 }
